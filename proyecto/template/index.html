@@ -7,33 +7,37 @@
     <meta name="description" content="Página web de blog de café">
 
     <!-- Prefetch -->
-    <link rel="prefetch" href="nosotros.html" as="document">
+    <link rel="prefetch" href="../template/nosotros.html" as="document">
 
     <!-- Preload -->
-    <link rel="preload" href="css/normalize.css" as="style">
-    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="preload" href="../static/normalize.css" as="style">
+    <link rel="stylesheet" href="../static/normalize.css">
 
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=PT+Sans:wght@400;700&display=swap"  crossorigin="crossorigin" as="font">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     
-    <link rel="preload" href="css/style.css" as="style">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" href="../static/style.css" as="style">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/whatsAap.css">
 </head>
 <body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<a href="https://api.whatsapp.com/send?phone=81654742&text=Quisiera%20obtener%20informacion%20acerca%20de%20la%20veterinaria" class="float" target="_blank">
+<i class="fa fa-whatsapp my-float"></i>
+</a>
 
     <header class="header">
 
         <div class="contenedor">
             <div class="barra">
-                <a class="logo" href="index.html">
+                <a class="logo" href="../template/index.html">
                     <h1 class="logo__nombre no-margin centrar-texto">Veterinaria<span class="logo__bold">El Buen productor</span></h1>
                 </a>
 
                 <nav class="navegacion">
-                    <a href="nosotros.html" class="navegacion__enlace">Nosotros</a>
-                    <a href="cursos.html" class="navegacion__enlace">Cursos</a>
-                    <a href="contacto.html" class="navegacion__enlace">Contacto</a>
-                    
+                    <a href="../template/nosotros.html" class="navegacion__enlace">Nosotros</a>
+                    <a href="../template/cursos.html" class="navegacion__enlace">Cursos</a>
+                    <a href="../template/contacto.html" class="navegacion__enlace">Contacto</a>
                 </nav>
             </div>
         </div>
@@ -116,11 +120,12 @@
                     <p class="widget-curso__label">Sábado: 
                         <span class="widget-curso__info">10:00 AM - 5:00 PM</span>
                     </p>
-                    <a href="contacto.html" class="boton boton--secundario">AGENDAR CITAS </a>
+                    <a href="../template/contacto.html" class="boton boton--secundario">AGENDAR CITAS </a>
                 </li>
                 <div>
                     <div class="mapa"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d975.7484891940842!2d-86.08630671382889!3d11.974919700000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f74098f30488c73%3A0xfaa51062de063583!2sVeterinaria%20el%20buen%20productor!5e0!3m2!1ses-419!2sni!4v1660765383070!5m2!1ses-419!2sni" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> </div>
-                 </div>
+                </div>
+                
                 
             </ul>
         </aside>
@@ -129,19 +134,19 @@
     <footer class="footer">
         <div class="contenedor">
             <div class="barra">
-                <a class="logo" href="index.html">
+                <a class="logo" href="../template/index.html">
                     <h1 class="logo__nombre no-margin centrar-texto">Blog<span class="logo__bold">DeCafé</span></h1>
                 </a>
 
                 <nav class="navegacion">
-                    <a href="nosotros.html" class="navegacion__enlace">Nosotros</a>
-                    <a href="cursos.html" class="navegacion__enlace">Cursos</a>
-                    <a href="contacto.html" class="navegacion__enlace">Contacto</a>
+                    <a href="../template/nosotros.html" class="navegacion__enlace">Nosotros</a>
+                    <a href="../template/cursos.html" class="navegacion__enlace">Cursos</a>
+                    <a href="../template/contacto.html" class="navegacion__enlace">Contacto</a>
                 </nav>
             </div>
         </div>
     </footer>
-    
-    <script src="js/modernizr.js"></script>
+<!--     
+    <script src="js/modernizr.js"></script> -->
 </body>
 </html>
