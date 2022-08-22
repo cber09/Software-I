@@ -1,0 +1,138 @@
+CREATE TABLE "Estado" (
+	"Id_Estado"	INTEGER NOT NULL,
+	"NombreEstado"	TEXT NOT NULL,
+	PRIMARY KEY("Id_Estado" AUTOINCREMENT)
+);
+
+CREATE TABLE "TipoMascota" (
+	"Id_TipoMascota"	INTEGER NOT NULL,
+	"Descripcion"	TEXT NOT NULL,
+	PRIMARY KEY("Id_TipoMascota" AUTOINCREMENT)
+);
+
+
+CREATE TABLE "Cliente" (
+	"Id_Cliente"	INTEGER NOT NULL,
+	"Nombres"	TEXT NOT NULL,
+	"Apellidos"	TEXT NOT NULL,
+	"TelefonoFijo"	NUMERIC,
+	"Celular"	NUMERIC,
+	"Correo"	TEXT,
+	"Direccion"	TEXT,
+	"IdEstado"	INTEGER NOT NULL,
+	"IdCredenciales"	INTEGER,
+	PRIMARY KEY("Id_Cliente" AUTOINCREMENT),
+	FOREIGN KEY("IdCredenciales") REFERENCES "Credenciales"("Id_Credenciales"),
+	FOREIGN KEY("IdEstado") REFERENCES "Estado"("Id_Estado")
+);
+
+CREATE TABLE "Mascota" (
+	"Id_Mascota"	INTEGER NOT NULL,
+	"IdCliente"	INTEGER NOT NULL,
+	"Nombre"	TEXT NOT NULL,
+	"Edad"	INTEGER NOT NULL,
+	"Raza"	TEXT NOT NULL,
+	"Sexo"	TEXT NOT NULL,
+	"IdTipoMascota"	INTEGER NOT NULL,
+	"IdEstado"	INTEGER NOT NULL,
+	FOREIGN KEY("IdTipoMascota") REFERENCES "TipoMascota"("Id_TipoMascota"),
+	FOREIGN KEY("IdCliente") REFERENCES "Cliente"("Id_Cliente"),
+	FOREIGN KEY("IdEstado") REFERENCES "Estado"("Id_Estado"),
+	PRIMARY KEY("Id_Mascota" AUTOINCREMENT)
+);
+
+CREATE TABLE "Empleado" (
+	"Id_Empleado"	INTEGER NOT NULL,
+	"Nombres"	TEXT NOT NULL,
+	"Apellidos"	TEXT NOT NULL,
+	"Cedula"	TEXT NOT NULL,
+	"Correo"	TEXT,
+	"Direccion"	TEXT NOT NULL,
+	"Celular"	INTEGER,
+	"IdEstado"	INTEGER NOT NULL,
+	"IdCredenciales"	INTEGER,
+	PRIMARY KEY("Id_Empleado" AUTOINCREMENT),
+	FOREIGN KEY("IdCredenciales") REFERENCES "Credenciales"("Id_Credenciales"),
+	FOREIGN KEY("IdEstado") REFERENCES "Estado"("Id_Estado")
+);
+
+CREATE TABLE "Producto" (
+	"Id_Producto"	INTEGER NOT NULL,
+	"Nombre"	TEXT NOT NULL,
+	"Precio"	double NOT NULL,
+	"Stock"	INTEGER NOT NULL,
+	"IdEstado"	INTEGER NOT NULL,
+	"IdProveedor"	INTEGER NOT NULL,
+	PRIMARY KEY("Id_Producto" AUTOINCREMENT),
+	FOREIGN KEY("IdEstado") REFERENCES "Estado"("Id_Estado"),
+	FOREIGN KEY("IdProveedor") REFERENCES "Proveedor"("Id_Proveedor")
+);
+
+CREATE TABLE "Proveedor" (
+	"Id_Proveedor"	INTEGER NOT NULL,
+	"Nombres"	TEXT NOT NULL,
+	"Apellidos"	TEXT NOT NULL,
+	"Celular"	NUMERIC,
+	"TelefonoFijo"	NUMERIC,
+	"Direccion"	TEXT NOT NULL,
+	"Correo"	TEXT,
+	"RUC"	TEXT NOT NULL,
+	"Compañia"	TEXT NOT NULL,
+	"IdEstado"	INTEGER NOT NULL,
+	PRIMARY KEY("Id_Proveedor" AUTOINCREMENT),
+	FOREIGN KEY("IdEstado") REFERENCES "Estado"("Id_Estado")
+);
+
+CREATE TABLE "Consulta" (
+	"Id_Consulta"	INTEGER NOT NULL,
+	"IdMascota"	INTEGER NOT NULL,
+	"Fecha"	date NOT NULL,
+	"Sintomas"	TEXT,
+	"Diagnostico"	TEXT,
+	"IdEmpleado"	INTEGER NOT NULL,
+	"Hora"	date NOT NULL,
+	"IdEstado"	INTEGER NOT NULL,
+	PRIMARY KEY("Id_Consulta" AUTOINCREMENT),
+	FOREIGN KEY("IdEstado") REFERENCES "Estado"("Id_Estado"),
+	FOREIGN KEY("IdMascota") REFERENCES "Mascota"("Id_Mascota"),
+	FOREIGN KEY("IdEmpleado") REFERENCES "Empleado"("Id_Empleado")
+);
+
+CREATE TABLE "Ventas" (
+	"Id_Venta"	INTEGER NOT NULL,
+	"IdCliente"	INTEGER NOT NULL,
+	"IdEmpleado"	INTEGER NOT NULL,
+	"Fecha"	date NOT NULL,
+	"Total"	double NOT NULL,
+	PRIMARY KEY("Id_Venta" AUTOINCREMENT),
+	FOREIGN KEY("IdCliente") REFERENCES "Cliente"("Id_Cliente"),
+	FOREIGN KEY("IdEmpleado") REFERENCES "Empleado"("Id_Empleado")
+);
+
+CREATE TABLE "DetalleVenta" (
+	"IdVenta"	INTEGER NOT NULL,
+	"IdProducto"	INTEGER NOT NULL,
+	"Cantidad"	INTEGER NOT NULL,
+	"CostoUnidad"	double NOT NULL,
+	FOREIGN KEY("IdProducto") REFERENCES "Producto"("Id_Producto"),
+	FOREIGN KEY("IdVenta") REFERENCES "Ventas"("Id_Venta")
+);
+
+CREATE TABLE "Credenciales" (
+	"Id_Credenciales"	INTEGER NOT NULL,
+	"Usuario"	TEXT NOT NULL,
+	"Contraseña"	TEXT NOT NULL,
+	"Rol"	INTEGER NOT NULL,
+	PRIMARY KEY("Id_Credenciales" AUTOINCREMENT)
+);
+
+CREATE TABLE "Vacunacion" (
+	"IdMascota"	INTEGER NOT NULL,
+	"FechaAplicada"	date NOT NULL,
+	"FechaProgramada"	date,
+	"Vacuna"	INTEGER NOT NULL,
+	FOREIGN KEY("IdMascota") REFERENCES "Mascota"("Id_Mascota")
+);
+
+
+
