@@ -9,7 +9,7 @@
 }
 html {
     box-sizing: border-box;
-    font-size: 62.5%; /* 1 rem = 10px */    
+    font-size: 62.5%; /* 1 rem = 10px */
 }
 *, *:before, *:after {
     box-sizing: inherit;
@@ -101,7 +101,7 @@ img {
 }
 .logo {
     color: var(--blanco);
-    
+
 }
 .logo__nombre {
     font-weight: 400;
@@ -165,7 +165,7 @@ img {
 }
 .boton--secundario {
     background-color: var(--primario);
-    
+
 }
 
 .cursos {
@@ -280,3 +280,15 @@ img {
     height: 20rem;
 }
 
+/**LOGIN*/
+
+.footer_aso{    
+    background-color: var(--negro);
+
+}
+.barra_aso{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
