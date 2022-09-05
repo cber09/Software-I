@@ -43,8 +43,12 @@ def login():
                 session["user_Id"] = empleado[0]["Id_Usuario"]
                 session["userrole"] = empleadoRol[0]["Id_Rol"]
                 session["nombrerol"] = empleadoRol[0]["NombreRol"]
-                
-                return redirect(url_for('home'))
+                if session["nombrerol"] == "Administrador":
+                    return render_template('admin.html',rol =session["nombrerol"],nombre =session["usercom"])
+                elif session["nombrerol"] == "Empleado":
+                    return render_template('empleado.html',rol =session["nombrerol"],nombre =session["usercom"])
+                else:
+                    return render_template('cliente.html',rol =session["nombrerol"],nombre =session["usercom"])
     return render_template('index.html')
 #DESLOGUEO
 @app.route('/deslog')
