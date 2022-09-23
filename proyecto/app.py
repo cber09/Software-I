@@ -44,9 +44,9 @@ def login():
                 session["userrole"] = empleadoRol[0]["Id_Rol"]
                 session["nombrerol"] = empleadoRol[0]["NombreRol"]
                 if session["nombrerol"] == "Administrador":
-                    return render_template('admin.html',rol =session["nombrerol"],nombre =session["usercom"])
+                    return redirect(url_for('homesistema'))
                 elif session["nombrerol"] == "Empleado":
-                    return render_template('empleado.html',rol =session["nombrerol"],nombre =session["usercom"])
+                    return redirect(url_for('homesistema'))
                 else:
                     return render_template('cliente.html',rol =session["nombrerol"],nombre =session["usercom"])
     return render_template('index.html')
@@ -55,7 +55,31 @@ def login():
 def deslog():
     session.clear()
     return render_template('index.html',rol ="",nombre ="" )
+######################
+######################
+#LAYOUT OPCIONES
+######################
+@app.route('/consulta')
+def consulta():
+    return render_template('sistema/consulta.html',rol =session["nombrerol"],nombre =session["usercom"] )
+
+@app.route('/usuario')
+def usuario():
+    return render_template('sistema/usuario.html',rol =session["nombrerol"],nombre =session["usercom"] )
+
+@app.route('/facturacion')
+def facturacion():
+    return render_template('sistema/facturacion.html',rol =session["nombrerol"],nombre =session["usercom"] )
+######################
+######################
 #HOME AQUI
+######################
+#HOME SISTEMA
+@app.route('/homesistema')
+def homesistema():
+    return render_template('sistema/admin.html',rol =session["nombrerol"],nombre =session["usercom"])
+######################
+
 @app.route('/home')
 def home():
     return render_template('index.html',rol =session["nombrerol"],nombre =session["usercom"] )

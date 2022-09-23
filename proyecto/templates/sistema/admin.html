@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% extends "sistema/layout-sistema.html" %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin</title>
+</head>
+
+<body>
+
+    {% block content %}
+    <div class="admin">
+        <h1>Nombre de usuario: {{nombre}}</h1>
+        <br>
+        <h1>Rol de usuario: {{rol}}</h1>
+    </div>
+    <style>
+        .admin {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            width: calc(100%);
+            background-color: rgb(109, 109, 109);
+            padding: 10px 30px 10px 30px;
+            margin: 10px 10px 10px 10px;
+            border-radius: 10px;
+            overflow-y: scroll;
+            height: 100%;
+        }
+    </style>
+    {%endblock%}
+</body>
+
+
+</html>
