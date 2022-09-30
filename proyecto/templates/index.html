@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Buen productor</title>
-    <meta name="description" content="Página web de blog de café">
+    <title>El buen productor</title>
+    <link rel="icon" href="../static/img/logo.ico">
+    <meta name="description" content="Veterinaria el Buen productor">
 
     <!-- Prefetch -->
     <link rel="prefetch" href="../templates/nosotros.html" as="document">
@@ -31,9 +32,7 @@
         class="float" target="_blank">
         <i class="fa fa-whatsapp my-float"></i>
     </a>
-
     <header class="header">
-
         <div class="contenedor">
             <div class="barra">
                 <a class="logo" href="/">
@@ -62,46 +61,93 @@
                 mejor servicio medico veterinario<br> dando una atención personalizada para cada paciente</p>
         </div>
     </header>
- 
+
+    <div class="contenedor contenido-principal">
+        <main class="blog">
+            <h3 class="centrar-texto"> Nuestras últimas noticias</h3>
+            <!--BlogArticulo-->
+            <article class="entrada">
+                <div class="entra__imagen">
+                    <picture>
+                        <!-- <source srcset="img/blog1.webp" type="image/webp"> -->
+                        <img loading="lazy" src="../static/img/parvovirus.jpg" alt="imagen blog">
+                    </picture>
+                    
+                </div>
+                <div class="entrada__contenido">
+                    <h4 class="no-margin">Como evitar la parvovirus</h4>
+                    <p>Se puede prevenir el Parvovirus. Hay una vacuna que está fácilmente disponible, al alcance de todos gracias a su bajo coste. La vacuna contra el Parvovirus para los cachorros se administra a partir de que cumple las 6-8 semanas de vida.
+                        Posteriormente es necesario continuar la aplicación de 2 a 3 semanas hasta que el cachorro tiene 4 meses de edad. Las razas más grandes como Rottweilers, Doberman Pinschers y Pit Bulls están en mayor riesgo de Parvovirus.                        
+                        Por lo tanto, deberán recibir las vacunas de Parvovirus hasta que cumplan los 6 meses de edad; de esta manera su sistema inmunológico quedará reforzado completamente.</p>
+                    <a href="https://www.purina-latam.com/mx/purina/nota/perros/parvovirus-canino" class="boton boton--primario"> Leer mas <br>PURINA LATAM </a>
+                </div>
+            </article>
+            <!--BlogArticulo-->
+            <article class="entrada">
+                <div class="entra__imagen">
+                    <picture>
+                        <source srcset="img/blog2.webp" type="image/webp">
+                        <img loading="lazy" src="img/blog2.jpg" alt="imagen blog">
+                    </picture>
+
+                </div>
+                <div class="entrada__contenido">
+                    <h4 class="no-margin">3 deliciosa recetas de cafe</h4>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla leo ipsum, facilisis vitae vehicula nec, ultricies consectetur arcu.
+                     Morbi id metus sit amet metus mollis lobortis. Mauris sit amet cursus lorem. Sed nibh nunc, consequat vel laoreet nec, commodo eu felis. Ut eu venenatis nulla. Vivamus in massa augue.</p>
+                    <a href="entrada.html" class="boton boton--primario"> Leer entrada </a>
+                </div>
+            </article>
+            <!--BlogArticulo-->
+            <article class="entrada">
+                <div class="entra__imagen">
+                    <picture>
+                        <source srcset="img/blog3.webp" type="image/webp">
+                        <img loading="lazy" src="img/blog3.jpg" alt="imagen blog">
+                    </picture>
+                </div>
+                <div class="entrada__contenido">
+                    <h4 class="no-margin">Beneficios del café</h4>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla leo ipsum, facilisis vitae vehicula nec, ultricies consectetur arcu.
+                     Morbi id metus sit amet metus mollis lobortis. Mauris sit amet cursus lorem. Sed nibh nunc, consequat vel laoreet nec, commodo eu felis. Ut eu venenatis nulla. Vivamus in massa augue.</p>
+                    <a href="entrada.html" class="boton boton--primario"> Leer entrada </a>
+                </div>
+            </article>
         </main>
         <aside class="sidebar">
-            <h3>Horarios de atencion </h3>
-            
-
+        
             <ul class="cursos no-padding">
                 <li class="widget-curso">
-                    <h4 class="no-margin">Sucursal - Mercado Ernesto Fernandez</h4>
+                    <h3>Horarios de atencion </h3>
+                    <h4 class="no-margin centrar-texto">Sucursal - Mercado Ernesto Fernandez</h4>
                     <p class="widget-curso__label">Lunes - Viernes:
                         <span class="widget-curso__info">8:00 AM - 5:00 PM</span>
                     </p>
                     <p class="widget-curso__label">Sábado:
                         <span class="widget-curso__info">10:00 AM - 5:00 PM</span>
                     </p>
-                  <a href="entrada.html" class="boton boton--secundario">AGENDAR CITAS</a>
+                  <a href="/contactos" class="boton boton--secundario">AGENDAR CITAS</a>
                 </li>
 
                 <li class="widget-curso">
-                    <h4 class="no-margin">Sucursal - Calle Limon </h4>
+                    <h4 class="no-margin centrar-texto">Sucursal - Calle Limon </h4>
                     <p class="widget-curso__label">Lunes - Viernes:
                         <span class="widget-curso__info">8:00 AM - 5:00 PM</span>
                     </p>
                     <p class="widget-curso__label">Sábado:
                         <span class="widget-curso__info">10:00 AM - 5:00 PM</span>
                     </p>
-                    <a href="../templates/contacto.html" class="boton boton--secundario">AGENDAR CITAS </a>
+                    <a href="/contactos" class="boton boton--secundario">AGENDAR CITAS </a>
                 </li>
                 <div>
                     <div class="mapa"><iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d975.7484891940842!2d-86.08630671382889!3d11.974919700000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f74098f30488c73%3A0xfaa51062de063583!2sVeterinaria%20el%20buen%20productor!5e0!3m2!1ses-419!2sni!4v1660765383070!5m2!1ses-419!2sni"
-                            width="40%" height="800" style="border:0;" allowfullscreen="" loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"></iframe> </div>
-                </div>
-
-
+                           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d975.7484891940842!2d-86.08630671382889!3d11.974919700000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f74098f30488c73%3A0xfaa51062de063583!2sVeterinaria%20el%20buen%20productor!5e0!3m2!1ses-419!2sni!4v1660765383070!5m2!1ses-419!2sni"
+                           width="100%" height="50%" style="border:0;" allowfullscreen="" loading="lazy"
+                           referrerpolicy="no-referrer-when-downgrade"></iframe> </div>
+                    </div>
             </ul>
         </aside>
     </div>
-
     <footer class="footer">
         <div class="contenedor">
             <div class="barra">
@@ -110,15 +156,20 @@
                 </a>
 
                 <nav class="navegacion">
-                    <a href="../templates/nosotros.html" class="navegacion__enlace">Nosotros</a>
-                    <a href="../templates/cursos.html" class="navegacion__enlace">Cursos</a>
-                    <a href="../templates/contacto.html" class="navegacion__enlace">Contacto</a>
+                    <a href="/nosotros" class="navegacion__enlace">Nosotros</a>
+                    <a href="/" class="navegacion__enlace">Servicios</a>
+                    <a href="/contactos" class="navegacion__enlace">Contacto</a>
+                    {%if rol%}
+                    <a href="/asociate" class="navegacion__enlace">{{rol}}</a>
+                    <a href="/deslog" class="navegacion__enlace">Cerrar Sesion</a>
+                    {%else%}
+
+                    <a href="/asociate" class="navegacion__enlace">Asociate</a>
+                    {%endif%}
                 </nav>
             </div>
         </div>
     </footer>
-    <!--     
-    <script src="js/modernizr.js"></script> -->
+    
 </body>
-
 </html>
