@@ -1,3 +1,4 @@
+
 import datetime
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, sessions, url_for, session, send_file
@@ -65,7 +66,39 @@ def consulta():
 
 @app.route('/usuario')
 def usuario():
-    return render_template('sistema/usuario.html',rol =session["nombrerol"],nombre =session["usercom"] )
+    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    return render_template('sistema/usuario.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
+
+@app.route('/actusu', methods =["POST","GET"])
+def actusu():
+    if request.method == "POST":
+        id = request.form['id']
+        usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
+        return render_template('sistema/modal.html',info = usuarios)
+
+@app.route('/actualizaremp', methods =["POST","GET"])
+def actualizaremp():
+    if request.method == "POST":
+        id = request.form['id']
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        telfijo = request.form['telfijo']
+        celular = request.form['celular']
+        direccion = request.form['direccion']
+        usuario = request.form['usuario']
+        contra = request.form['contra']
+        db1.execute('Update Usuarios set Nombres = :nombre, Apellidos = :apell,TelefonoFijo = :tel,Celular = :cel,Direccion = :dir where Id_Usuario = :id',nombre = nombre,apell = apellido,tel = telfijo,cel = celular,dir = direccion,id = id)
+        if contra:
+            db1.execute('update Credenciales set Usuario = :usu,Contraseña = :contra where Id_Credenciales = :id',usu = usuario, contra = generate_password_hash(contra),id = id)
+    return redirect(url_for('usuario'))
+
+@app.route('/elimusu', methods =["POST","GET"])
+def elimusu():
+    if request.method == "POST":
+        id = request.form['id']
+        db1.execute('Update Usuarios set IdEstado = :est where Id_Usuario = :id',est = 2,id = id)
+        return redirect(url_for('usuario'))
+
 
 @app.route('/facturacion')
 def facturacion():
