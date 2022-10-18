@@ -70,7 +70,7 @@ img {
     background-image: url(../img/contacto.jpg);
 } */
 .header {
-    background-image: url(../static/img/banner.jpg);
+    background-image: url(../static/img/banner2.jpg);
 }
 .header {
     height: 60rem;
@@ -289,6 +289,11 @@ img {
 .barra_aso{
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
+}
+
+.mapa{
     align-items: center;
 
 }
