@@ -19,15 +19,15 @@
 
 <header class="header">
 
-    <a href="#" class="logo"> <i class="fas fa-paw"></i> shop </a>
+    <a href="#" class="logo"> <i class="fas fa-paw"></i> El buen productor </a>
 
     <nav class="navbar">
-        <a href="#home">home</a>
-        <a href="#about">about</a>
-        <a href="#shop">shop</a>
-        <a href="#services">services</a>
-        <a href="#plan">plan</a>
-        <a href="#contact">contact</a>
+        <a href="#home">Inicio</a>
+        <a href="../templates/asociate.html">Asociate</a>
+        <a href="#shop">Productos</a>
+        <a href="#services">Servicios</a>
+        <a href="#plan">Clientes</a>
+        <a href="#contact">Contactanos</a>
     </nav>
 
     <div class="icons">
@@ -61,7 +61,7 @@
 
     <div class="content">
         <h3> <span>Bienvenidos</span> <br> Veterinaria el buen productor </h3>
-        <a href="#" class="btn">Asociate</a>
+        <a href="../templates/asociate.html" class="btn">Asociate</a>
     </div>
 
     <img src="../static/img/bottom_wave.png" class="wave" alt="">
@@ -125,7 +125,7 @@
 
 <section class="shop" id="shop">
 
-    <h1 class="heading"> our <span> products </span> </h1>
+    <h1 class="heading"> Nuestros <span> Productos </span> </h1>
 
     <div class="box-container">
 
@@ -229,7 +229,7 @@
 
 <section class="services" id="services">
 
-    <h1 class="heading"> our <span>services</span> </h1>
+    <h1 class="heading"> Nuestros <span> Servicios</span> </h1>
 
     <div class="box-container">
 
@@ -279,7 +279,7 @@
 
 <section class="plan" id="plan">
 
-    <h1 class="heading"> choose a <span>plan</span> </h1>
+    <h1 class="heading"> Nuestros mejores <span> clientes</span> </h1>
 
     <div class="box-container">
 
@@ -338,12 +338,13 @@
     </div>
 
     <form action="">
-        <h3>contact us</h3>
-        <input type="text" placeholder="your name" class="box">
-        <input type="email" placeholder="your email" class="box">
-        <input type="tumber" placeholder="your number" class="box">
-        <textarea name="" placeholder="your message" id="" cols="30" rows="10"></textarea>
-        <input type="submit" value="send message" class="btn">
+        <h3>Contactanos</h3>
+        <input type="text" placeholder="Ingrese su nombre " class="box" required maxlength="20">
+        <input type="email" placeholder="Ingrese su correo" class="box" required>
+        <!-- Validar que solamente ingrese numero -->
+        <input type="tumber" placeholder="Ingrese su telefono " class="box" required>
+        <textarea name="" placeholder="Dejanos tu comentario" id="" cols="30" rows="10" required></textarea>
+        <input type="submit" value="Enviar" class="btn">
     </form>
 
 </section>
