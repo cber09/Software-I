@@ -15,8 +15,17 @@
     {% block content %}
     <div class="admin">
         <div class="main-top">
-            <h1>Registro Usuario</h1>
+
             <i class="fas fa-user-cog"></i>
+        </div>
+        <div class="row mb-4">
+            <div class="col">
+                <h1>Registro Usuario</h1>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-success" onclick="agregar()"><i class="bi bi-person-plus-fill"></i>
+                    Añadir</button>
+            </div>
         </div>
         <div class="table">
             <table id="table_id" class="display">
@@ -58,6 +67,7 @@
                 </tbody>
             </table>
         </div>
+
         <input id="launch" type="hidden" data-toggle="modal" data-target=".bd-example-modal-lg">
         <div id="cont"></div>
 
@@ -74,6 +84,7 @@
                 type: "POST",
                 data: {
                     id: id,
+                    accion: "actualizar",
                 },
                 success: function (response) {
                     $('#cont').html(response);
@@ -123,7 +134,23 @@
                 },
             });
         });
-
+        function agregar() {
+            $.ajax({
+                url: "/actusu",
+                type: "POST",
+                data: {
+                    accion: "agregar",
+                },
+                success: function (response) {
+                    $('#cont').html(response);
+                    $('#cont').append(response.htmlresponse);
+                    $('#launch').click();
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        }
     </script>
 
     {%endblock%}

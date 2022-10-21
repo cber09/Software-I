@@ -1,5 +1,6 @@
 
 import datetime
+from correo import enviar_correo
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, sessions, url_for, session, send_file
 from jinja2 import Environment
@@ -11,7 +12,7 @@ app.secret_key = "super secret key"
 
 @app.route('/')
 def Index():
-    return render_template('index.html')
+    return render_template('index.html', rol = "")
 # asociate (LOGIN)
 @app.route('/asociate')
 def asociate():
@@ -63,7 +64,7 @@ def deslog():
 @app.route('/consulta')
 def consulta():
     return render_template('sistema/consulta.html',rol =session["nombrerol"],nombre =session["usercom"] )
-
+# USUARIOS
 @app.route('/usuario')
 def usuario():
     usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
@@ -72,9 +73,14 @@ def usuario():
 @app.route('/actusu', methods =["POST","GET"])
 def actusu():
     if request.method == "POST":
-        id = request.form['id']
-        usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
-        return render_template('sistema/modal.html',info = usuarios)
+        
+        accion = request.form['accion']
+        if accion == "actualizar":
+            id = request.form['id']
+            usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
+            return render_template('sistema/modal.html',info = usuarios)
+        elif accion == "agregar":
+            return render_template('sistema/modal.html',info = "agregar")
 
 @app.route('/actualizaremp', methods =["POST","GET"])
 def actualizaremp():
@@ -99,7 +105,34 @@ def elimusu():
         db1.execute('Update Usuarios set IdEstado = :est where Id_Usuario = :id',est = 2,id = id)
         return redirect(url_for('usuario'))
 
+@app.route('/buscarusu', methods =["POST","GET"])
+def buscarusu():
+    if request.method == "POST":
+        usuario = request.form['usuario']
+        existente = db1.execute('select * from Credenciales where Usuario == :us',us = usuario )
+        if existente:
+            return "ya hay"
+        else:
+            return "no existe"
 
+######################
+######################
+# OTRAS FUNCIONES
+@app.route('/correo',methods=["GET", "POST"])
+def correo():
+    if request.method == "POST":
+        nombres = request.form['nombres']
+        apellidos = request.form['apellidos']
+        correoc = request.form['correo']
+        usuario = request.form['loginUser']
+        contraseña = request.form['loginPassword']
+        message = "Bienvenido al sistema de la Veterinaria El buen productor.\nSu Usuario es: "+ usuario+" \nSu Contraseña es: "+contraseña
+        enviar_correo(app,"Bienvenido a Nuestra Familia",correoc,message)
+        return "done"
+    else:
+        return render_template('nuevous.html')
+######################
+######################
 @app.route('/facturacion')
 def facturacion():
     return render_template('sistema/facturacion.html',rol =session["nombrerol"],nombre =session["usercom"] )
@@ -125,16 +158,27 @@ def nuevou():
         direccion = request.form['direccion']
         telefono = request.form['telefono']
         celular = request.form['celular']
+        correo = request.form['correo']
         usuario = request.form['loginUser']
         contraseña = request.form['loginPassword']
-        verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
-        db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,3)",usu = usuario,passw = generate_password_hash(contraseña))
-        credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
-        db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,null,:dir,1,:cred)",
-                    name=nombres , lastna=apellidos , tel = telefono,cel = celular,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
-        
-        
-        return redirect(url_for('asociate'))
+        flag = request.form['flag']
+        print(flag)
+        if flag:
+            rol = request.form['rol']
+            verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
+            db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,:rol)",usu = usuario,passw = generate_password_hash(contraseña),rol = rol)
+            credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
+            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred)",
+                        name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
+            return "yes"
+        else:
+            verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
+            db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,3)",usu = usuario,passw = generate_password_hash(contraseña))
+            credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
+            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred)",
+                            name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
+                
+            return redirect(url_for('asociate'))
     else:
         return render_template('nuevous.html')
 #CONTACTOS

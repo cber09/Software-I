@@ -1,3 +1,423 @@
+{%if info == "agregar"%}
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar</h5>
+                <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="cliente-nuevo" id="clientenuevo" style="display: block; padding: 15px 15px;">
+                <!-- 2 column grid layout with text inputs for the first and last names -->
+                <div class="row mb-4">
+                    <input type="hidden" name="id">
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example1">Nombres</label>
+                            <input type="text" id="nombre" name="nombre" required class="form-control" />
+                            <label id="mensaje_error_input" class="control-label col-md-12 text-danger"
+                                style="display: block;">Las
+                                constraseñas no coinciden</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example2">Apellidos</label>
+                            <input type="text" id="apellido" name="apellido" required class="form-control" />
+                            <label id="mensaje_error_input_a" class="control-label col-md-12 text-danger"
+                                style="display: block;">Las
+                                constraseñas no coinciden</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Telefono Fijo</label>
+                            <input type="text" id="telfijo" name="telfijo" maxlength="8" required
+                                class="form-control" />
+
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Celular</label>
+                            <input type="text" id="celular" maxlength="8" name="celular" required
+                                class="form-control" />
+
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Correo</label>
+                            <input type="email" id="correo" maxlength="80" name="correo" required
+                                class="form-control" />
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Rol</label>
+                            <select class="form-select" id="rol" name="rol">
+                                <option value="1" selected="true">Administrador</option>
+                                <option value="2">Usuario</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form3Example4">Dirección</label>
+                        <textarea class="form-control" name="direccion" maxlength="50" required id="direccion"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col" id="div-cambio"><label for=""><input type="checkbox" name="cambio"> Personalizar
+                            Credenciales</label></div>
+
+                </div>
+                <div class="row mb-4 hidden" id="credenciales" style="display: none;">
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form3Example4">Usuario</label>
+                        <input type="text" id="usuario" name="usuario" required class="form-control" />
+                        <label id="mensaje_error_usu" class="control-label col-md-12 text-danger"
+                            style="display: block;">El
+                            usuario ya existe</label>
+
+                    </div>
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form3Example4">Contraseña</label>
+                        <input type="text" id="contra" name="contra" placeholder="Contraseña nueva"
+                            class="form-control" />
+                        <label id="mensaje_error" class="control-label col-md-12 text-danger"
+                            style="display: block;">Las
+                            constraseñas no coinciden</label>
+                        <label id="passstrength" class="control-label col-md-12 text-danger" style="display: block;">Las
+                            constraseñas no coinciden</label>
+
+                    </div>
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form3Example4">Contraseña</label>
+                        <input type="text" id="contra1" name="contra1" placeholder="Repita la contraseña"
+                            class="form-control" />
+
+
+
+                    </div>
+                </div>
+                <!-- Submit button -->
+                <button onclick="añadir()" class="btn btn-primary btn-block mb-4">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#mensaje_error').hide();
+        $('#mensaje_error_usu').hide();
+        $('#mensaje_error_input').hide();
+        $('#passstrength').hide();
+        $('#mensaje_error_input_a').hide();
+
+        $('#usuario').hide();
+        $('#contra').hide();
+        $('#contra1').hide();
+        $('#div-cambio input[name=cambio]').on('click', function () {
+            if ($(this).is(':checked')) {
+                // Hacer algo si el checkbox ha sido seleccionado
+                $('#generar').prop("disabled", true);
+                $('#generar').prop("checked", false);
+                $('#credenciales').show();
+                $('#usuario').show();
+                $('#contra').show();
+                $('#contra1').show();
+                $('#usuario').attr("required", true);
+                $('#contra').attr("required", true);
+                $('#contra1').attr("required", true);
+                var cambioDePass = function () {
+                    var cont = $('#contra').val();
+                    var cont2 = $('#contra1').val();
+                    if (cont == "") {
+                        $('#mensaje_error').hide();
+                        $('#passstrength').hide();
+                    } else if (cont == cont2) {
+                        $('#mensaje_error').hide();
+                        $('#mensaje_error').attr("class", "control-label col-md-12 text-success");
+                        $('#mensaje_error').show();
+                        $('#passstrength').show();
+                        $('#mensaje_error').html("Las constraseñas si coinciden");
+                        var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+                        var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+                        var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+                        if (false == enoughRegex.test(cont)) {
+                            $('#passstrength').html('Más caracteres.');
+                        } else if (strongRegex.test(cont)) {
+                            $('#passstrength').className = 'ok';
+                            $('#passstrength').attr("class", "control-label col-md-12 text-success");
+                            $('#passstrength').html(' Contraseña es fuerte!');
+                            $('#passstrength').show();
+                        } else if (mediumRegex.test(cont)) {
+                            $('#passstrength').className = 'alert';
+                            $('#passstrength').attr("class", "control-label col-md-12 text-warning");
+                            $('#passstrength').html('Contraseña es media!');
+                            $('#passstrength').show();
+                        } else {
+                            $('#passstrength').className = 'error';
+                            $('#passstrength').show();
+                            $('#passstrength').attr("class", "control-label col-md-12 text-danger");
+                            $('#passstrength').html('Contraseña es débil!');
+
+                        }
+                        $('#boton-enviar').removeAttr("disabled");
+                    } else {
+                        $('#mensaje_error').html("Las constraseñas no coinciden");
+                        $('#mensaje_error').attr("class", "control-label col-md-12 text-danger");
+                        $('#mensaje_error').show();
+                        $('#boton-enviar').attr("disabled", true);
+                    }
+                }
+
+                $("#contra").on('keyup', cambioDePass);
+                $("#contra1").on('keyup', cambioDePass);
+
+                var cambioDeus = function () {
+                    var usuario = $('#usuario').val();
+
+                    $.ajax({
+                        url: "/buscarusu",
+                        type: "POST",
+                        data: {
+                            usuario: usuario,
+
+                        },
+                        success: function (response) {
+                            if (response == "no existe") {
+                                $('#mensaje_error_usu').hide();
+                                $('#mensaje_error_usu').attr("class", "control-label col-md-12 text-success");
+                                $('#mensaje_error_usu').show();
+                                $('#mensaje_error_usu').html("Usuario Válido");
+                                $('#boton-enviar').removeAttr("disabled");
+
+                            } else {
+                                $('#mensaje_error_usu').html("El usuario ya existe");
+                                $('#mensaje_error_usu').attr("class", "control-label col-md-12 text-danger");
+                                $('#mensaje_error_usu').show();
+                                $('#boton-enviar').attr("disabled", true);
+                                if (usuario == "") {
+                                    $('#mensaje_error_usu').hide();
+                                }
+                            }
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+
+                }
+
+                $("#usuario").on('keyup', cambioDeus);
+
+            } else {
+                // Hacer algo si el checkbox ha sido deseleccionado
+                $('#generar').prop("disabled", false);
+                $('#credenciales').hide();
+                $('#usuario').hide();
+                $('#contra').hide();
+                $('#contra1').hide();
+
+            }
+            // $('#div-generar input[name=generar]').on('click', function () {
+            //     if ($(this).is(':checked')) {
+            //         // Hacer algo si el checkbox ha sido seleccionado
+            //         $.ajax({
+            //             url: "/generar",
+            //             type: "POST",
+            //             data: {
+            //                 nombre: $('#nombre').val(),
+            //                 apellido: $('#apellido').val(),
+            //                 telfijo: $('#telfijo').val(),
+            //                 celular: $('#celular').val(),
+            //                 direccion: $('#direccion').val(),
+            //                 nombre: $('#nombre').val(),
+            //             },
+            //             success: function (response) {
+            //                 $('#cont').html(response);
+            //                 $('#cont').append(response.htmlresponse);
+            //                 $('#launch').click();
+            //             },
+            //             error: function (error) {
+            //                 //console.log(error);
+            //             },
+            //         });
+
+
+
+            //         $('#credenciales').show();
+            //         $('#usuario').show();
+            //         $('#contra').show();
+            //         $('#contra1').show();
+            //         $('#usuario').attr("required", true);
+            //         $('#contra').attr("required", true);
+            //         $('#contra1').attr("required", true);
+            //         var cambioDePass = function () {
+            //             var cont = $('#contra').val();
+            //             var cont2 = $('#contra1').val();
+            //             if (cont == cont2) {
+            //                 $('#mensaje_error').hide();
+            //                 $('#mensaje_error').attr("class", "control-label col-md-12 text-success");
+            //                 $('#mensaje_error').show();
+            //                 $('#mensaje_error').html("Las constraseñas si coinciden");
+            //                 $('#boton-enviar').removeAttr("disabled");
+            //             } else {
+            //                 $('#mensaje_error').html("Las constraseñas no coinciden");
+            //                 $('#mensaje_error').attr("class", "control-label col-md-12 text-danger");
+            //                 $('#mensaje_error').show();
+            //                 $('#boton-enviar').attr("disabled", true);
+            //             }
+            //         }
+
+            //         $("#contra").on('keyup', cambioDePass);
+            //         $("#contra1").on('keyup', cambioDePass);
+
+            //     } else {
+            //         // Hacer algo si el checkbox ha sido deseleccionado
+            //         $('#generar').prop("disabled", false);
+            //         $('#credenciales').hide();
+            //         $('#usuario').hide();
+            //         $('#contra').hide();
+            //         $('#contra1').hide();
+
+            //     }
+            // })
+
+        });
+        document.getElementById("nombre").addEventListener("input", (e) => {
+            let value = e.target.value;
+            e.target.value = value.replace(/[^a-z-A-Z- -]/, "");
+            var nombre = $('#nombre').val();
+            var resu = validarnombre(nombre);
+
+            if (resu == 1) {
+                $('#mensaje_error_input').html("El nombre esta vacio");
+                $('#mensaje_error_input').attr("class", "control-label col-md-12 text-danger");
+                $('#mensaje_error_input').show();
+                $('#boton-enviar').attr("disabled", true);
+            } else if (resu == 2) {
+                $('#mensaje_error_input').html("El nombre deb tener al menos 3 caracteres");
+                $('#mensaje_error_input').attr("class", "control-label col-md-12 text-danger");
+                $('#mensaje_error_input').show();
+                $('#boton-enviar').attr("disabled", true);
+            } else if (resu == 3) {
+                $('#mensaje_error_input').html("El nombre no debe tener caracteres raros");
+                $('#mensaje_error_input').attr("class", "control-label col-md-12 text-danger");
+                $('#mensaje_error_input').show();
+                $('#boton-enviar').attr("disabled", true);
+            } else {
+                $('#mensaje_error_input').hide();
+            }
+        });
+        document.getElementById("apellido").addEventListener("input", (e) => {
+            let value = e.target.value;
+            e.target.value = value.replace(/[^a-z-A-Z- -]/, "");
+            var nombre = $('#apellido').val();
+            $('#mensaje_error_input_a').hide();
+            var resu = validarnombre(nombre);
+            if (resu == 1) {
+                $('#mensaje_error_input_a').html("El apellido esta vacio");
+                $('#mensaje_error_input_a').attr("class", "control-label col-md-12 text-danger");
+                $('#mensaje_error_input_a').show();
+                $('#boton-enviar').attr("disabled", true);
+            } else if (resu == 2) {
+                $('#mensaje_error_input_a').html("El apellido deb tener al menos 3 caracteres");
+                $('#mensaje_error_input_a').attr("class", "control-label col-md-12 text-danger");
+                $('#mensaje_error_input_a').show();
+                $('#boton-enviar').attr("disabled", true);
+            } else if (resu == 3) {
+                $('#mensaje_error_input_a').html("El nombre no debe tener caracteres raros");
+                $('#mensaje_error_input_a').attr("class", "control-label col-md-12 text-danger");
+                $('#mensaje_error_input_a').show();
+                $('#boton-enviar').attr("disabled", true);
+            } else {
+                $('#mensaje_error_input_a').hide();
+            }
+        });
+        document.getElementById("telfijo").addEventListener("input", (e) => {
+            let value = e.target.value;
+            e.target.value = value.replace(/[^0-9]/, "");
+        });
+        document.getElementById("celular").addEventListener("input", (e) => {
+            let value = e.target.value;
+            e.target.value = value.replace(/[^0-9]/, "");
+        });
+
+        $('#contra').keyup(function (e) {
+
+            return true;
+        });
+
+
+    });
+
+    function añadir() {
+
+        $.ajax({
+            url: "/nuevou",
+            type: "POST",
+            data: {
+                nombres: $('#nombre').val(),
+                apellidos: $('#apellido').val(),
+                correo: $('#correo').val(),
+                telefono: $('#telfijo').val(),
+                celular: $('#celular').val(),
+                direccion: $('#direccion').val(),
+                loginUser: $('#usuario').val(),
+                loginPassword: $('#contra').val(),
+                rol: $('#rol').val(),
+                flag: "sistema",
+            },
+            success: function (response) {
+                $.ajax({
+                    url: "/correo",
+                    type: "POST",
+                    data: {
+                        nombres: $('#nombre').val(),
+                        apellidos: $('#apellido').val(),
+                        correo: $('#correo').val(),
+                        loginUser: $('#usuario').val(),
+                        loginPassword: $('#contra').val(),
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Usuario Registrado Correctamente!',
+                            text: 'Se envio un correo con las credenciales al ' + $('#correo').val(),
+                            icon: 'success',
+                            confirmButtonText: "Aceptar",
+                        }).then(() => {
+                            window.location = '../usuario'
+                        });
+
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    }
+</script>
+{%else%}
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -144,3 +564,4 @@
     });
 
 </script>
+{%endif%}

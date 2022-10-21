@@ -17,7 +17,7 @@
 <body>
     <div class="login-wrapper">
         <form action="/nuevou" class="form" method="POST">
-
+            <input type="hidden" value="" name="flag">
             <img src="../static/img/nosotros.jpg" alt="">
             <h2>UNETE A NUESTRA FAMILIA </h2>
             <!-- Datos generales del cliente  -->
@@ -41,6 +41,10 @@
             <div class="input-group">
                 <input type="text" class="input-field" id="direccion" name="direccion" required>
                 <label for="loginUser">Direccion</label>
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="correo" name="correo" required>
+                <label for="loginUser">Correo</label>
             </div>
 
             <div class="input-group">

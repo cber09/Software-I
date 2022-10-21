@@ -1,18 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout-web.html" %}
+{% block cliente %}
+<h1 class="heading"> Sus <span> Consultas </span> </h1>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cliente</title>
-</head>
+<div class="box-container">
 
-<body>
-
-    <h1>Nombre de usuario: {{nombre}}</h1>
-    <br>
-    <h1>Rol de usuario: {{rol}}</h1>
-</body>
-
-</html>
+    <div class="box">
+        <div class="icons">
+            <a href="#" class="fas fa-shopping-cart"></a>
+            <a href="#" class="fas fa-heart"></a>
+            <a href="#" class="fas fa-eye"></a>
+        </div>
+        <div class="image">
+            <img src="../static/img/product_01.jpg" alt="">
+        </div>
+        <div class="content">
+            <h3>air-dried food</h3>
+            <div class="amount"> $15.00 - $30.00 </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
