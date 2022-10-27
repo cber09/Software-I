@@ -1,0 +1,140 @@
+{%for lista in consultas%}
+
+
+
+<div class="card">
+    <div class=" card-body">
+        <h5 class="card-title">Datos del Paciente</h5>
+        <hr>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p>Cliente: {{lista.Nombres}}</p>
+                    <p>Mascota: {{lista.Nombre}} </p>
+
+                </div>
+                <div class="col">
+                    <p>Edad: {{lista.Edad}} </p>
+                    {%if lista.sexo == 1%}
+                    <p>Sexo: Masculino</p>
+                    {%else%}
+                    <p>Sexo: Masculino</p>
+                    {%endif%}
+
+                </div>
+                <div class="col">
+                    <p>Tipo Mascota: {{lista.Descripcion}}</p>
+                    <p>Raza: {{lista.Raza}}</p>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-outline-info">Historial</button>
+                    <button type="button" class="btn btn-outline-danger">Ausente</button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br>
+<div style="display: flex; height: 100%; ">
+    <div class="card" style="width: 25rem;">
+        <div class=" card-body">
+            <h5 class="card-title">Expediente</h5>
+            <hr>
+            <div class="container">
+                <div class="row">
+                    {%for historial in historial%}
+                    <div class="col">
+                        <p>Ultima Consulta: {{historial.Fecha}}</p>
+                        <p>Diagnostico: {{historial.Diagnostico}}</p>
+                        <p>Receta: </p>
+                        {%for receta in recetas%}
+                        <p>- {{receta.Medicamento}}</p>
+                        {%endfor%}
+
+                    </div>
+                    {%endfor%}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="card" style="width: 100%; margin-left: 20px;">
+        <div class=" card-body">
+            <h5 class="card-title">Datos Consulta</h5>
+            <hr>
+            <div class="container" id="aqui">
+                <div class="row">
+                    <div class="col">
+                        <label class="labels" for="sintomas">Sintomas:</label>
+                        <br>
+                        <textarea class="textarea" name="sintomas" placeholder="Escriba los sintomas..." id="sintomas"
+                            cols="20" rows="10">{{lista.Sintomas}}</textarea>
+                        <style>
+
+                        </style>
+                    </div>
+                    <div class="col">
+                        <label class="labels" for="diagnostico">Diagnostico:</label>
+                        <br>
+                        <textarea class="textarea" name="diagnostico" placeholder="Escriba el diagnostico..."
+                            id="diagnostico" cols="20" rows="10"></textarea>
+
+                    </div>
+                    <div class="col">
+                        <label class="labels" for="receta">Receta:</label>
+                        <br>
+                        <textarea class="textarea" name="receta" placeholder="Escriba la receta..." id="receta"
+                            cols="20" rows="10"></textarea>
+
+                    </div>
+                </div>
+                <br>
+                <div class="row justify-content-md-end">
+                    <div class="col col-lg-2">
+                        <button type="button" class="btn btn-success" name="diag" value="{{lista.Id_Consulta}}"
+                            onclick="recetar()"><i class="far fa-check-circle"
+                                style="margin-right: 5px;"></i>Terminar</button>
+                    </div>
+
+                </div>
+                <input type="hidden" id="mascota" value="{{lista.Id_Mascota}}">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{%endfor%}
+<script>
+    $("#aqui button[name=diag]").click(function () {
+        id = $(this).val();
+        $.ajax({
+            url: "/diagnosticar",
+            type: "POST",
+            data: {
+                id: id,
+                diagnostico: $('#diagnostico').val(),
+                receta: $('#receta').val(),
+                mascota: $('#mascota').val(),
+            },
+            success: function (response) {
+                Swal.fire({
+                    title: 'Diagnosticado Correctamente!',
+                    text: 'Gracias por preferirnos!!! ',
+                    icon: 'success',
+                    confirmButtonText: "Aceptar",
+                }).then(() => {
+                    window.location = '../consulta'
+                });
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+</script>

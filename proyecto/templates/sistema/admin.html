@@ -13,10 +13,272 @@
 
     {% block content %}
     <div class="admin">
-        <h1>Nombre de usuario: {{nombre}}</h1>
-        <br>
-        <h1>Rol de usuario: {{rol}}</h1>
+        <div class="content-wrapper">
+            <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+                <!-- Left navbar links -->
+
+                <div class="main-top">
+                    <ul class="navbar-nav" style="margin-left: 50px;">
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a href="index3.html" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a href="#" class="nav-link">Contact</a>
+                        </li>
+                    </ul>
+                    <i class="fas fa-user-cog"></i>
+                </div>
+            </nav>
+            <!-- /.content-header -->
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid" style="padding: 0px 20px;">
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+                        <div class="col-lg-3 col-6" style="padding: 10px;">
+                            <!-- small box -->
+                            <div class="card cartas bg-info" style="padding: 5px;">
+                                <div class="inner">
+                                    <h3>150<sup style="font-size: 20px">$</sup></h3>
+                                    <p>Ventas por dia</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <a href="#" class="card-footer">
+                                    Ver mas <i class="fas fa-arrow-circle-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <br>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-6" style="padding: 10px;">
+                            <!-- small box -->
+                            <div class="card cartas bg-success" style="padding: 5px;">
+                                <div class="inner">
+                                    <h3>5</h3>
+
+                                    <p>Consultas Pendientes</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <a href="#" class="card-footer">Ver mas <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <br>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-6" style="padding: 10px;">
+                            <!-- small box -->
+                            <div class="card cartas bg-warning" style="padding: 5px;">
+                                <div class="inner">
+                                    <h3>44</h3>
+
+                                    <p>Usuarios Registrados</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <a href="#" class="card-footer">Ver mas <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <br>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-6" style="padding: 10px;">
+                            <!-- small box -->
+                            <div class="card cartas bg-danger" style="padding: 5px;">
+                                <div class="inner">
+                                    <h3>4</h3>
+
+                                    <p>Empleados Activos</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-user-clock"></i>
+                                </div>
+                                <a href="#" class="card-footer">Ver mas <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <!-- ./col -->
+                    </div>
+                    <br>
+                    <!-- /.row -->
+                    <!-- Main row -->
+                    <div class="row">
+                        <!-- Left col -->
+                        <section class="col-lg-7 connectedSortable">
+                            <!-- Custom tabs (Charts with tabs)-->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                        Ventas
+                                    </h3>
+                                    <div class="card-tools">
+
+                                    </div>
+                                </div><!-- /.card-header -->
+                                <div class="card-body">
+                                    <div class="tab-content p-0">
+                                        <!-- Morris chart - Sales -->
+                                        <div class="chart tab-pane active" id="revenue-chart"
+                                            style="position: relative; height: 300px; margin-bottom: 10px;">
+                                            <canvas id="revenue-chart-canvas" height="4" width="10"></canvas>
+                                        </div>
+                                    </div>
+                                </div><!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+
+                        </section>
+                        <!-- /.Left col -->
+                        <!-- right col (We are only adding the ID to make the widgets sortable)-->
+                        <section class="col-lg-5 connectedSortable">
+
+                            <!-- Map card -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header" style="display: flex; justify-content: space-between;">
+                                            <h3 class="card-title">
+                                                <i class="fas fa-chart-pie mr-1"></i>
+                                                Clientes
+                                            </h3>
+                                            <div class="card-tools">
+                                                <div class="input-group input-group-sm" style="width: 150px; ">
+                                                    <input type="text" name="table_search"
+                                                        class="form-control float-right" placeholder="Search">
+
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-default">
+                                                            <i class="fas fa-search"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body table-responsive p-0" style="height: 340px; width: 100%;">
+                                            <table class="table table-hover text-nowrap" id="deta">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Cliente</th>
+                                                        <th>Mascota</th>
+                                                        <th>N° Counsultas</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td>Doggy</td>
+                                                        <td>8</td>
+                                                        <td style="text-align: end;">
+
+                                                            <button name="act1" id="act1"
+                                                                style="border: none; background: none" value="185"><i
+                                                                    class="fas fa-solid fa-calendar-day"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>184</td>
+                                                        <td>Marcos Bonilla</td>
+                                                        <td>Zeus</td>
+                                                        <td>4</td>
+                                                        <td style="text-align: end;">
+
+                                                            <button name="act2" id="act2"
+                                                                style="border: none; background: none" value="185"><i
+                                                                    class="fas fa-solid fa-calendar-day"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>185</td>
+                                                        <td>Mario Baltodano</td>
+                                                        <td>Firulais</td>
+                                                        <td>2</td>
+                                                        <td style="text-align: end;">
+
+                                                            <button name="act" id="act"
+                                                                style="border: none; background: none" value="185"><i
+                                                                    class="fas fa-solid fa-calendar-day"></i></button>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            </div>
+                            <!-- /.card -->
+
+
+                        </section>
+
+                        <!-- right col -->
+                    </div>
+                    <!-- /.row (main row) -->
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
     </div>
+
+    <input type="hidden" id="dale2" data-toggle="modal" data-target=".bd-example-modal-lg" />
+    <script>
+        const ctx = document.getElementById('revenue-chart-canvas').getContext('2d');
+        var xValues = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
+        var yValues = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
+
+        var myChart = new Chart("revenue-chart-canvas", {
+            type: "line",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    backgroundColor: "",
+                    borderColor: "rgba(0,0,0,0.1)",
+                    data: yValues
+                }]
+            },
+            options: {}
+        });
+        $("#deta button[name=act1]").click(function () {
+            id = $(this).val();
+            $.ajax({
+                url: "/clienteinfo",
+                type: "POST",
+                data: {
+                    id: id,
+                },
+                success: function (response) {
+                    $('#cont').html(response);
+                    $('#cont').append(response.htmlresponse);
+                    $("#dale2").click();
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+
+        });
+    </script>
+
+
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
+        integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+    <!-- Page specific script -->
+
+    <div id="cont"></div>
 
     {%endblock%}
 </body>

@@ -1,0 +1,98 @@
+<header>
+
+    <!-- <script src="../../static/js/calendar/moment.min.js"></script>
+    <script src="../../static/js/calendar/locale/es.js"></script> -->
+</header>
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Num:{{id}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    style="border: none; background: none">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="width: 100%;">
+                <div id="calendario-cliente">
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery UI -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
+    integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+<script>
+
+    function cale() {
+
+        /* initialize the calendar
+         -----------------------------------------------------------------*/
+        //Date for the calendar events (dummy data)
+        var date1 = new Date()
+        var d1 = date1.getDate(),
+            m1 = date1.getMonth(),
+            y1 = date1.getFullYear()
+
+        var Calendar1 = FullCalendar.Calendar;
+
+        // var containerEl = document.getElementById('external-events');
+        // var checkbox = document.getElementById('drop-remove');
+        var calendarEl1 = document.getElementById('calendario-cliente');
+
+        // initialize the external events
+        // -----------------------------------------------------------------
+        var calendar1 = new Calendar1(calendarEl1, {
+
+            buttonText: {
+                prevYear: 'prev year',
+                nextYear: 'next year',
+                year: 'year',
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Dia',
+                list: 'list',
+            },
+            locale: 'es',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            themeSystem: 'bootstrap',
+            //Random default events
+            events: [
+                {
+                    title: 'All Day Event',
+                    start: new Date(y1, m1, 1),
+                    backgroundColor: '#f56954', //red
+                    borderColor: '#f56954', //red
+                    allDay: true
+                }
+            ],
+            editable: false,
+
+
+        });
+
+        calendar1.render();
+        // $('#calendario-cliente').fullCalendar()
+
+    }
+    cale();
+
+
+</script>

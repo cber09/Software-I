@@ -1,5 +1,7 @@
 
-import datetime
+from datetime import datetime,date
+import random
+import secrets
 from correo import enviar_correo
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, sessions, url_for, session, send_file
@@ -63,7 +65,34 @@ def deslog():
 ######################
 @app.route('/consulta')
 def consulta():
-    return render_template('sistema/consulta.html',rol =session["nombrerol"],nombre =session["usercom"] )
+    consultas = db1.execute('select c.Id_Consulta,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado where c.IdUsuario = :u and c.IdEstado = 3',u = session["user_Id"])
+    return render_template('sistema/consulta.html',rol =session["nombrerol"],nombre =session["usercom"] , consultas = consultas)
+######################
+@app.route('/detalleconsul', methods =["POST","GET"])
+def detalleconsul():
+    hi = datetime.now()
+    if request.method == "POST":
+        id = request.form['id']
+        consultas = db1.execute('select m.Id_Mascota,c.Id_Consulta,u.Nombres,u.apellidos,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado,m.Edad,m.Sexo,tm.Descripcion,m.Raza from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado inner join Usuarios as u ON m.IdUsuario = u.Id_Usuario inner join TipoMascota as tm on m.IdTipoMascota = tm.Id_TipoMascota where c.Id_Consulta = :u',u = id)
+        historial = db1.execute('select c.Diagnostico,re.Id_Receta,c.Fecha from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado  inner join Recetas as re ON c.Id_Consulta = re.IdConsulta Where c.IdEstado = 4 and m.Id_Mascota = :id and date(c.Fecha) <= :fech ORDER BY date(c.Fecha) DESC Limit 1',id = consultas[0]['Id_Mascota'],fech = datetime.date(hi))
+        if historial:
+            receta = db1.execute('select * from DetalleReceta Where IdReceta = :rec',rec = historial[0]['Id_Receta'])
+            return render_template('sistema/consulta-detalle.html',rol =session["nombrerol"],nombre =session["usercom"] , consultas = consultas,historial = historial,recetas = receta)
+        else:
+            return render_template('sistema/consulta-detalle.html',rol =session["nombrerol"],nombre =session["usercom"] , consultas = consultas,historial = "",recetas = "")
+        
+@app.route('/diagnosticar', methods =["POST","GET"])
+def diagnosticar():
+    if request.method == "POST":
+        id = request.form['id']
+        diagnostico = request.form['diagnostico']
+        receta = request.form['receta']
+        mascota = request.form['mascota']
+        db1.execute('UPDATE Consulta set Diagnostico = :diag, IdEstado = 4 where Id_Consulta = :u',diag = diagnostico,u = id)
+        db1.execute('INSERT INTO Recetas VALUES(null,:mas,:con)',mas = mascota,con = id)
+        id = db1.execute('select Id_Receta from Recetas order by Id_Receta desc')
+        db1.execute('INSERT INTO DetalleReceta VALUES(:id,:receta)',id = id[0]['Id_Receta'],receta = receta)
+        return "siuuu"
 # USUARIOS
 @app.route('/usuario')
 def usuario():
@@ -114,8 +143,34 @@ def buscarusu():
             return "ya hay"
         else:
             return "no existe"
+@app.route('/buscar', methods =["POST","GET"])
+def buscar():
+    if request.method == "POST":
+        correo = request.form['correo']
+        mascota = request.form['masc']
+        flag = request.form['flag']
+        if flag == "mascota":
+            usuario = db1.execute('select Id_Usuario from Usuarios WHere correo = :cor',cor = correo)
+            print(usuario)
+            if usuario:
+                existente = db1.execute('select Id_Mascota From Mascota Where IdUsuario = :usu AND Nombre = :name',usu = usuario[0]['Id_Usuario'],name = mascota)
+                print(existente)
+                if existente:
+                    return "encontrada"
+                else:
+                    return "no"
+            else:
+                return "no"
+
 
 ######################
+# clientes
+@app.route('/clienteinfo', methods =["POST","GET"])
+def clienteinfo():
+    if request.method == "POST":
+       id = request.form['id']
+       return render_template('sistema/modal-cliente.html',id = id)
+        
 ######################
 # OTRAS FUNCIONES
 @app.route('/correo',methods=["GET", "POST"])
@@ -131,6 +186,17 @@ def correo():
         return "done"
     else:
         return render_template('nuevous.html')
+
+@app.route('/buscarcorreo', methods =["POST","GET"])
+def buscarcorreo():
+    if request.method == "POST":
+        correo = request.form['correo']
+        existente = db1.execute('select * from Usuarios WHere correo = :us',us = correo )
+        if existente:
+            return "ya hay"
+        else:
+            return "no existe"
+
 ######################
 ######################
 @app.route('/facturacion')
@@ -168,19 +234,60 @@ def nuevou():
             verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
             db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,:rol)",usu = usuario,passw = generate_password_hash(contraseña),rol = rol)
             credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
-            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred)",
+            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred,null)",
                         name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
             return "yes"
         else:
             verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
             db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,3)",usu = usuario,passw = generate_password_hash(contraseña))
             credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
-            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred)",
+            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred,null)",
                             name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
                 
             return redirect(url_for('asociate'))
     else:
         return render_template('nuevous.html')
+#mascota
+@app.route('/mascota',methods=["GET", "POST"])
+def mascota():
+     if request.method == "POST":
+        flag = request.form['flag']
+        if flag:
+            nombremas = request.form['nombremas']
+            edad = request.form['edad']
+            tipo = request.form['tipo']
+            sexo = request.form['sexo']
+            raza = request.form['raza']
+            correo = request.form['correo']
+            usuario = db1.execute('select Id_Usuario from Usuarios WHere correo = :cor',cor = correo)
+            mascota = db1.execute('select Id_Mascota From Mascota Where IdUsuario = :usu AND Nombre = :name',usu = usuario[0]['Id_Usuario'],name = nombremas)
+            return "mascota lista"
+        else:
+            nombremas = request.form['nombremas']
+            edad = request.form['edad']
+            tipo = request.form['tipo']
+            sexo = request.form['sexo']
+            raza = request.form['raza']
+            correo = request.form['correo']
+            usuario = db1.execute('select Id_Usuario from Usuarios WHere correo = :cor',cor = correo)
+            db1.execute('INSERT INTO Mascota values(null,:us,:nom,:edad,:raza,:sexo,:tipo,1)',us = usuario[0]['Id_Usuario'],nom = nombremas, edad = edad, raza = raza,sexo = sexo,tipo = tipo)
+            return "mascota lista"
+@app.route('/generarconsulta',methods=["GET", "POST"])
+def generarconsulta():
+     if request.method == "POST":
+        sintomas1 = request.form['sintomas1']
+        nombremas = request.form['nombremas']
+        fecha = request.form['fecha']
+        correo = request.form['correo']
+        usuario = db1.execute('select Id_Usuario from Usuarios WHere correo = :cor',cor = correo)
+        mascota = db1.execute('SELECT Id_Mascota From Mascota Where IdUsuario = :usu AND Nombre =:nam',usu = usuario[0]['Id_Usuario'], nam = nombremas)
+        vet = db1.execute('select u.Id_Usuario from usuarios as u inner join credenciales as cred on u.IdCredenciales = cred.Id_Credenciales where cred.Rol = 1')
+        
+        numero = secrets.choice(vet)
+        db1.execute('INSERT INTO Consulta values(null,:mas,:fecha,:sintomas,null,:vet,"3:00",3)',mas = mascota[0]['Id_Mascota'],fecha = fecha, sintomas = sintomas1, vet = numero['Id_Usuario'])
+        return "consulta lista"
+
+
 #CONTACTOS
 @app.route('/contactos')
 def contactos():

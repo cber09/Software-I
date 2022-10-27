@@ -7,16 +7,620 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta</title>
+    <script src=""></script>
 </head>
 
 <body>
 
     {% block content %}
-    <div class="admin">
-        <h1>ESTO ES CONSULTA</h1>
+    {%if session.nombrerol == "Administrador"%}
+
+    <div class="admin" style="padding: 20px;">
+        <div class="main-top">
+            <div class="container">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1>Consultas</h1>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
         <br>
-    </div>
-    {%endblock%}
+        <div class="card" id="lista">
+            <div class="card-header">
+                <h3 class="card-title">Mis Consultas de Hoy</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body ">
+                <table class="table table-striped" id="consultas">
+                    <thead>
+                        <tr>
+                            <th style="width: 250px">Id Consulta</th>
+                            <th>Paciente</th>
+                            <th>Hora</th>
+                            <th style="width: 40px">Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for list in consultas%}
+
+                        <tr>
+                            <td>{{list.Id_Consulta}}</td>
+                            <td>{{list.Nombre}}</td>
+                            <td>
+                                {{list.Hora}}
+
+                            </td>
+                            <td>
+                                <span class="badge bg-warning">{{list.NombreEstado}}</span>
+                            </td>
+                            <td style="text-align: end;"><button type="button" name="detalle" style="border: none;"
+                                    value="{{list.Id_Consulta}}" class="btn btn-outline-secondary"><i
+                                        class="fas fa-solid fa-eye"></i></button>
+                            </td>
+                        </tr>
+                        {%endfor%}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <div class="" id="cont"></div>
+        <script>
+            $("#consultas button[name=detalle]").click(function () {
+                id = $(this).val();
+                $.ajax({
+                    url: "/detalleconsul",
+                    type: "POST",
+                    data: {
+                        id: id
+                    },
+                    success: function (response) {
+                        $('#lista').hide();
+                        $('#cont').html(response);
+                        $('#cont').append(response.htmlresponse);
+                        $('#launch').click();
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
+            });
+        </script>
+        {%else%}
+        <!-- empleado -->
+        <div class="admin">
+            <div class="main-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <h2>Agendar consultas</h2>
+                        </div>
+                        <div class="col">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body" id="client">
+                    <h5 class="card-title">Datos del Cliente</h5>
+                    <hr>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-outline">
+                                    <label class="form-label" for="form3Example3">Correo</label>
+                                    <input type="email" id="correo" maxlength="80" name="correo" required
+                                        class="form-control" placeholder="correo" />
+                                    <label id="mensaje_error_input_c" class="control-label col-md-12 text-danger"
+                                        style="display: none;">Las
+                                        constraseñas no coinciden</label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="form" style="display: none;">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="form3Example1">Nombres</label>
+                                        <input type="text" id="nombre" name="nombre" placeholder="nombres" required
+                                            class="form-control" />
+                                        <label id="mensaje_error_input" class="control-label col-md-12 text-danger"
+                                            style="display: block;">Las
+                                            constraseñas no coinciden</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="form3Example2">Apellidos</label>
+                                        <input type="text" id="apellido" name="apellido" required
+                                            class="form-control" />
+                                        <label id="mensaje_error_input_a" class="control-label col-md-12 text-danger"
+                                            style="display: block;">Las
+                                            constraseñas no coinciden</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="form3Example3">Celular</label>
+                                        <input type="text" id="celular" maxlength="8" name="celular" required
+                                            class="form-control" />
+
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="form3Example3">Telefono Fijo</label>
+                                        <input type="text" id="telfijo" name="telfijo" maxlength="8" required
+                                            class="form-control" />
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label class="labels" for="receta">Direccion:</label>
+                                    <br>
+                                    <textarea class="textarea" style="width: 100%;"
+                                        placeholder="Escriba su dirección..." name="direccion" maxlength="50" required
+                                        id="direccion" rows="3"></textarea>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <div class="card" id="pet">
+                        <div class=" card-body">
+
+
+                            <h5 class="card-title">Datos del Paciente</h5>
+                            <hr>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="exampleInputEmail1">Nombre</label>
+                                        <input type="text" class="form-control" id="nombremas"
+                                            aria-describedby="emailHelp" placeholder="Nombre de la mascota">
+                                        <label id="mensaje_error_input_ma" class="control-label col-md-12 text-danger"
+                                            style="display: none;">Las
+                                            constraseñas no coinciden</label>
+                                    </div>
+                                </div>
+                                <div id="formmas" style="margin-bottom: 15px;">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="exampleInputEmail1">Edad</label>
+                                            <input type="number" maxlength="10" class="form-control" id="edad"
+                                                aria-describedby="emailHelp" placeholder="Edad">
+                                        </div>
+                                        <div class="col">
+                                            <label for="exampleInputEmail1">Tipo mascota</label>
+                                            <select class="form-select" id="tipo" name="rol">
+                                                <option value="1" selected="true">Perro</option>
+                                                <option value="2">Gato</option>
+                                                <option value="3" selected="true">Hamster</option>
+                                                <option value="0">Otro</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="exampleInputEmail1">Sexo</label>
+                                            <select class="form-select" id="sexo" name="rol">
+                                                <option value="1" selected="true">Hembra</option>
+                                                <option value="2">Macho</option>
+
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="exampleInputEmail1">Raza</label>
+                                            <input type="text" maxlength="20" class="form-control" id="raza"
+                                                aria-describedby="emailHelp" placeholder="Raza">
+                                            <label id="mensaje_error_input_m"
+                                                class="control-label col-md-12 text-danger" style="display: none;">Las
+                                                constraseñas no coinciden</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card" id="general">
+                        <div class=" card-body">
+                            <h5 class="card-title">Datos Generales</h5>
+                            <hr>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="labels" style="margin-bottom: 0;" for="sintomas1">Sintomas</label>
+
+                                        <textarea class="textarea" style="width: 100%;" name="sintomas1"
+                                            placeholder="Escriba sus sintomas..." id="sintomas1" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="exampleInputEmail1">Fecha</label>
+                                        <input type="date" class="form-control" id="fecha" aria-describedby="emailHelp"
+                                            placeholder="Enter email">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="row justify-content-md-end" style="margin-top: 15px;">
+                    <div class="col col-lg-2">
+                        <button type="button" class="btn btn-success" id="boton-enviar" disabled onclick="agendar()"><i
+                                class="fas fa-calendar-check" style="margin-right: 5px;"></i>Agendar</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <script>
+            var totalflag;
+            var mascotaflag;
+            var cambioDeus = function () {
+                var correo = $('#correo').val();
+                if (correo != "") {
+
+
+                    $.ajax({
+                        url: "/buscarcorreo",
+                        type: "POST",
+                        data: {
+                            correo: correo,
+
+                        },
+                        success: function (response) {
+                            if (response == "no existe") {
+                                $('#form').show();
+                                $('#mensaje_error_input_c').hide();
+                                totalflag = 0;
+                            } else {
+                                $('#form').hide();
+                                $('#mensaje_error_input_c').html("usuario encontrado ✓");
+                                $('#mensaje_error_input_c').attr("class", "control-label col-md-12 text-success");
+                                $('#mensaje_error_input_c').show();
+                                $("#nombre").removeAttr("required");
+                                $("#apellido").removeAttr("required");
+                                $("#celular").removeAttr("required");
+                                $("#telfijo").removeAttr("required");
+                                $("#direccion").removeAttr("required");
+                                $("#boton-enviar").removeAttr("disabled");
+                                totalflag = 1;
+
+                            }
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+                }
+
+            }
+
+            $("#correo").on('keyup', cambioDeus);
+            var mascota = function () {
+                var correo = $('#correo').val();
+                var masc = $("#nombremas").val();
+
+                $.ajax({
+                    url: "/buscar",
+                    type: "POST",
+                    data: {
+                        correo: correo,
+                        masc: masc,
+                        flag: "mascota",
+
+                    },
+                    success: function (response) {
+                        if (response == "no") {
+                            $('#formmas').show();
+                            $('#mensaje_error_input_ma').hide();
+                            mascotaflag = 0;
+                        } else {
+                            $('#formmas').hide();
+                            $('#mensaje_error_input_ma').html("mascota encontrada ✓");
+                            $('#mensaje_error_input_ma').attr("class", "control-label col-md-12 text-success");
+                            $('#mensaje_error_input_ma').show();
+                            $("#edad").removeAttr("required");
+                            $("#raza").removeAttr("required");
+                            mascotaflag = 1;
+
+                        }
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
+
+            }
+
+            $("#nombremas").on('keyup', mascota);
+
+            function agendar() {
+                var flag;
+                var flag1;
+                var flag2;
+                if (($("#nombremas").val() == "" || $("#edad").val() == "" || $("#raza").val() == "") && mascotaflag == 0) {
+                    $('#mensaje_error_input_m').hide();
+                    bordeRojo($('#pet'));
+                    $('#pet').addClass('animar');
+
+                    setTimeout(function () {
+                        $('#pet').removeClass('animar');
+                    }, 1000)
+                    flag = 0;
+                } else {
+                    $('#pet').css({ border: "1px solid green" });
+                    flag = 1;
+
+                }
+                if ($('#sintomas1').val() == "" || $('#fecha').val() == "") {
+                    bordeRojo($('#general'));
+                    $('#general').addClass('animar');
+
+                    setTimeout(function () {
+                        $('#general').removeClass('animar');
+                    }, 1000)
+                    flag1 = 0;
+                } else {
+                    $('#general').css({ border: "1px solid green" });
+                    flag1 = 1;
+
+                }
+                if (($('#correo').val() == "" || $('#nombre').val() == "" || $('#apellido').val() == "" || $('#celular').val() == "" || $('#telfijo').val() == "" || $('#direccion').val() == "") && totalflag == 0) {
+                    bordeRojo($('#client'));
+                    $('#client').addClass('animar');
+
+                    setTimeout(function () {
+                        $('#client').removeClass('animar');
+                    }, 1000)
+                    flag2 = 0;
+                } else {
+                    $('#client').css({ border: "1px solid green" });
+                    flag2 = 1;
+                }
+                // el correo ya existe
+
+                if (flag == 1 && flag1 == 1 && flag2 == 1 && totalflag == 1 && mascotaflag == 1) {
+
+                    $.ajax({
+                        url: "/mascota",
+                        type: "POST",
+                        data: {
+                            nombremas: $('#nombremas').val(),
+                            edad: $('#edad').val(),
+                            tipo: $('#tipo').val(),
+                            sexo: $('#sexo').val(),
+                            raza: $('#raza').val(),
+                            correo: $('#correo').val(),
+                            flag: "vieja",
+
+                        },
+                        success: function (response) {
+                            $.ajax({
+                                url: "/generarconsulta",
+                                type: "POST",
+                                data: {
+                                    nombremas: $('#nombremas').val(),
+                                    correo: $('#correo').val(),
+                                    sintomas1: $('#sintomas1').val(),
+                                    fecha: $('#fecha').val(),
+
+                                },
+                                success: function (response) {
+                                    Swal.fire({
+                                        title: 'Cita Agendada Correctamente!',
+                                        text: 'Gracias por preferirnos!!! ' + $('#correo').val(),
+                                        icon: 'success',
+                                        confirmButtonText: "Aceptar",
+                                    }).then(() => {
+                                        window.location = '../consulta'
+                                    });
+
+                                },
+                                error: function (error) {
+                                    //console.log(error);
+                                },
+                            });
+
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+                } else if (flag == 1 && flag1 == 1 && flag2 == 1 && totalflag == 1 && mascotaflag == 0) {
+                    alert("mascota nuevo")
+                    $.ajax({
+                        url: "/mascota",
+                        type: "POST",
+                        data: {
+                            nombremas: $('#nombremas').val(),
+                            edad: $('#edad').val(),
+                            tipo: $('#tipo').val(),
+                            sexo: $('#sexo').val(),
+                            raza: $('#raza').val(),
+                            correo: $('#correo').val(),
+                            flag: "",
+
+                        },
+                        success: function (response) {
+                            $.ajax({
+                                url: "/generarconsulta",
+                                type: "POST",
+                                data: {
+                                    nombremas: $('#nombremas').val(),
+                                    correo: $('#correo').val(),
+                                    sintomas1: $('#sintomas1').val(),
+                                    fecha: $('#fecha').val(),
+
+                                },
+                                success: function (response) {
+                                    Swal.fire({
+                                        title: 'Cita Agendada Correctamente!',
+                                        text: 'Gracias por preferirnos!!! ' + $('#correo').val(),
+                                        icon: 'success',
+                                        confirmButtonText: "Aceptar",
+                                    }).then(() => {
+                                        window.location = '../consulta'
+                                    });
+
+                                },
+                                error: function (error) {
+                                    //console.log(error);
+                                },
+                            });
+
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+                }
+                else if (flag == 1 && flag1 == 1 && flag2 == 1 && totalflag == 0 && mascotaflag == 0) {// el correo no existe y la mascota tampoco
+                    alert("todo nuevo")
+                    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    let result1 = ' ';
+                    const charactersLength = characters.length;
+                    for (let i = 0; i < 8; i++) {
+                        result1 += characters.charAt(Math.floor(Math.random() * charactersLength));
+                    }
+
+                    var contra = result1;
+                    var dato = $('#nombre').val();
+                    // Usando replace y expresiones regulares
+                    dato = dato.replace(/\s\s+/g, '').trim();
+                    var array = new Array();
+                    array = $.trim(dato).split(' ');
+                    var usuario = array[0];
+                    $.ajax({
+                        url: "/nuevou",
+                        type: "POST",
+                        data: {
+                            nombres: $('#nombre').val(),
+                            apellidos: $('#apellido').val(),
+                            correo: $('#correo').val(),
+                            telefono: $('#telfijo').val(),
+                            celular: $('#celular').val(),
+                            direccion: $('#direccion').val(),
+                            loginUser: usuario,
+                            loginPassword: contra,
+                            flag: "",
+                        },
+                        success: function (response) {
+                            $.ajax({
+                                url: "/correo",
+                                type: "POST",
+                                data: {
+                                    nombres: $('#nombre').val(),
+                                    apellidos: $('#apellido').val(),
+                                    correo: $('#correo').val(),
+                                    loginUser: usuario,
+                                    loginPassword: contra,
+                                },
+                                success: function (response) {
+                                    $.ajax({
+                                        url: "/mascota",
+                                        type: "POST",
+                                        data: {
+                                            nombremas: $('#nombremas').val(),
+                                            edad: $('#edad').val(),
+                                            tipo: $('#tipo').val(),
+                                            sexo: $('#sexo').val(),
+                                            raza: $('#raza').val(),
+                                            correo: $('#correo').val(),
+                                            flag: "",
+
+                                        },
+                                        success: function (response) {
+                                            $.ajax({
+                                                url: "/generarconsulta",
+                                                type: "POST",
+                                                data: {
+                                                    nombremas: $('#nombremas').val(),
+                                                    correo: $('#correo').val(),
+                                                    sintomas1: $('#sintomas1').val(),
+                                                    fecha: $('#fecha').val(),
+
+                                                },
+                                                success: function (response) {
+                                                    Swal.fire({
+                                                        title: 'Cita Agendada Correctamente!',
+                                                        text: 'Se envio un correo con las credenciales al ' + $('#correo').val(),
+                                                        icon: 'success',
+                                                        confirmButtonText: "Aceptar",
+                                                    }).then(() => {
+                                                        window.location = '../consulta'
+                                                    });
+
+                                                },
+                                                error: function (error) {
+                                                    //console.log(error);
+                                                },
+                                            });
+
+                                        },
+                                        error: function (error) {
+                                            //console.log(error);
+                                        },
+                                    });
+
+                                },
+                                error: function (error) {
+                                    //console.log(error);
+                                },
+                            });
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+                }
+            }
+            function bordeRojo(div) {
+                div.css({ border: "1px solid red" });
+            }
+
+
+
+
+        </script>
+
+        {%endif%}
+        {%endblock%}
 </body>
 
 
