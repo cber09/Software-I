@@ -228,9 +228,10 @@
             <!-- /.content -->
         </div>
     </div>
-
-    <input type="hidden" id="dale2" data-toggle="modal" data-target=".bd-example-modal-lg" />
+    <div id="cont"></div>
+    <input type="hidden" id="dale2" data-toggle="modal" data-target="#exampleModal" />
     <script>
+
         const ctx = document.getElementById('revenue-chart-canvas').getContext('2d');
         var xValues = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
         var yValues = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
@@ -259,6 +260,8 @@
                     $('#cont').html(response);
                     $('#cont').append(response.htmlresponse);
                     $("#dale2").click();
+
+
                 },
                 error: function (error) {
                     //console.log(error);
@@ -267,18 +270,9 @@
 
         });
     </script>
+    <script>
 
-
-    <!-- jQuery UI -->
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
-        integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-
-    <!-- Page specific script -->
-
-    <div id="cont"></div>
+    </script>
 
     {%endblock%}
 </body>

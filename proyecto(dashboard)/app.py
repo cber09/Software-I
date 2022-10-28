@@ -52,7 +52,11 @@ def login():
                 elif session["nombrerol"] == "Empleado":
                     return redirect(url_for('homesistema'))
                 else:
-                    return render_template('cliente.html',rol =session["nombrerol"],nombre =session["usercom"])
+                    #aca traemos las consultas del cliente logeado
+                    consultas = db1.execute('select c.*,m.Nombre from Consulta as c inner join mascota as m ON c.IdMascota = m.Id_Mascota inner join Usuarios as u ON m.IdUsuario = u.Id_Usuario Where u.Id_Usuario = :id',id = session["user_Id"] )
+                    
+                    #receta = db1.execute('select * from DetalleReceta Where IdReceta = :rec',rec = historial[0]['Id_Receta'])
+                    return render_template('cliente.html',rol =session["nombrerol"],nombre =session["usercom"], cons = consultas)
     return render_template('index.html')
 #DESLOGUEO
 @app.route('/deslog')
@@ -80,7 +84,9 @@ def detalleconsul():
             return render_template('sistema/consulta-detalle.html',rol =session["nombrerol"],nombre =session["usercom"] , consultas = consultas,historial = historial,recetas = receta)
         else:
             return render_template('sistema/consulta-detalle.html',rol =session["nombrerol"],nombre =session["usercom"] , consultas = consultas,historial = "",recetas = "")
-        
+
+
+
 @app.route('/diagnosticar', methods =["POST","GET"])
 def diagnosticar():
     if request.method == "POST":
@@ -181,8 +187,7 @@ def correo():
         correoc = request.form['correo']
         usuario = request.form['loginUser']
         contraseña = request.form['loginPassword']
-        message = "Bienvenido al sistema de la Veterinaria El buen productor.\nSu Usuario es: "+ usuario+" \nSu Contraseña es: "+contraseña
-        enviar_correo(app,"Bienvenido a Nuestra Familia",correoc,message)
+        enviar_correo(app,"Bienvenido a Nuestra Familia",correoc,usuario,contraseña)
         return "done"
     else:
         return render_template('nuevous.html')

@@ -1,11 +1,5 @@
-<header>
-
-    <!-- <script src="../../static/js/calendar/moment.min.js"></script>
-    <script src="../../static/js/calendar/locale/es.js"></script> -->
-</header>
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Num:{{id}}</h5>
@@ -28,16 +22,10 @@
     </div>
 </div>
 <!-- jQuery UI -->
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
-    integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
 <script>
-
+    // document.addEventListener('DOMContentLoaded', function () {
     function cale() {
-
         /* initialize the calendar
          -----------------------------------------------------------------*/
         //Date for the calendar events (dummy data)
@@ -47,9 +35,6 @@
             y1 = date1.getFullYear()
 
         var Calendar1 = FullCalendar.Calendar;
-
-        // var containerEl = document.getElementById('external-events');
-        // var checkbox = document.getElementById('drop-remove');
         var calendarEl1 = document.getElementById('calendario-cliente');
 
         // initialize the external events
@@ -62,7 +47,6 @@
                 year: 'year',
                 today: 'Hoy',
                 month: 'Mes',
-                week: 'Semana',
                 day: 'Dia',
                 list: 'list',
             },
@@ -70,13 +54,13 @@
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                right: 'dayGridMonth,timeGridDay'
             },
-            themeSystem: 'bootstrap',
+
             //Random default events
             events: [
                 {
-                    title: 'All Day Event',
+                    title: 'Consulta 1',
                     start: new Date(y1, m1, 1),
                     backgroundColor: '#f56954', //red
                     borderColor: '#f56954', //red
@@ -92,7 +76,14 @@
         // $('#calendario-cliente').fullCalendar()
 
     }
-    cale();
+    $('#exampleModal').on('show.bs.modal', function () {
+        setTimeout(() => {
+            cale();
+        }, 200);
+    })
 
+
+
+    // });
 
 </script>
