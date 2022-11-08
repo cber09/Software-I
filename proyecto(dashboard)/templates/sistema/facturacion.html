@@ -12,10 +12,284 @@
 <body>
 
     {% block content %}
-    <div class="admin">
-        <h1>ESTO ES FACTURACION</h1>
+    <div class="admin" style="padding: 20px;">
+        <div class="main-top">
+            <div class="container">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1>Facturación</h1>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
         <br>
+        <div class="card" style="padding: 20px;">
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-outline">
+
+                        <label class="form-label" for="form3Example3">Busqueda Producto</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-primary boton-input" type="button"><i
+                                        class="fas fa-search"></i></button>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Buscar producto" aria-label="Username"
+                                aria-describedby="basic-addon1">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="form-outline">
+                        <label class="form-label" for="form3Example3">Cantidad</label>
+                        <input type="email" id="correo" maxlength="80" name="Cantidad" required class="form-control"
+                            placeholder="Cantidad" />
+
+
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="form-outline">
+                        <label class="form-label" for="form3Example3">Descuento</label>
+                        <div style="display: flex;">
+                            <input type="email" id="correo" maxlength="80" name="correo" required class="form-control"
+                                placeholder="Descuento" />
+                            <div style="display: block;">
+                                <input type="radio" style="margin-left: 10px;"> %
+                                <input type="radio" style="margin-left: 10px;"> C$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-outline">
+                        <label class="form-label" for="form3Example3">N° Receta</label>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-primary boton-input" type="button"><i
+                                        class="fas fa-search"></i></button>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Codigo receta" aria-label="Username"
+                                aria-describedby="basic-addon1" id="idreceta">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <label class="form-label" for="form3Example3">Factura Rápida</label>
+                <div class="col-6">
+                    <div class="form-outline">
+                        <input type="email" id="correo" maxlength="80" name="correo" required class="form-control"
+                            placeholder="Cliente" />
+                        <label id="mensaje_error_input_c" class="control-label col-md-12 text-danger"
+                            style="display: none;">Las
+                            constraseñas no coinciden</label>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <br>
+        <div style="display: flex; ">
+            <div class="card" id="tabla" style="width: calc(75%);padding: 20px;">
+
+            </div>
+
+            <div class="card" style="margin-left: 10px; width:calc(40%) ;">
+                <div class="row">
+                    <div class="col-lg-6 col-6">
+                        <!-- small box -->
+                        <div class=" card cartas bg-info" style="padding: 5px;">
+                            <div class="inner">
+                                <h3>Consulta</h3>
+                                <p style="height: 20px;"></p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <a onclick="addconsul()" class="card-footer" style="cursor: pointer;">
+                                Click
+                            </a>
+                        </div>
+                    </div>
+                    <br>
+                    <!-- ./col -->
+                    <div class="col-lg-6 col-6">
+                        <!-- small box -->
+                        <div class="card cartas bg-success" style="padding: 5px;">
+                            <div class="inner">
+                                <h3>PAGAR</h3>
+
+                                <p style="height: 20px;"> </p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <a href="#" class="card-footer">Click</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" style="padding: 10px 10px 0 10px;">
+                        <!-- small box -->
+                        <div class="cards" style="padding: 5px; height: 100%;">
+                            <div class="inner" style="color: black;">
+                                <h3>TOTAL</h3>
+
+                            </div>
+                            <div style=" text-align: end;">
+                                <h2 style="font-size: 50px;" id="total1">0 C$</h2>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                </div>
+            </div>
+        </div>
     </div>
+    <input type="hidden" value="0" id="monto">
+
+    </div>
+    <script>
+        var flag = false;
+        function addconsul() {
+            if (flag) {
+                $('#monto').val(parseInt($('#monto').val()) - 50);
+
+                $('#total1').text($('#monto').val() + " C$");
+                flag = false
+            } else {
+                $('#monto').val(parseInt($('#monto').val()) + 50);
+
+                $('#total1').text($('#monto').val() + " C$");
+                flag = true
+            }
+
+        }
+
+        function buscarReceta(id) {
+            $.ajax({
+                url: "/buscar",
+                type: "POST",
+                data: {
+                    receta: id,
+                    flag: "receta"
+
+                },
+                success: function (response) {
+                    $('#tabla').html(response);
+                    $('#tabla').append(response.htmlresponse);
+                    $('#monto').val(parseInt($('#total').val()));
+
+                    $('#total1').text($('#monto').val() + " C$");
+                    $("#fact button[name=edit]").click(function () {
+                        id = $(this).val();
+                        Swal
+                            .fire({
+                                title: "Ingrese La cantidad de " + id,
+                                input: "text",
+                                showCancelButton: true,
+                                confirmButtonText: "Guardar",
+                                cancelButtonText: "Cancelar",
+                            })
+                            .then(resultado => {
+                                if (resultado.value) {
+                                    let diag = resultado.value;
+                                    id = $(this).val();
+                                    $.ajax({
+                                        url: "/cantidad",
+                                        type: "POST",
+                                        data: {
+                                            id: id,
+                                            receta: $('#idreceta').val(),
+                                            // diagnostico: $('#diagnostico').val(),
+                                            // receta: $('#receta').val(),
+                                            cant: diag
+                                        },
+                                        success: function (response) {
+                                            Swal.fire({
+                                                title: 'Cantidad Actualizada!',
+                                                text: 'Gracias por preferirnos!!!',
+                                                icon: 'success',
+                                                confirmButtonText: "Aceptar",
+                                            }).then(() => {
+                                                setTimeout(() => {
+                                                    $('#tabla').html(response);
+                                                    $('#tabla').append(response.htmlresponse);
+                                                    $('#monto').val(parseInt($('#total').val()));
+
+                                                    $('#total1').text($('#monto').val() + " C$");
+                                                    buscarReceta($('#idreceta').val());
+                                                }, 200);
+
+                                            });
+                                        },
+                                        error: function (error) {
+                                            //console.log(error);
+                                        },
+                                    });
+                                }
+                            });
+                    });
+                    $("#fact button[name=delete]").click(function () {
+                        id = $(this).val();
+                        $.ajax({
+                            url: "/eliminar",
+                            type: "POST",
+                            data: {
+                                id: id,
+                                flag: "fact",
+                                receta: $('#idreceta').val()
+                            },
+                            success: function (response) {
+                                Swal.fire({
+                                    title: 'Producto Eliminado!',
+                                    text: 'Gracias por preferirnos!!!',
+                                    icon: 'success',
+                                    confirmButtonText: "Aceptar",
+                                }).then(() => {
+                                    setTimeout(() => {
+                                        $('#tabla').html(response);
+                                        $('#tabla').append(response.htmlresponse);
+                                        $('#monto').val(parseInt($('#total').val()) - parseInt($('#monto').val()));
+                                        $('#total1').text($('#monto').val() + " C$");
+                                        buscarReceta($('#idreceta').val());
+                                    }, 200);
+
+                                });
+                            },
+                            error: function (error) {
+                                //console.log(error);
+                            },
+                        });
+                    });
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+
+        }
+
+        $("#idreceta").keyup(function () {
+
+            buscarReceta($('#idreceta').val());
+        });
+
+    </script>
     {%endblock%}
 </body>
 

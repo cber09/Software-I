@@ -251,7 +251,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card" id="general">
+                    <div class="card" style="height: 330px;" id="general">
                         <div class=" card-body">
                             <h5 class="card-title">Datos Generales</h5>
                             <hr>
@@ -548,6 +548,7 @@
                                     nombres: $('#nombre').val(),
                                     apellidos: $('#apellido').val(),
                                     correo: $('#correo').val(),
+                                    flag: "usuario",
                                     loginUser: usuario,
                                     loginPassword: contra,
                                 },
@@ -610,9 +611,7 @@
                     });
                 }
             }
-            function bordeRojo(div) {
-                div.css({ border: "1px solid red" });
-            }
+
 
 
 

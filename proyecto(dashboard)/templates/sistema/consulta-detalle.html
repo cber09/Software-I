@@ -67,29 +67,33 @@
             <hr>
             <div class="container" id="aqui">
                 <div class="row">
-                    <div class="col">
+                    <div class="col" style="width: 30%;">
                         <label class="labels" for="sintomas">Sintomas:</label>
                         <br>
                         <textarea class="textarea" name="sintomas" placeholder="Escriba los sintomas..." id="sintomas"
                             cols="20" rows="10">{{lista.Sintomas}}</textarea>
-                        <style>
-
-                        </style>
-                    </div>
-                    <div class="col">
-                        <label class="labels" for="diagnostico">Diagnostico:</label>
-                        <br>
-                        <textarea class="textarea" name="diagnostico" placeholder="Escriba el diagnostico..."
-                            id="diagnostico" cols="20" rows="10"></textarea>
 
                     </div>
-                    <div class="col">
-                        <label class="labels" for="receta">Receta:</label>
-                        <br>
-                        <textarea class="textarea" name="receta" placeholder="Escriba la receta..." id="receta"
-                            cols="20" rows="10"></textarea>
+                    <div class="col-lg-9">
+                        <label class="labels" for="sintomas">Medicamento:</label>
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" placeholder="Busqueda de medicamento"
+                                aria-label="Username" aria-describedby="basic-addon1" id="BusquedaProducto">
+
+                            <button type="button" class="btn btn-success" name="med" value="{{lista.Id_Consulta}}"
+                                onclick="tablaMedicamento()"><i class="fas fa-plus"
+                                    style="margin-right: 5px;"></i>Añadir</button>
+                        </div>
+                        <div style="background-color: #FFF; position:relative; height: 70%;">
+                            <div class="info" id="listaproducto">
+
+                            </div>
+                            <div id="tabla"></div>
+                        </div>
 
                     </div>
+
                 </div>
                 <br>
                 <div class="row justify-content-md-end">
@@ -101,40 +105,273 @@
 
                 </div>
                 <input type="hidden" id="mascota" value="{{lista.Id_Mascota}}">
+                <input type="hidden" id="consul" value="{{lista.Id_Consulta}}">
 
             </div>
 
         </div>
     </div>
 </div>
+<input id="launch1" type="hidden" data-toggle="modal" data-target="#exampleModal">
+<!-- Modal -->
+<input type="hidden" id="medicamento">
+<div id="contenermodal"></div>
 
 
 {%endfor%}
 <script>
-    $("#aqui button[name=diag]").click(function () {
-        id = $(this).val();
+    function receta() {
         $.ajax({
-            url: "/diagnosticar",
+            url: "/orientacion",
             type: "POST",
             data: {
-                id: id,
-                diagnostico: $('#diagnostico').val(),
-                receta: $('#receta').val(),
-                mascota: $('#mascota').val(),
+                id: $('#medicamento').val(),
+                cons: $('#consul').val(),
+                ori: $('#receta').val()
+
             },
             success: function (response) {
-                Swal.fire({
-                    title: 'Diagnosticado Correctamente!',
-                    text: 'Gracias por preferirnos!!! ',
-                    icon: 'success',
-                    confirmButtonText: "Aceptar",
-                }).then(() => {
-                    window.location = '../consulta'
+                // $('#tabla').empty();
+
+                $('#cerrarmodal').click();
+                $('#tabla').html(response);
+                $('#tabla').append(response.htmlresponse);
+                $('#BusquedaProducto').val('');
+                $("#tabla-prod button[name=orientacion]").click(function () {
+                    $('#medicamento').val($(this).val());
+
+                    $.ajax({
+                        url: "/oriedit",
+                        type: "POST",
+                        data: {
+
+                            accion: "producto",
+                            id: $(this).val()
+                        },
+                        success: function (response) {
+
+                            $('#contenermodal').html(response);
+                            $('#contenermodal').append(response.htmlresponse);
+                            $('#launch1').click();
+
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+
                 });
+
             },
             error: function (error) {
                 //console.log(error);
             },
         });
+    }
+
+    function buscarproducto() {
+        $.ajax({
+            url: "/buscar",
+            type: "POST",
+            data: {
+                producto: $('#BusquedaProducto').val(),
+                flag: "producto"
+
+            },
+            success: function (response) {
+
+                if (response == "No") {
+                    $('#listaproducto').hide();
+                } else {
+
+                    $('#listaproducto').html(response);
+                    $('#listaproducto').append(response.htmlresponse);
+                    $('#listaproducto').show();
+
+                    $("#busqueda button[name=det]").click(function () {
+                        id = $(this).val();
+                        $.ajax({
+                            url: "/insertarReceta",
+                            type: "POST",
+                            data: {
+                                prod: id,
+                                cons: $('#consul').val(),
+                                mascota: $('#mascota').val()
+
+                            },
+                            success: function (response) {
+
+                                $('#tabla').html(response);
+                                $('#tabla').append(response.htmlresponse);
+                                $('#BusquedaProducto').val('');
+                                $('#listaproducto').empty();
+                                $("#tabla-prod button[name=orientacion]").click(function () {
+                                    $('#medicamento').val($(this).val());
+
+                                    $.ajax({
+                                        url: "/oriedit",
+                                        type: "POST",
+                                        data: {
+
+                                            accion: "producto",
+                                            id: $(this).val()
+                                        },
+                                        success: function (response) {
+
+                                            $('#contenermodal').html(response);
+                                            $('#contenermodal').append(response.htmlresponse);
+                                            $('#launch1').click();
+
+                                        },
+                                        error: function (error) {
+                                            //console.log(error);
+                                        },
+                                    });
+
+                                });
+
+                            },
+                            error: function (error) {
+                                //console.log(error);
+                            },
+                        });
+                    });
+                }
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    }
+    $('#BusquedaProducto').on('keyup', buscarproducto);
+    function tablaMedicamento() {
+        if ($('#BusquedaProducto').val() != "") {
+            $.ajax({
+                url: "/insertarReceta",
+                type: "POST",
+                data: {
+                    prod: $('#BusquedaProducto').val(),
+                    cons: $('#consul').val(),
+                    mascota: $('#mascota').val()
+
+                },
+                success: function (response) {
+
+                    $('#tabla').html(response);
+                    $('#tabla').append(response.htmlresponse);
+                    $('#BusquedaProducto').val('');
+                    $("#tabla-prod button[name=orientacion]").click(function () {
+                        $('#medicamento').val($(this).val());
+
+                        $.ajax({
+                            url: "/oriedit",
+                            type: "POST",
+                            data: {
+
+                                accion: "producto",
+                                id: $(this).val()
+                            },
+                            success: function (response) {
+
+                                $('#contenermodal').html(response);
+                                $('#contenermodal').append(response.htmlresponse);
+                                $('#launch1').click();
+
+                            },
+                            error: function (error) {
+                                //console.log(error);
+                            },
+                        });
+
+                    });
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        } else {
+            bordeRojo($('#BusquedaProducto'));
+            $('#BusquedaProducto').addClass('animar');
+            setTimeout(function () {
+                $('#BusquedaProducto').removeClass('animar');
+
+                $('#BusquedaProducto').css({ border: "" });
+            }, 700)
+
+        }
+
+    }
+    $("#aqui button[name=diag]").click(function () {
+
+        if ($('#tabla').html()) {
+            Swal
+                .fire({
+                    title: "Ingrese su diagnostico",
+                    input: "text",
+                    showCancelButton: true,
+                    confirmButtonText: "Guardar",
+                    cancelButtonText: "Cancelar",
+                })
+                .then(resultado => {
+                    if (resultado.value) {
+                        let diag = resultado.value;
+                        id = $(this).val();
+                        $.ajax({
+                            url: "/diagnosticar",
+                            type: "POST",
+                            data: {
+                                id: id,
+                                // diagnostico: $('#diagnostico').val(),
+                                // receta: $('#receta').val(),
+                                diagnostico: diag,
+                                receta: "",
+                                mascota: $('#mascota').val(),
+                            },
+                            success: function (response) {
+                                Swal.fire({
+                                    title: 'Diagnosticado Correctamente!',
+                                    text: 'Gracias por preferirnos!!! ',
+                                    icon: 'success',
+                                    confirmButtonText: "Aceptar",
+                                }).then(() => {
+                                    $.ajax({
+                                        url: "/correo",
+                                        type: "POST",
+                                        data: {
+                                            cons: $('#consul').val(),
+                                            mascota: $('#mascota').val(),
+                                            flag: "receta"
+                                        },
+                                        success: function (response) {
+                                            window.location = '../consulta'
+                                        }
+                                    });
+
+                                });
+                            },
+                            error: function (error) {
+                                //console.log(error);
+                            },
+                        });
+                    }
+                });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                confirmButtonText: 'Ok',
+                text: 'Debe Añadir medicamentos a la receta'
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                }
+            })
+        }
+
+
     });
+
 </script>

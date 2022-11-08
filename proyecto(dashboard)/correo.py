@@ -1,6 +1,6 @@
 from flask import render_template
 from flask_mail import Mail,Message
-def enviar_correo(app,title,recipient,usuario,contraseña):
+def enviar_correo(app,title,recipient,usuario,contraseña,info,diagnostico):
     enviar = "veterinariabuenproductor@gmail.com"
     app.config.update(
     MAIL_SERVER = 'smtp.gmail.com',
@@ -14,5 +14,8 @@ def enviar_correo(app,title,recipient,usuario,contraseña):
     sender = enviar, 
     recipients = [recipient], 
     )  
-    msg.html = render_template('correo.html',usuario = usuario,contraseña = contraseña )
+    if usuario:
+        msg.html = render_template('correo.html',usuario = usuario,contraseña = contraseña )
+    else:
+        msg.html = render_template('correo-receta.html',receta = info,diag = diagnostico )
     mail.send(msg)

@@ -1,0 +1,28 @@
+<table class="table table-striped" id="tabla-prod">
+    <thead>
+        <tr>
+            <th style="width: 450px">Medicamentos</th>
+            <th>Orientaciones</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for list in receta%}
+
+        <tr>
+            <td>{{list.Medicamento}}</td>
+            {%if list.Pasos == None%}
+            <td align="center" style="padding-right: 100px;"> ---- </td>
+            {%else%}
+            <td>{{list.Pasos}}</td>
+            {%endif%}
+            <td>
+                <button type="button" name="orientacion" style="border: none;" value="{{list.IdDetalleReceta}}"
+                    class="btn btn-outline-secondary"><i class="fas fa-plus"></i> </button>
+            </td>
+
+        </tr>
+        {%endfor%}
+
+    </tbody>
+</table>

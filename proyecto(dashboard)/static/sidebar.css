@@ -194,8 +194,32 @@ ul {
   margin-right: 0 !important;
   margin-left: 0 !important;
 }
+.form-control {
+  height: 50px;
+}
+.boton-input {
+  height: 50px;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+.cartas-fac {
+  height: 15vh;
+  border-radius: 10px;
+  margin: 10px;
+}
 .animar {
   animation: tiembla 0.1s infinite;
+}
+.tablas {
+  padding: 20px;
+}
+.info {
+  border-radius: 5px;
+  box-shadow: #4b545c;
+  background-color: #fff;
+  width: 88%;
+  display: block;
+  position: absolute;
 }
 @keyframes tiembla {
   0% {
