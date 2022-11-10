@@ -1,0 +1,87 @@
+{%if flag == "receta"%}
+<div class="card div-verpdf">
+    <div class="card-header">
+        <h3 class="card-title">Factura</h3>
+        <input type="hidden" id="total2" value="{{total}}">
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+        {%if info%}
+        <table class="table table-sm" id="fact">
+            <thead>
+                <tr>
+
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unidad</th>
+                    <th style="width: 40px"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+
+                {%for list in info%}
+                {%for li in list%}
+
+                <tr>
+                    <td>{{li.Nombre}}</td>
+                    <td>
+                        {{li.Cantidad}}
+                    </td>
+                    <td>{{li.Precio}}</td>
+                </tr>
+                {%endfor%}
+                {%endfor%}
+            </tbody>
+        </table>
+
+        {%endif%}
+    </div>
+    <!-- /.card-body -->
+</div>
+<script>
+
+</script>
+{%elif flag == "rapida"%}
+<div class="card div-verpdf">
+    <div class="card-header">
+        <h3 class="card-title">Productos</h3>
+        <input type="hidden" id="total2" value="{{total}}">
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+        {%if info%}
+        <table class="table table-sm" id="fact">
+            <thead>
+                <tr>
+
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unidad</th>
+                    <th style="width: 40px"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+
+                {%for list in info%}
+
+
+                <tr>
+                    <td>{{list.Nombre}}</td>
+                    <td>
+                        {{list.Cantidad}}
+                    </td>
+                    <td>{{list.Precio}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+
+        {%endif%}
+    </div>
+    <!-- /.card-body -->
+</div>
+{%endif%}

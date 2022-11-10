@@ -1,0 +1,64 @@
+<head>
+
+
+</head>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Productos</h3>
+        <input type="hidden" id="total2" value="{{total}}">
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+        {%if productos%}
+        <table class="table table-sm" id="fact">
+            <thead>
+                <tr>
+
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unidad</th>
+                    <th style="width: 40px"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+
+                {%for list in productos%}
+
+
+                <tr>
+                    <td>{{list.Nombre}}</td>
+                    <td>
+                        {{list.Cantidad}}
+                    </td>
+                    <td>{{list.Precio}}</td>
+                    <td>
+                        <button type="button" name="edit" style="border: none;" value="{{list.IdDetalle}}"
+                            class="btn btn-outline-secondary"><i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" name="delete" style="border: none;" value="{{list.IdDetalle}}"
+                            class="btn btn-outline-secondary"><i class="fas fa-trash-alt" style="color: red;"></i>
+                        </button>
+                    </td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+
+        {%endif%}
+    </div>
+    <!-- /.card-body -->
+</div>
+{%if nohay%}
+<script>
+    Swal.fire({
+        title: 'Productos Faltantes!!!',
+        text: 'No contamos con todos los productos de su receta, debera revisar su receta y comprar los medicamentos faltantes',
+        icon: 'warning',
+        confirmButtonText: "Aceptar",
+    })
+</script>
+{%endif%}

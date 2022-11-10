@@ -31,7 +31,7 @@
         <br>
         <div class="card" style="padding: 20px;">
             <div class="row">
-                <div class="col-4">
+                <div class="col-4 fact-rap">
                     <div class="form-outline">
 
                         <label class="form-label" for="form3Example3">Busqueda Producto</label>
@@ -40,22 +40,27 @@
                                 <button class="btn btn-primary boton-input" type="button"><i
                                         class="fas fa-search"></i></button>
                             </div>
-                            <input type="text" class="form-control" placeholder="Buscar producto" aria-label="Username"
-                                aria-describedby="basic-addon1">
+                            <input type="text" class="form-control" id="buscprod" placeholder="Buscar producto"
+                                aria-label="Username" aria-describedby="basic-addon1">
                         </div>
 
                     </div>
+                    <div style="background-color: #FFF; position:relative; ">
+                        <div class="info" id="listaproducto">
+
+                        </div>
+                    </div>
                 </div>
-                <div class="col-2">
+                <div class="col-2 fact-rap">
                     <div class="form-outline">
                         <label class="form-label" for="form3Example3">Cantidad</label>
-                        <input type="email" id="correo" maxlength="80" name="Cantidad" required class="form-control"
+                        <input type="email" id="cant" maxlength="80" name="Cantidad" required class="form-control"
                             placeholder="Cantidad" />
 
 
                     </div>
                 </div>
-                <div class="col-2">
+                <div class="col-2 fact-rap">
                     <div class="form-outline">
                         <label class="form-label" for="form3Example3">Descuento</label>
                         <div style="display: flex;">
@@ -68,7 +73,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-4 sin-rec">
                     <div class="form-outline">
                         <label class="form-label" for="form3Example3">N° Receta</label>
 
@@ -86,10 +91,10 @@
             </div>
             <br>
             <div class="row">
-                <label class="form-label" for="form3Example3">Factura Rápida</label>
-                <div class="col-6">
+                <label class="form-label fact-rap" for="form3Example3">Factura Rápida</label>
+                <div class="col-6 fact-rap">
                     <div class="form-outline">
-                        <input type="email" id="correo" maxlength="80" name="correo" required class="form-control"
+                        <input type="email" id="cliente" maxlength="80" name="correo" required class="form-control"
                             placeholder="Cliente" />
                         <label id="mensaje_error_input_c" class="control-label col-md-12 text-danger"
                             style="display: none;">Las
@@ -137,7 +142,7 @@
                             <div class="icon">
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
-                            <a href="#" class="card-footer">Click</a>
+                            <a onclick="pay()" class="card-footer" style="cursor: pointer;">Click</a>
                         </div>
                     </div>
                 </div>
@@ -161,9 +166,26 @@
         </div>
     </div>
     <input type="hidden" value="0" id="monto">
+    <input type="hidden" value="" id="venta">
 
-    </div>
+    <div id="contenermodal"> </div>
+    <div id="pdf"></div>
     <script>
+        var flaglista = false;
+        $.ajax({
+            url: "/idventa",
+            type: "POST",
+            data: {
+
+            },
+            success: function (response) {
+
+                $('#venta').val(response);
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
         var flag = false;
         function addconsul() {
             if (flag) {
@@ -181,6 +203,7 @@
         }
 
         function buscarReceta(id) {
+
             $.ajax({
                 url: "/buscar",
                 type: "POST",
@@ -190,92 +213,104 @@
 
                 },
                 success: function (response) {
-                    $('#tabla').html(response);
-                    $('#tabla').append(response.htmlresponse);
-                    $('#monto').val(parseInt($('#total').val()));
+                    if (response != "no") {
+                        flaglista = true
+                        $('#tabla').html(response);
+                        $('#tabla').append(response.htmlresponse);
+                        $('#monto').val(parseInt($('#total').val()));
+                        $('.fact-rap').hide();
+                        flaglista = true
+                        $('#idreceta').attr('readonly', true);
+                        $('#total1').text($('#monto').val() + " C$");
+                        $("#fact button[name=edit]").click(function () {
+                            id = $(this).val();
+                            Swal
+                                .fire({
+                                    title: "Ingrese La cantidad de " + id,
+                                    input: "text",
+                                    showCancelButton: true,
+                                    confirmButtonText: "Guardar",
+                                    cancelButtonText: "Cancelar",
+                                })
+                                .then(resultado => {
+                                    if (resultado.value) {
+                                        let diag = resultado.value;
+                                        id = $(this).val();
+                                        $.ajax({
+                                            url: "/cantidad",
+                                            type: "POST",
+                                            data: {
+                                                id: id,
+                                                receta: $('#idreceta').val(),
+                                                // diagnostico: $('#diagnostico').val(),
+                                                // receta: $('#receta').val(),
+                                                cant: diag
+                                            },
+                                            success: function (response) {
+                                                Swal.fire({
+                                                    title: 'Cantidad Actualizada!',
+                                                    text: 'Gracias por preferirnos!!!',
+                                                    icon: 'success',
+                                                    confirmButtonText: "Aceptar",
+                                                }).then(() => {
+                                                    setTimeout(() => {
+                                                        $('#tabla').html(response);
+                                                        $('#tabla').append(response.htmlresponse);
+                                                        $('#monto').val(parseInt($('#total').val()));
 
-                    $('#total1').text($('#monto').val() + " C$");
-                    $("#fact button[name=edit]").click(function () {
-                        id = $(this).val();
-                        Swal
-                            .fire({
-                                title: "Ingrese La cantidad de " + id,
-                                input: "text",
-                                showCancelButton: true,
-                                confirmButtonText: "Guardar",
-                                cancelButtonText: "Cancelar",
-                            })
-                            .then(resultado => {
-                                if (resultado.value) {
-                                    let diag = resultado.value;
-                                    id = $(this).val();
-                                    $.ajax({
-                                        url: "/cantidad",
-                                        type: "POST",
-                                        data: {
-                                            id: id,
-                                            receta: $('#idreceta').val(),
-                                            // diagnostico: $('#diagnostico').val(),
-                                            // receta: $('#receta').val(),
-                                            cant: diag
-                                        },
-                                        success: function (response) {
-                                            Swal.fire({
-                                                title: 'Cantidad Actualizada!',
-                                                text: 'Gracias por preferirnos!!!',
-                                                icon: 'success',
-                                                confirmButtonText: "Aceptar",
-                                            }).then(() => {
-                                                setTimeout(() => {
-                                                    $('#tabla').html(response);
-                                                    $('#tabla').append(response.htmlresponse);
-                                                    $('#monto').val(parseInt($('#total').val()));
+                                                        $('#total1').text($('#monto').val() + " C$");
+                                                        buscarReceta($('#idreceta').val());
+                                                    }, 200);
 
-                                                    $('#total1').text($('#monto').val() + " C$");
-                                                    buscarReceta($('#idreceta').val());
-                                                }, 200);
-
-                                            });
-                                        },
-                                        error: function (error) {
-                                            //console.log(error);
-                                        },
-                                    });
-                                }
-                            });
-                    });
-                    $("#fact button[name=delete]").click(function () {
-                        id = $(this).val();
-                        $.ajax({
-                            url: "/eliminar",
-                            type: "POST",
-                            data: {
-                                id: id,
-                                flag: "fact",
-                                receta: $('#idreceta').val()
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    title: 'Producto Eliminado!',
-                                    text: 'Gracias por preferirnos!!!',
-                                    icon: 'success',
-                                    confirmButtonText: "Aceptar",
-                                }).then(() => {
-                                    setTimeout(() => {
-                                        $('#tabla').html(response);
-                                        $('#tabla').append(response.htmlresponse);
-                                        $('#monto').val(parseInt($('#total').val()) - parseInt($('#monto').val()));
-                                        $('#total1').text($('#monto').val() + " C$");
-                                        buscarReceta($('#idreceta').val());
-                                    }, 200);
-
+                                                });
+                                            },
+                                            error: function (error) {
+                                                //console.log(error);
+                                            },
+                                        });
+                                    }
                                 });
-                            },
-                            error: function (error) {
-                                //console.log(error);
-                            },
                         });
-                    });
+
+                        $("#fact button[name=delete]").click(function () {
+                            id = $(this).val();
+                            $.ajax({
+                                url: "/eliminar",
+                                type: "POST",
+                                data: {
+                                    id: id,
+                                    flag: "fact",
+                                    receta: $('#idreceta').val()
+                                },
+                                success: function (response) {
+                                    Swal.fire({
+                                        title: 'Producto Eliminado!',
+                                        text: 'Gracias por preferirnos!!!',
+                                        icon: 'success',
+                                        confirmButtonText: "Aceptar",
+                                    }).then(() => {
+                                        setTimeout(() => {
+
+                                            $('#tabla').html(response);
+                                            $('#tabla').append(response.htmlresponse);
+                                            $('#monto').val(parseInt($('#total').val()) - parseInt($('#monto').val()));
+                                            $('#total1').text($('#monto').val() + " C$");
+                                            buscarReceta($('#idreceta').val());
+                                        }, 200);
+
+                                    });
+                                },
+                                error: function (error) {
+                                    //console.log(error);
+                                },
+                            });
+                        });
+
+                    } else {
+                        flaglista = false
+                        $('.fact-rap').show();
+                    }
+
                 },
                 error: function (error) {
                     //console.log(error);
@@ -288,6 +323,420 @@
 
             buscarReceta($('#idreceta').val());
         });
+        //////  FACTURA RAPIDA  ///////////////////
+        function buscarproducto(id) {
+            if (id == "") {
+                $("#fact button[name=delete]").click(function () {
+                    $('#listaproducto').empty();
+                    id = $(this).val();
+                    $.ajax({
+                        url: "/eliminar",
+                        type: "POST",
+                        data: {
+                            id: id,
+                            flag: "fact-rapida",
+                            idventa: $('#venta').val()
+                        },
+                        success: function (response) {
+                            Swal.fire({
+                                title: 'Producto Eliminado!',
+                                text: 'Gracias por preferirnos!!!',
+                                icon: 'success',
+                                confirmButtonText: "Aceptar",
+                            }).then(() => {
+                                setTimeout(() => {
+                                    $('#tabla').html(response);
+                                    $('#tabla').append(response.htmlresponse);
+                                    if ($('#total2').val() == "None") {
+                                        $('#monto').val("0");
+                                        flaglista = false
+                                        $('#total1').text($('#monto').val() + " C$");
+                                    } else {
+                                        $('#monto').val(parseInt($('#total2').val()));
+                                        $('#total1').text($('#monto').val() + " C$");
+                                    }
+
+                                    $('#buscprod').val('')
+                                    buscarproducto($('#buscprod').val());
+                                }, 200);
+
+                            });
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+                });
+
+                $("#fact button[name=edit]").click(function () {
+                    $('#listaproducto').empty();
+                    id = $(this).val();
+                    Swal
+                        .fire({
+                            title: "Ingrese La cantidad de " + id,
+                            input: "text",
+                            showCancelButton: true,
+                            confirmButtonText: "Guardar",
+                            cancelButtonText: "Cancelar",
+                        })
+                        .then(resultado => {
+
+                            if (resultado.value != "") {
+
+                                let diag1 = resultado.value;
+                                id = $(this).val();
+                                $.ajax({
+                                    url: "/cantidad1",
+                                    type: "POST",
+                                    data: {
+                                        id: id,
+                                        idventa: $('#venta').val(),
+                                        // diagnostico: $('#diagnostico').val(),
+                                        // receta: $('#receta').val(),
+                                        cant: diag1
+                                    },
+                                    success: function (response) {
+                                        Swal.fire({
+                                            title: 'Cantidad Actualizada!',
+                                            text: 'Gracias por preferirnos!!!',
+                                            icon: 'success',
+                                            confirmButtonText: "Aceptar",
+                                        }).then(() => {
+                                            setTimeout(() => {
+                                                $('#tabla').html(response);
+                                                $('#tabla').append(response.htmlresponse);
+                                                $('#monto').val(parseInt($('#total2').val()));
+                                                flaglista = true
+                                                $('#listaproducto').empty();
+                                                $('#total1').text($('#monto').val() + " C$");
+                                                $('#buscprod').val('')
+                                                buscarproducto($('#buscprod').val());
+
+
+                                            }, 200);
+
+                                        });
+                                    },
+                                    error: function (error) {
+                                        //console.log(error);
+                                    },
+                                });
+                            }
+                        });
+                });
+
+            } else {
+
+
+                $.ajax({
+                    url: "/buscar",
+                    type: "POST",
+                    data: {
+                        producto: id,
+                        flag: "producto"
+
+                    },
+                    success: function (response) {
+                        if (response == "No") {
+                            $('#listaproducto').empty();
+                            Swal.fire({
+                                title: 'Producto no encontrado!',
+                                text: 'Busque otro producto!!!',
+                                icon: 'error',
+                                confirmButtonText: "Aceptar",
+                            }).then(() => {
+                                $('#listaproducto').empty();
+                            });
+                        } else {
+                            $('.sin-rec').hide();
+                            $('#listaproducto').html(response);
+                            $('#listaproducto').append(response.htmlresponse);
+                            $('#listaproducto').show();
+                            $("#fact button[name=edit]").click(function () {
+                                $('#listaproducto').empty();
+                                id = $(this).val();
+                                Swal
+                                    .fire({
+                                        title: "Ingrese La cantidad de " + id,
+                                        input: "text",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Guardar",
+                                        cancelButtonText: "Cancelar",
+                                    })
+                                    .then(resultado => {
+
+                                        if (resultado.value != "") {
+
+                                            let diag1 = resultado.value;
+                                            id = $(this).val();
+                                            $.ajax({
+                                                url: "/cantidad1",
+                                                type: "POST",
+                                                data: {
+                                                    id: id,
+                                                    idventa: $('#venta').val(),
+                                                    // diagnostico: $('#diagnostico').val(),
+                                                    // receta: $('#receta').val(),
+                                                    cant: diag1
+                                                },
+                                                success: function (response) {
+                                                    Swal.fire({
+                                                        title: 'Cantidad Actualizada!',
+                                                        text: 'Gracias por preferirnos!!!',
+                                                        icon: 'success',
+                                                        confirmButtonText: "Aceptar",
+                                                    }).then(() => {
+                                                        setTimeout(() => {
+                                                            $('#tabla').html(response);
+                                                            $('#tabla').append(response.htmlresponse);
+                                                            $('#monto').val(parseInt($('#total2').val()));
+                                                            flaglista = true
+                                                            $('#listaproducto').empty();
+                                                            $('#total1').text($('#monto').val() + " C$");
+                                                            $('#buscprod').val('')
+                                                            buscarproducto($('#buscprod').val());
+
+
+                                                        }, 200);
+
+                                                    });
+                                                },
+                                                error: function (error) {
+                                                    //console.log(error);
+                                                },
+                                            });
+                                        }
+                                    });
+                            });
+
+                            $("#fact button[name=delete]").click(function () {
+                                $('#listaproducto').empty();
+                                id = $(this).val();
+                                $.ajax({
+                                    url: "/eliminar",
+                                    type: "POST",
+                                    data: {
+                                        id: id,
+                                        flag: "fact-rapida",
+                                        idventa: $('#venta').val()
+                                    },
+                                    success: function (response) {
+                                        Swal.fire({
+                                            title: 'Producto Eliminado!',
+                                            text: 'Gracias por preferirnos!!!',
+                                            icon: 'success',
+                                            confirmButtonText: "Aceptar",
+                                        }).then(() => {
+                                            setTimeout(() => {
+                                                $('#tabla').html(response);
+                                                $('#tabla').append(response.htmlresponse);
+                                                if ($('#total2').val() == "None") {
+                                                    $('#monto').val("0");
+                                                    flaglista = false
+                                                    $('#total1').text($('#monto').val() + " C$");
+                                                } else {
+                                                    $('#monto').val(parseInt($('#total2').val()));
+                                                    $('#total1').text($('#monto').val() + " C$");
+                                                }
+
+                                                $('#buscprod').val('')
+                                                buscarproducto($('#buscprod').val());
+                                            }, 200);
+
+                                        });
+                                    },
+                                    error: function (error) {
+                                        //console.log(error);
+                                    },
+                                });
+                            });
+
+                            $("#busqueda button[name=det]").click(function () {
+                                if ($('#cant').val() == "") {
+                                    Swal.fire({
+                                        title: 'Cantidad no encontrada!',
+                                        text: 'Debe ingresar una cantidad!!!',
+                                        icon: 'error',
+                                        confirmButtonText: "Aceptar",
+                                    }).then(() => {
+                                    });
+                                } else {
+
+                                    id = $(this).val();
+                                    $.ajax({
+                                        url: "/insertarVenta",
+                                        type: "POST",
+                                        data: {
+                                            prod: id,
+                                            idventa: $('#venta').val(),
+                                            cant: $('#cant').val()
+
+                                        },
+                                        success: function (response) {
+                                            flaglista = true
+                                            $('#tabla').html(response);
+                                            $('#tabla').append(response.htmlresponse);
+                                            $('#listaproducto').empty();
+                                            $('#monto').val(parseInt($('#total2').val()));
+                                            $('#total1').text($('#monto').val() + " C$");
+                                            $('#buscprod').val('')
+                                            buscarproducto($('#buscprod').val());
+
+
+                                        },
+                                        error: function (error) {
+                                            //console.log(error);
+                                        },
+                                    });
+
+                                }
+
+                            });
+
+
+                        }
+
+
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
+            }
+        }
+        $("#buscprod").keyup(function () {
+            buscarproducto($('#buscprod').val());
+        });
+
+        function pay() {
+
+            if ($('#idreceta').val() == "") {
+                if (flaglista == true && $('#cliente').val() != "") {
+                    //quiere decir que es factura rapida
+                    $.ajax({
+                        url: "/generarpdf",
+                        type: "POST",
+                        data: {
+                            flag: "rapida",
+                            idventa: $('#venta').val()
+                        },
+                        success: function (response) {
+                            $('#pdf').html(response);
+                            $('#pdf').append(response.htmlresponse);
+                            // Escuchamos el click del botón
+                            elementoParaConvertir = document.querySelector(".div-verpdf"); // <-- Aquí puedes elegir cualquier elemento del DOM
+                            elementoParaConvertir.style.display = 'block'
+                            html2pdf()
+                                .set({
+                                    margin: 0.5,
+                                    filename: 'documento.pdf',
+                                    image: {
+                                        type: 'jpeg',
+                                        quality: 0.98
+                                    },
+                                    html2canvas: {
+                                        scale: 3, // A mayor escala, mejores gráficos, pero más peso
+                                        letterRendering: true,
+                                    },
+                                    jsPDF: {
+                                        unit: "in",
+                                        format: "letter",
+                                        orientation: 'portrait' // landscape o portrait
+                                    }
+                                })
+
+                                .from(elementoParaConvertir)
+                                .save()
+                            setTimeout(() => {
+                                elementoParaConvertir.style.display = 'none'
+                                Swal.fire(
+                                    'Good job!',
+                                    'You clicked the button!',
+                                    'success'
+                                )
+                                window.location = '/facturacion'
+                            }, 1000)
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+
+                } else {
+                    Swal.fire({
+                        title: 'Datos Faltantes!',
+                        text: 'Rellene los campos faltantes!!!',
+                        icon: 'error',
+                        confirmButtonText: "Aceptar",
+                    }).then(() => {
+                    });
+                }
+            } else {
+                if (flaglista == true && $('#idreceta').val() != "") {
+                    var id = $('#idreceta').val();
+                    //quiere decir que es factura rapida
+                    $.ajax({
+                        url: "/generarpdf",
+                        type: "POST",
+                        data: {
+                            id: id,
+                            flag: "receta",
+                            idventa: $('#venta').val()
+                        },
+                        success: function (response) {
+                            $('#pdf').html(response);
+                            $('#pdf').append(response.htmlresponse);
+                            // Escuchamos el click del botón
+                            elementoParaConvertir = document.querySelector(".div-verpdf"); // <-- Aquí puedes elegir cualquier elemento del DOM
+                            elementoParaConvertir.style.display = 'block'
+                            html2pdf()
+                                .set({
+                                    margin: 0.5,
+                                    filename: 'documento.pdf',
+                                    image: {
+                                        type: 'jpeg',
+                                        quality: 0.98
+                                    },
+                                    html2canvas: {
+                                        scale: 3, // A mayor escala, mejores gráficos, pero más peso
+                                        letterRendering: true,
+                                    },
+                                    jsPDF: {
+                                        unit: "in",
+                                        format: "letter",
+                                        orientation: 'portrait' // landscape o portrait
+                                    }
+                                })
+
+                                .from(elementoParaConvertir)
+                                .save()
+                            setTimeout(() => {
+                                elementoParaConvertir.style.display = 'none'
+                                Swal.fire(
+                                    'Good job!',
+                                    'You clicked the button!',
+                                    'success'
+                                )
+                                window.location = '/facturacion'
+                            }, 1000)
+
+                        },
+                        error: function (error) {
+                            //console.log(error);
+                        },
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Datos Faltantes!',
+                        text: 'Rellene los campos faltantes!!!',
+                        icon: 'error',
+                        confirmButtonText: "Aceptar",
+                    }).then(() => {
+                    });
+                    //es receta
+                }
+            }
+        }
 
     </script>
     {%endblock%}

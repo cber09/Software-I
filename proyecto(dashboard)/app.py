@@ -146,33 +146,45 @@ def eliminar():
     if request.method == "POST":
         id = request.form['id']
         flag = request.form['flag']
-        receta = request.form['receta']
+        
         if flag == "fact":
+            receta = request.form['receta']
             db1.execute('Update DetalleReceta set IdEstado = :est where Medicamento = :id',est = 2,id = id)
         
-        recetas = db1.execute('select Medicamento from DetalleReceta Where IdReceta = :name AND IdEstado = 1',name = receta)
-        cantidad = 0    
-        print("receta: ",recetas)
-        medicamentobase = {}
-        nohay = []
-        hay = []
-            
-        total = 0
-        for i in recetas:
+            recetas = db1.execute('select Medicamento from DetalleReceta Where IdReceta = :name AND IdEstado = 1',name = receta)
+            cantidad = 0    
+            print("receta: ",recetas)
+            medicamentobase = {}
+            nohay = []
+            hay = []
                 
-            medicamentoencontrado = db1.execute('select Nombre,Precio from Producto where Nombre = :name', name = i['Medicamento'])
-                
-            if medicamentoencontrado:
-                hay.append(medicamentoencontrado)
-                cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name',name = i['Medicamento'])
-                total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'] )
-
-            else:
+            total = 0
+            for i in recetas:
                     
-                nohay.append(medicamentoencontrado)
-            
+                medicamentoencontrado = db1.execute('select Nombre,Precio from Producto where Nombre = :name', name = i['Medicamento'])
+                    
+                if medicamentoencontrado:
+                    hay.append(medicamentoencontrado)
+                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name',name = i['Medicamento'])
+                    total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'] )
 
-        return render_template('sistema/tabla-factura.html',productos = hay,total = total,cant  = cantidad, nohay = nohay)  
+                else:
+                        
+                    nohay.append(medicamentoencontrado)
+                
+
+            return render_template('sistema/tabla-factura.html',productos = hay,total = total,cant  = cantidad, nohay = nohay)  
+        elif flag == "fact-rapida":
+            idventa = request.form['idventa']
+            db1.execute('DELETE FROM DetalleVenta WHERE IdDetalle = :id',id = id)
+            sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
+            print(sumatotal[0]['total'])
+            db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = idventa)
+            nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = idventa)
+        
+            return render_template('sistema/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])         
+
+
 
 @app.route('/buscarusu', methods =["POST","GET"])
 def buscarusu():
@@ -239,8 +251,11 @@ def buscar():
             
             print("hay vale:",hay)
             print("no hay: ",nohay) 
-            print(cantidades)     
-            return render_template('sistema/tabla-factura.html',productos = hay,total = total,cant  = cantidades,nohay = nohay)
+            print(cantidades)
+            if hay:
+                return render_template('sistema/tabla-factura.html',productos = hay,total = total,cant  = cantidades,nohay = nohay)
+            else:
+                return "no"
 
 @app.route('/cantidad', methods =["POST","GET"])
 def cantidad():
@@ -313,6 +328,51 @@ def insertarReceta():
             receta = db1.execute('SELECT * from DetalleReceta Where IdReceta = :id',id = id[0]['Id_Receta'])
         return render_template ('tabla-productos.html',receta = receta)
 
+@app.route('/insertarVenta', methods =["POST","GET"])
+def insertarVenta():
+    if request.method == "POST":
+        idventa = request.form['idventa']
+        prod = request.form['prod']
+        cantidad = request.form['cant']
+        hi = datetime.now()
+        precio = db1.execute('SELECT Id_Producto,Precio from Producto WHERE Nombre = :name',name = prod)
+        
+        subtotal = float(precio[0]['Precio']) * float(cantidad)
+
+        verificacion = db1.execute('SELECT * FROM Ventas Where Id_Venta = :id', id = idventa)
+        if not verificacion:
+            nuevoid = db1.execute('INSERT INTO Ventas VALUES(:id,:emp,:fecha,:total)',id = idventa,emp = session["user_Id"], fecha = datetime.date(hi),total = 0 )
+            db1.execute('INSERT INTO DetalleVenta VALUES(null,:idv,:idpro,:cant,:sub,null)',idv= nuevoid,idpro = precio[0]['Id_Producto'] ,cant = cantidad,sub =subtotal)
+            sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =nuevoid)
+            db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = nuevoid)
+            nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = nuevoid)
+        else:
+            db1.execute('INSERT INTO DetalleVenta VALUES(null,:idv,:idpro,:cant,:sub,null)',idv= idventa,idpro = precio[0]['Id_Producto'] ,cant = cantidad,sub =subtotal)
+            sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
+            db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = idventa)
+            nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta = :idven',idven = idventa)
+        
+        return render_template('sistema/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])  
+
+@app.route('/cantidad1', methods =["POST","GET"])
+def cantidad1():
+    if request.method == "POST":
+        id = request.form['id']
+        idventa = request.form['idventa']
+        cantidad = request.form['cant']
+        idproducto = db1.execute('SELECT IdProducto from DetalleVenta WHERE IdDetalle = :name',name = id)
+        producto = db1.execute('SELECT Precio from Producto WHERE Id_Producto = :name',name = idproducto[0]['IdProducto'])
+        subtotal = float(producto[0]['Precio']) * float(cantidad)
+        db1.execute('UPDATE DetalleVenta set Cantidad = :cant, Subtotal = :sub WHERE IdDetalle = :id',cant = cantidad,sub = subtotal,id = id)
+        sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
+        print(sumatotal[0]['total'])
+        db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = idventa)
+        nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = idventa)
+        
+        return render_template('sistema/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])         
+
+
+
 @app.route('/orientacion', methods =["POST","GET"])
 def orientacion():
     if request.method == "POST":
@@ -326,6 +386,16 @@ def orientacion():
         
         receta = db1.execute('SELECT * from DetalleReceta Where IdReceta = :id',id = id[0]['Id_Receta'])
         return render_template ('tabla-productos.html',receta = receta)
+@app.route('/idventa', methods =["POST","GET"])
+def idventa():
+    if request.method == "POST":
+        receta = db1.execute('select Id_Venta from Ventas  order by(Id_Venta) DESC limit 1')
+        if not receta:
+            return "1"
+        else:
+            id = int(receta[0]['Id_Venta']) + 1
+            return str(id)    
+        
 
 @app.route('/oriedit', methods =["POST","GET"])
 def oriedit():
@@ -334,6 +404,46 @@ def oriedit():
         
         receta = db1.execute('SELECT * from DetalleReceta Where IdDetalleReceta = :id',id = id)
         return render_template ('sistema/modal.html', info = "producto", receta = receta)
+
+
+@app.route('/generarpdf', methods =["POST","GET"])
+def generarpdf():
+    if request.method == "POST":
+       
+        flag = request.form['flag']
+        if flag == "receta":
+            id = request.form['id']
+            idrec = db1.execute('select Id_Receta from Recetas order by Id_Receta desc')
+            recetas = db1.execute('SELECT * from DetalleReceta Where IdReceta = :id',id = idrec[0]['Id_Receta'])
+            nohay = []
+            hay = []
+            cantidades = []
+            cantidad = 0  
+            total = 0
+            cont = 0
+            for i in recetas:
+                
+                medicamentoencontrado = db1.execute('select p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name', name = i['Medicamento'])
+                
+                if medicamentoencontrado:
+                    hay.append(medicamentoencontrado)
+                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name',name = i['Medicamento'])
+                    cantidades.append(cantidad)
+                    print("cantidad receta: ",cantidad)
+                    total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'])
+
+                else:
+                    
+                    nohay.append(medicamentoencontrado)
+            print(hay)
+            
+            return render_template ('sistema/pdf-factura.html', info = hay, flag = flag)
+        elif flag == "rapida":
+            idventa = request.form['idventa']
+            nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = idventa)
+            print(nuevatabla)
+            return render_template ('sistema/pdf-factura.html', info = nuevatabla,flag = flag)
+
 
 ######################
 # clientes
