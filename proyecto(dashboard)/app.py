@@ -465,7 +465,7 @@ def correo():
             correoc = request.form['correo']
             usuario = request.form['loginUser']
             contraseña = request.form['loginPassword']
-            enviar_correo(app,"Bienvenido a Nuestra Familia",correoc,usuario,contraseña)
+            enviar_correo(app,"Bienvenido a Nuestra Familia",correoc,usuario,contraseña,"a","a")
             return "done"
         elif flag == "receta":
             consulta = request.form['cons']

@@ -16,6 +16,7 @@ def enviar_correo(app,title,recipient,usuario,contraseña,info,diagnostico):
     )  
     if usuario:
         msg.html = render_template('correo.html',usuario = usuario,contraseña = contraseña )
+        mail.send(msg)
     else:
         msg.html = render_template('correo-receta.html',receta = info,diag = diagnostico )
-    mail.send(msg)
+        mail.send(msg)
