@@ -20,13 +20,13 @@
                 <div class="main-top">
                     <ul class="navbar-nav" style="margin-left: 50px;">
                         <li class="nav-item d-none d-sm-inline-block">
-                            <a href="index3.html" class="nav-link">Home</a>
+
                         </li>
                         <li class="nav-item d-none d-sm-inline-block">
-                            <a href="#" class="nav-link">Contact</a>
+
                         </li>
                     </ul>
-                    <i class="fas fa-user-cog"></i>
+                    <i class="fas fa-user-cog" onclick="Info()"></i>
                 </div>
             </nav>
             <!-- /.content-header -->
@@ -40,13 +40,13 @@
                             <!-- small box -->
                             <div class="card cartas bg-info" style="padding: 5px;">
                                 <div class="inner">
-                                    <h3>150<sup style="font-size: 20px">$</sup></h3>
+                                    <h3>{{ventas}}<sup style="font-size: 20px">$</sup></h3>
                                     <p>Ventas por dia</p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-dollar-sign"></i>
                                 </div>
-                                <a href="#" class="card-footer">
+                                <a href="/ajuste" class="card-footer">
                                     Ver mas <i class="fas fa-arrow-circle-right"></i>
                                 </a>
                             </div>
@@ -57,14 +57,15 @@
                             <!-- small box -->
                             <div class="card cartas bg-success" style="padding: 5px;">
                                 <div class="inner">
-                                    <h3>5</h3>
+                                    <h3>{{cons}}</h3>
 
                                     <p>Consultas Pendientes</p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-user-md"></i>
                                 </div>
-                                <a href="#" class="card-footer">Ver mas <i class="fas fa-arrow-circle-right"></i></a>
+                                <a href="/consulta" class="card-footer">Ver mas <i
+                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <br>
@@ -73,14 +74,19 @@
                             <!-- small box -->
                             <div class="card cartas bg-warning" style="padding: 5px;">
                                 <div class="inner">
-                                    <h3>44</h3>
+                                    <h3>{{usuarios}}</h3>
 
                                     <p>Usuarios Registrados</p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-user"></i>
                                 </div>
+                                {%if rol == "Administrador"%}
+                                <a href="/usuario" class="card-footer">Ver mas <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                                {%else%}
                                 <a href="#" class="card-footer">Ver mas <i class="fas fa-arrow-circle-right"></i></a>
+                                {%endif%}
                             </div>
                         </div>
                         <br>
@@ -89,14 +95,19 @@
                             <!-- small box -->
                             <div class="card cartas bg-danger" style="padding: 5px;">
                                 <div class="inner">
-                                    <h3>4</h3>
+                                    <h3>{{empleados}}</h3>
 
                                     <p>Empleados Activos</p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-user-clock"></i>
                                 </div>
+                                {%if rol == "Administrador"%}
+                                <a href="/usuario" class="card-footer">Ver mas <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                                {%else%}
                                 <a href="#" class="card-footer">Ver mas <i class="fas fa-arrow-circle-right"></i></a>
+                                {%endif%}
                             </div>
                         </div>
                         <!-- ./col -->
@@ -146,14 +157,14 @@
                                             </h3>
                                             <div class="card-tools">
                                                 <div class="input-group input-group-sm" style="width: 150px; ">
-                                                    <input type="text" name="table_search"
+                                                    <!-- <input type="text" name="table_search"
                                                         class="form-control float-right" placeholder="Search">
 
                                                     <div class="input-group-append">
                                                         <button type="submit" class="btn btn-default">
                                                             <i class="fas fa-search"></i>
                                                         </button>
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </div>
@@ -170,11 +181,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    {%for i in clientes%}
                                                     <tr>
-                                                        <td>183</td>
-                                                        <td>John Doe</td>
-                                                        <td>Doggy</td>
-                                                        <td>8</td>
+                                                        <td>{{i.Id_Usuario}}</td>
+                                                        <td>{{i.cliente}}</td>
+                                                        <td>{{i.Mascota}}</td>
                                                         <td style="text-align: end;">
 
                                                             <button name="act1" id="act1"
@@ -182,30 +193,8 @@
                                                                     class="fas fa-solid fa-calendar-day"></i></button>
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>184</td>
-                                                        <td>Marcos Bonilla</td>
-                                                        <td>Zeus</td>
-                                                        <td>4</td>
-                                                        <td style="text-align: end;">
+                                                    {%endfor%}
 
-                                                            <button name="act2" id="act2"
-                                                                style="border: none; background: none" value="185"><i
-                                                                    class="fas fa-solid fa-calendar-day"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>185</td>
-                                                        <td>Mario Baltodano</td>
-                                                        <td>Firulais</td>
-                                                        <td>2</td>
-                                                        <td style="text-align: end;">
-
-                                                            <button name="act" id="act"
-                                                                style="border: none; background: none" value="185"><i
-                                                                    class="fas fa-solid fa-calendar-day"></i></button>
-                                                        </td>
-                                                    </tr>
 
                                                 </tbody>
                                             </table>
@@ -229,12 +218,37 @@
         </div>
     </div>
     <div id="cont"></div>
+    <div id="mi-info"></div>
     <input type="hidden" id="dale2" data-toggle="modal" data-target="#exampleModal" />
+    <input type="hidden" id="dale3" data-toggle="modal" data-target="#exampleModal1" />
+    <input type="hidden" id="mesuno" value="{{ventasmesuno}}">
+    <input type="hidden" id="mesdos" value="{{ventasmesdos}}">
+    <input type="hidden" id="mesactual" value="{{ventas}}">
     <script>
+        function Info() {
+            $.ajax({
+                url: "/miinfo",
+                type: "POST",
+                data: {
+                },
+                success: function (response) {
+                    $('#mi-info').html(response);
+                    $('#mi-info').append(response.htmlresponse);
+                    $("#dale3").click();
 
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        }
+        var mes1 = $('#mesuno').val();
+        var mes2 = $('#mesdos').val();
+        var mes3 = $('#mesactual').val();
         const ctx = document.getElementById('revenue-chart-canvas').getContext('2d');
-        var xValues = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
-        var yValues = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
+        var xValues = [5, 15, 25];
+        var yValues = [mes1, mes2, mes3];
 
         var myChart = new Chart("revenue-chart-canvas", {
             type: "line",

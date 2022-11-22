@@ -1,0 +1,145 @@
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Num:{{id}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    style="border: none; background: none">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="width: 100%;">
+                <form action="/actualizaremp" method="POST" id="okis">
+                    {%for list in info%}
+                    <div class="row mb-4">
+                        <input type="hidden" name="id" value="{{list.Id_Usuario}}">
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example1">Nombres</label>
+                                <input type="text" id="form3Example1" name="nombre" required value="{{list.Nombres}}"
+                                    class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example2">Apellidos</label>
+                                <input type="text" id="form3Example2" name="apellido" required
+                                    value="{{list.Apellidos}}" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Telefono Fijo</label>
+                                <input type="text" id="form3Example3" name="telfijo" required
+                                    value="{{list.TelefonoFijo}}" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Celular</label>
+                                <input type="text" id="form3Example3" name="celular" required value="{{list.Celular}}"
+                                    class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Estado</label>
+                                <input type="text" id="form3Example3" name="estado" required
+                                    value="{{list.NombreEstado}}" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Dirección</label>
+                            <textarea class="form-control" name="direccion" required id="exampleFormControlTextarea1"
+                                rows="3">{{list.Direccion}}</textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <label for=""><input type="checkbox" name="cambio"> Cambiar Credenciales</label>
+                    </div>
+                    <div class="row mb-4" id="credenciales" style="display: none;">
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Usuario</label>
+                            <input type="text" id="usuario" name="usuario" required value="{{list.Usuario}}"
+                                class="form-control" />
+
+                        </div>
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Contraseña</label>
+                            <input type="text" id="contra" name="contra" placeholder="Contraseña nueva"
+                                class="form-control" />
+
+                        </div>
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Contraseña</label>
+                            <input type="text" id="contra1" name="contra1" placeholder="Repita la contraseña"
+                                class="form-control" />
+                            <label id="mensaje_error" class="control-label col-md-12 text-danger"
+                                style="display: block;">Las
+                                constraseñas no coinciden</label>
+
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mb-4">
+                        ENVIAR
+                    </button>
+                    {%endfor%}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery UI -->
+<script>
+    $(document).ready(function () {
+        $('#mensaje_error').hide();
+        $('#usuario').hide();
+        $('#contra').hide();
+        $('#contra1').hide();
+        $('#okis input[name=cambio]').on('click', function () {
+            if ($(this).is(':checked')) {
+                // Hacer algo si el checkbox ha sido seleccionado
+                $('#credenciales').show();
+                $('#usuario').show();
+                $('#contra').show();
+                $('#contra1').show();
+                $('#usuario').attr("required", true);
+                $('#contra').attr("required", true);
+                $('#contra1').attr("required", true);
+                var cambioDePass = function () {
+                    var cont = $('#contra').val();
+                    var cont2 = $('#contra1').val();
+                    if (cont == cont2) {
+                        $('#mensaje_error').hide();
+                        $('#mensaje_error').attr("class", "control-label col-md-12 text-success");
+                        $('#mensaje_error').show();
+                        $('#mensaje_error').html("Las constraseñas si coinciden");
+                        $('#boton-enviar').removeAttr("disabled");
+                    } else {
+                        $('#mensaje_error').html("Las constraseñas no coinciden");
+                        $('#mensaje_error').attr("class", "control-label col-md-12 text-danger");
+                        $('#mensaje_error').show();
+                        $('#boton-enviar').attr("disabled", true);
+                    }
+                }
+
+                $("#contra").on('keyup', cambioDePass);
+                $("#contra1").on('keyup', cambioDePass);
+
+            } else {
+                // Hacer algo si el checkbox ha sido deseleccionado
+                $('#credenciales').hide();
+                $('#usuario').hide();
+                $('#contra').hide();
+                $('#contra1').hide();
+
+            }
+        })
+
+    });
+
+</script>

@@ -1,0 +1,520 @@
+{% extends "sistema/layout-sistema.html" %}
+
+
+{% block content %}
+<div class="admin">
+
+    <div class="row ">
+        <div class="col">
+            <h1>Administración</h1>
+        </div>
+    </div>
+    <div class="row" style="padding: 0 20px;">
+        <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+                aria-controls="nav-home" aria-selected="true">Inventario</a>
+            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+                aria-controls="nav-profile" aria-selected="false">Historial Ventas</a>
+            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab"
+                aria-controls="nav-contact" aria-selected="false">Historial Consultas</a>
+            <a class="nav-item nav-link" id="nav-prov-tab" data-toggle="tab" href="#nav-prov" role="tab"
+                aria-controls="nav-contact" aria-selected="false">Proveedores</a>
+        </div>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="row">
+                    <div class="col-4">
+                        <label class="form-label" for="form3Example3">Buscar</label>
+                        <input type="text" class="form-control" placeholder="buscar producto" id="prod-inv">
+                    </div>
+                </div>
+                <div id="tabla-inventario"></div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-6">
+                        <label class="form-label" for="form3Example3">Buscar por rango de fechas</label>
+                        <div class="form-group has-feedback">
+                            <i class="fas fa-calendar-alt form-control-feedback"></i>
+                            <input type="text" class="form-control" style="padding-left: 50px;" readonly
+                                name="daterange" value="" />
+                        </div>
+
+                        <style>
+                            .form-control-feedback {
+                                position: absolute;
+                                padding: 19px;
+                                pointer-events: none;
+                            }
+                        </style>
+
+
+
+                        <input type="hidden" id="inicio">
+                        <input type="hidden" id="final">
+
+                        <script>
+                            $(function () {
+                                $('input[name="daterange"]').daterangepicker({
+                                    opens: 'right'
+                                }, function (start, end, label) {
+                                    $('#inicio').val(start.format('YYYY-MM-DD'));
+                                    $('#final').val(end.format('YYYY-MM-DD'));
+                                    $.ajax({
+                                        url: "/buscarventa",
+                                        type: "POST",
+                                        data: {
+                                            inicio: $('#inicio').val(),
+                                            final: $('#final').val()
+                                        },
+                                        success: function (response) {
+                                            $('#tabla-ventas').html(response);
+                                            $('#tabla-ventas').append(response.htmlresponse);
+                                        },
+                                        error: function (error) {
+                                            //console.log(error);
+                                        },
+                                    });
+
+                                });
+                            });
+                        </script>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="form3Example3">Buscar por Tipo</label>
+                        <select class="form-control" name="tipo" id="tipo">
+                            <option value="" selected disabled hidden>Elegir opcion</option>
+                            <option value="todo">Todo</option>
+                            <option value="rapida">Factura rápida</option>
+                            <option value="receta">Recetas</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div id="tabla-ventas" style="padding-top: 20px;"></div>
+            </div>
+            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-6">
+                        <label class="form-label" for="form3Example3">Buscar por rango de fechas</label>
+                        <div class="form-group has-feedback">
+                            <i class="fas fa-calendar-alt form-control-feedback"></i>
+                            <input type="text" class="form-control" style="padding-left: 50px;" readonly
+                                name="daterange" value="" />
+                        </div>
+
+                        <style>
+                            .form-control-feedback {
+                                position: absolute;
+                                padding: 19px;
+                                pointer-events: none;
+                            }
+                        </style>
+
+
+
+                        <input type="hidden" id="inicio-consul">
+                        <input type="hidden" id="final-consul">
+
+                        <script>
+                            $(function () {
+                                $('input[name="daterange"]').daterangepicker({
+                                    opens: 'right'
+                                }, function (start, end, label) {
+                                    $('#inicio-consul').val(start.format('YYYY-MM-DD'));
+                                    $('#final-consul').val(end.format('YYYY-MM-DD'));
+                                    $.ajax({
+                                        url: "/buscarconsul",
+                                        type: "POST",
+                                        data: {
+                                            inicio: $('#inicio-consul').val(),
+                                            final: $('#final-consul').val()
+                                        },
+                                        success: function (response) {
+                                            $('#tabla-consultas').html(response);
+                                            $('#tabla-consultas').append(response.htmlresponse);
+                                        },
+                                        error: function (error) {
+                                            //console.log(error);
+                                        },
+                                    });
+
+                                });
+                            });
+                        </script>
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label" for="form3Example3">Buscar por</label>
+                        <select class="form-control" name="tipo1" id="tipo1">
+                            <option value="" selected disabled hidden>Elegir opcion</option>
+                            <option value="todo">Todo</option>
+                            <option value="mascota">Mascota</option>
+                            <option value="vet">Veterinario</option>
+
+                        </select>
+                    </div>
+                    <div class="col-2" id="buscar" style="display: none;">
+                        <label class="form-label" id="valor-buscar" for="form3Example3">Buscar por</label>
+                        <input type="text" class="form-control" name="" id="busc">
+                    </div>
+                </div>
+                <div id="tabla-consultas"></div>
+            </div>
+        </div>
+        <div class="row mb-4" style="margin-top: 50px;">
+            <div class="col">
+
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary" onclick="Respaldo()"><i class="fas fa-cloud"></i>
+                    Respaldo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function BuscarProd(id) {
+
+        $.ajax({
+            url: "/buscarinv",
+            type: "POST",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $('#tabla-inventario').html(response);
+                $('#tabla-inventario').append(response.htmlresponse);
+
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    }
+
+
+    $("#prod-inv").keyup(function () {
+        if ($("#prod-inv").val() != "") {
+            BuscarProd($("#prod-inv").val());
+        }
+
+    });
+    function Respaldo() {
+        (async () => {
+
+            /* inputOptions can be an object or Promise */
+            const inputOptions = new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        'Inventario': 'Inventario',
+                        'Usuarios': 'Usuarios',
+                        'Consultas': 'Consultas',
+                        'Ventas': 'Ventas',
+                        'Todo': 'Todo'
+                    })
+                }, 1000)
+            })
+
+            const { value: color } = await Swal.fire({
+                title: 'De que desea hacer el backup?',
+                input: 'radio',
+                inputOptions: inputOptions,
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Debe Escoger una opción!'
+                    }
+                }
+            })
+
+            if (color == "Usuarios") {
+                window.location = "{{ url_for( 'Backupusu') }}"
+
+
+            } else if (color == "Inventario") {
+                window.location = "{{ url_for( 'Backupinv') }}"
+
+            } else if (color == "Consultas") {
+                window.location = "{{ url_for( 'Backupcons') }}"
+            } else if (color == "Ventas") {
+                window.location = "{{ url_for( 'Backupvent') }}"
+            } else if (color == "Todo") {
+                $.ajax({
+                    url: "/base",
+                    type: "POST",
+                    data: {
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Generando Backup!',
+                            html: '',
+                            timer: 500,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading()
+                                const b = Swal.getHtmlContainer().querySelector('b')
+                                timerInterval = setInterval(() => {
+                                    b.textContent = Swal.getTimerLeft()
+                                }, 3000)
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval)
+                            }
+                        }).then((result) => {
+                            /* Read more about handling dismissals below */
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                Swal.fire(
+                                    'Respaldo Generado',
+                                    'Se genero el respaldo con éxito',
+                                    'success'
+                                )
+                            }
+                        })
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
+            }
+
+        })()
+    }
+    $(document).ready(function () {
+        $('#consul-data').DataTable({
+            "bLengthChange": false,
+            "bFilter": true,
+            "bInfo": false,
+            "bAutoWidth": false,
+            searching: false,
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+    });
+    $(document).ready(function () {
+        $.ajax({
+            url: "/inventario",
+            type: "POST",
+            data: {
+            },
+            success: function (response) {
+                $('#tabla-inventario').html(response);
+                $('#tabla-inventario').append(response.htmlresponse);
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+    $('#nav-home-tab').click(function () {
+        $.ajax({
+            url: "/inventario",
+            type: "POST",
+            data: {
+            },
+            success: function (response) {
+                $('#tabla-inventario').html(response);
+                $('#tabla-inventario').append(response.htmlresponse);
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+    $('#nav-profile-tab').click(function () {
+        $.ajax({
+            url: "/venta",
+            type: "POST",
+            data: {
+            },
+            success: function (response) {
+                $('#tabla-ventas').html(response);
+                $('#tabla-ventas').append(response.htmlresponse);
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+    $('#nav-prov-tab').click(function () {
+        $.ajax({
+            url: "/proveedores",
+            type: "POST",
+            data: {
+            },
+            success: function (response) {
+                $('#tabla-proveedores').html(response);
+                $('#tabla-proveedores').append(response.htmlresponse);
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+    $("select[name=tipo]").change(function () {
+        if ($('select[name=tipo]').val() == "receta") {
+            $.ajax({
+                url: "/tipoVenta",
+                type: "POST",
+                data: {
+                    tipo: "receta"
+                },
+                success: function (response) {
+                    $('#tabla-ventas').html(response);
+                    $('#tabla-ventas').append(response.htmlresponse);
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        } else if ($('select[name=tipo]').val() == "rapida") {
+            $.ajax({
+                url: "/tipoVenta",
+                type: "POST",
+                data: {
+                    tipo: "rapida"
+                },
+                success: function (response) {
+                    $('#tabla-ventas').html(response);
+                    $('#tabla-ventas').append(response.htmlresponse);
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        } else if ($('select[name=tipo]').val() == "todo") {
+            $.ajax({
+                url: "/tipoVenta",
+                type: "POST",
+                data: {
+                    tipo: "todo"
+                },
+                success: function (response) {
+                    $('#tabla-ventas').html(response);
+                    $('#tabla-ventas').append(response.htmlresponse);
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        }
+    });
+
+
+    $('#nav-contact-tab').click(function () {
+        $.ajax({
+            url: "/consultahist",
+            type: "POST",
+            data: {
+            },
+            success: function (response) {
+                $('#tabla-consultas').html(response);
+                $('#tabla-consultas').append(response.htmlresponse);
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+        $("select[name=tipo1]").change(function () {
+            busc = $('select[name=tipo1]').val();
+            $('#busc').val("");
+            if (busc == "todo") {
+                $('#buscar').hide();
+                $.ajax({
+                    url: "/tipoConsulta",
+                    type: "POST",
+                    data: {
+                        tipo: busc,
+                        val: "",
+                    },
+                    success: function (response) {
+                        $('#tabla-consultas').html(response);
+                        $('#tabla-consultas').append(response.htmlresponse);
+
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
+            } else {
+                $('#buscar').show();
+                function mandarbusqueda(val) {
+                    if (val != "") {
+
+
+                        $('#tabla-consultas').empty()
+                        $.ajax({
+                            url: "/tipoConsulta",
+                            type: "POST",
+                            data: {
+                                tipo: busc,
+                                val: $('#busc').val(),
+                            },
+                            success: function (response) {
+                                $('#tabla-consultas').html(response);
+                                $('#tabla-consultas').append(response.htmlresponse);
+
+                            },
+                            error: function (error) {
+                                //console.log(error);
+                            },
+                        });
+                    } else {
+                        $('#busc').val("");
+                        $.ajax({
+                            url: "/tipoConsulta",
+                            type: "POST",
+                            data: {
+                                tipo: "todo",
+                                val: "",
+                            },
+                            success: function (response) {
+                                $('#tabla-consultas').html(response);
+                                $('#tabla-consultas').append(response.htmlresponse);
+                            },
+                            error: function (error) {
+                                //console.log(error);
+                            },
+                        });
+                    }
+                }
+
+                $('#busc').keyup(function () {
+                    mandarbusqueda($('#busc').val());
+                });
+            }
+
+
+
+        });
+
+    });
+</script>
+{%endblock%}

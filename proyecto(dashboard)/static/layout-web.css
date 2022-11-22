@@ -1,16 +1,16 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
 * {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   outline: none;
   border: none;
   text-decoration: none;
   text-transform: capitalize;
-  -webkit-transition: .2s linear;
-  transition: .2s linear;
+  -webkit-transition: 0.2s linear;
+  transition: 0.2s linear;
 }
 
 html {
@@ -51,7 +51,7 @@ section {
 .btn {
   display: inline-block;
   margin-top: 1rem;
-  padding: .8rem 2.8rem;
+  padding: 0.8rem 2.8rem;
   border-radius: 5rem;
   border-top-left-radius: 0;
   border: 0.2rem solid #130f40;
@@ -73,15 +73,15 @@ section {
   width: 100%;
   background: #130f40;
   z-index: -1;
-  -webkit-transition: .2s linear;
-  transition: .2s linear;
+  -webkit-transition: 0.2s linear;
+  transition: 0.2s linear;
   -webkit-clip-path: circle(0% at 0% 5%);
-          clip-path: circle(0% at 0% 5%);
+  clip-path: circle(0% at 0% 5%);
 }
 
 .btn:hover::before {
   -webkit-clip-path: circle(100%);
-          clip-path: circle(100%);
+  clip-path: circle(100%);
 }
 
 .btn:hover {
@@ -91,7 +91,7 @@ section {
 @-webkit-keyframes fadeIn {
   0% {
     -webkit-transform: translateY(3rem);
-            transform: translateY(3rem);
+    transform: translateY(3rem);
     opacity: 0;
   }
 }
@@ -99,7 +99,7 @@ section {
 @keyframes fadeIn {
   0% {
     -webkit-transform: translateY(3rem);
-            transform: translateY(3rem);
+    transform: translateY(3rem);
     opacity: 0;
   }
 }
@@ -110,26 +110,26 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   padding: 2rem 9%;
   -webkit-box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
-          box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
   -webkit-transform: translateY(-10rem);
-          transform: translateY(-10rem);
+  transform: translateY(-10rem);
 }
 
 .header.active {
   -webkit-transform: translateY(0rem);
-          transform: translateY(0rem);
+  transform: translateY(0rem);
 }
 
 .header .logo {
@@ -173,29 +173,27 @@ section {
   border-radius: 1rem;
   background: #fff;
   -webkit-box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
-          box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
   padding: 2rem;
   display: none;
 }
 
-
-
 .header .login-form.active {
   display: block;
-  -webkit-animation: fadeIn .4s linear;
-          animation: fadeIn .4s linear;
+  -webkit-animation: fadeIn 0.4s linear;
+  animation: fadeIn 0.4s linear;
 }
 
 .header .login-form h3 {
   color: #130f40;
   font-size: 2.5rem;
-  padding-bottom: .5rem;
+  padding-bottom: 0.5rem;
 }
 
 .header .login-form .box {
   width: 100%;
   border-bottom: 0.2rem solid #130f40;
-  border-width: .1rem;
+  border-width: 0.1rem;
   padding: 1.5rem 0;
   font-size: 1.6rem;
   color: #130f40;
@@ -208,9 +206,9 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: .5rem;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.5rem;
   padding: 1rem 0;
 }
 
@@ -235,11 +233,11 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   margin-top: 1rem;
 }
 
@@ -253,11 +251,6 @@ section {
   text-decoration: underline;
 }
 
-
-
-
-
-
 .header .register-form {
   position: absolute;
   top: 120%;
@@ -268,29 +261,27 @@ section {
   border-radius: 1rem;
   background: #fff;
   -webkit-box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
-          box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
   padding: 2rem;
   display: none;
 }
 
-
-
 .header .register-form.active {
   display: block;
-  -webkit-animation: fadeIn .4s linear;
-          animation: fadeIn .4s linear;
+  -webkit-animation: fadeIn 0.4s linear;
+  animation: fadeIn 0.4s linear;
 }
 
 .header .register-form h3 {
   color: #130f40;
   font-size: 2.5rem;
-  padding-bottom: .5rem;
+  padding-bottom: 0.5rem;
 }
 
 .header .register-form .box {
   width: 100%;
   border-bottom: 0.2rem solid #130f40;
-  border-width: .1rem;
+  border-width: 0.1rem;
   padding: 1.5rem 0;
   font-size: 1.6rem;
   color: #130f40;
@@ -303,9 +294,9 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: .5rem;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.5rem;
   padding: 1rem 0;
 }
 
@@ -330,11 +321,11 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   margin-top: 1rem;
 }
 
@@ -348,11 +339,6 @@ section {
   text-decoration: underline;
 }
 
-
-
-
-
-
 #menu-btn {
   display: none;
 }
@@ -363,11 +349,11 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
   background: url(../static/img/home_bg_img.jpg) no-repeat;
   background-position: center;
   background-size: cover;
@@ -414,17 +400,17 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   gap: 2rem;
 }
 
 .about .image {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 40rem;
-          flex: 1 1 40rem;
+  -ms-flex: 1 1 40rem;
+  flex: 1 1 40rem;
 }
 
 .about .image img {
@@ -433,8 +419,8 @@ section {
 
 .about .content {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 40rem;
-          flex: 1 1 40rem;
+  -ms-flex: 1 1 40rem;
+  flex: 1 1 40rem;
 }
 
 .about .content h3 {
@@ -459,18 +445,18 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   padding: 2rem 0;
 }
 
 .dog-food .image,
 .cat-food .image {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 40rem;
-          flex: 1 1 40rem;
+  -ms-flex: 1 1 40rem;
+  flex: 1 1 40rem;
 }
 
 .dog-food .image img,
@@ -481,8 +467,8 @@ section {
 .dog-food .content,
 .cat-food .content {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 40rem;
-          flex: 1 1 40rem;
+  -ms-flex: 1 1 40rem;
+  flex: 1 1 40rem;
   text-align: center;
   padding: 2rem;
 }
@@ -510,7 +496,7 @@ section {
 .cat-food .content .amount {
   font-size: 3.5rem;
   color: #130f40;
-  padding: .5rem 0;
+  padding: 0.5rem 0;
 }
 
 .dog-food .content a img,
@@ -522,19 +508,19 @@ section {
 .dog-food .content a:hover img,
 .cat-food .content a:hover img {
   -webkit-transform: rotate(15deg);
-          transform: rotate(15deg);
+  transform: rotate(15deg);
 }
 
 .cat-food {
   -ms-flex-wrap: wrap-reverse;
-      flex-wrap: wrap-reverse;
+  flex-wrap: wrap-reverse;
 }
 
 .shop .box-container {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (minmax(30rem, 1fr))[auto-fit];
-      grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  -ms-grid-columns: (minmax(30rem, 1fr)) [auto-fit];
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
   gap: 1.5rem;
 }
 
@@ -545,12 +531,12 @@ section {
 
 .shop .box-container .box:hover .image img {
   -webkit-transform: scale(1.1);
-          transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .shop .box-container .box:hover .icons {
   -webkit-transform: translateX(0rem);
-          transform: translateX(0rem);
+  transform: translateX(0rem);
 }
 
 .shop .box-container .box .image {
@@ -563,7 +549,7 @@ section {
   height: 100%;
   width: 100%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 .shop .box-container .box .icons {
@@ -572,7 +558,7 @@ section {
   right: 2rem;
   z-index: 10;
   -webkit-transform: translateX(10rem);
-          transform: translateX(10rem);
+  transform: translateX(10rem);
 }
 
 .shop .box-container .box .icons a {
@@ -600,7 +586,7 @@ section {
 .shop .box-container .box .content h3 {
   font-size: 2.2rem;
   color: #130f40;
-  padding-bottom: .5rem;
+  padding-bottom: 0.5rem;
 }
 
 .shop .box-container .box .content .amount {
@@ -611,8 +597,8 @@ section {
 .services .box-container {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (minmax(30rem, 1fr))[auto-fit];
-      grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  -ms-grid-columns: (minmax(30rem, 1fr)) [auto-fit];
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
   gap: 1.5rem;
 }
 
@@ -629,7 +615,7 @@ section {
 }
 
 .services .box-container .box:hover {
-  border-radius: .5rem;
+  border-radius: 0.5rem;
 }
 
 .services .box-container .box i {
@@ -640,7 +626,7 @@ section {
   color: #fff;
   background: #e67e22;
   border-radius: 50%;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .services .box-container .box h3 {
@@ -652,15 +638,15 @@ section {
 .plan .box-container {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (minmax(30rem, 1fr))[auto-fit];
-      grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  -ms-grid-columns: (minmax(30rem, 1fr)) [auto-fit];
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
   gap: 1.5rem;
 }
 
 .plan .box-container .box {
   position: relative;
   padding: 2rem;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   position: relative;
   margin-bottom: 2rem;
   background: #eee;
@@ -701,11 +687,11 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   font-size: 1.4rem;
   color: #666;
   padding: 1rem 0;
@@ -725,28 +711,18 @@ section {
   font-size: 3rem;
 }
 
-
-
-
-
-
-
-
-
-
-
 .consultas .box-container {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (minmax(30rem, 1fr))[auto-fit];
-      grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  -ms-grid-columns: (minmax(30rem, 1fr)) [auto-fit];
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
   gap: 1.5rem;
 }
 
 .consultas .box-container .box {
   position: relative;
   padding: 2rem;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   position: relative;
   margin-bottom: 2rem;
   background: #eee;
@@ -786,11 +762,11 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   font-size: 1.4rem;
   color: #666;
   padding: 1rem 0;
@@ -816,17 +792,17 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   gap: 3rem;
 }
 
 .contact .image {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 40rem;
-          flex: 1 1 40rem;
+  -ms-flex: 1 1 40rem;
+  flex: 1 1 40rem;
 }
 
 .contact .image img {
@@ -835,8 +811,8 @@ section {
 
 .contact form {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 40rem;
-          flex: 1 1 40rem;
+  -ms-flex: 1 1 40rem;
+  flex: 1 1 40rem;
   padding: 2rem 7%;
 }
 
@@ -855,10 +831,11 @@ section {
   color: #130f40;
 }
 
-.contact form .box, .contact form textarea {
+.contact form .box,
+.contact form textarea {
   width: 100%;
   border-bottom: 0.2rem solid #130f40;
-  border-width: .1rem;
+  border-width: 0.1rem;
   font-size: 1.6rem;
   text-transform: none;
   color: #130f40;
@@ -893,10 +870,10 @@ section {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   gap: 1.5rem;
 }
 
@@ -914,7 +891,7 @@ section {
 }
 
 .footer .share a i {
-  padding-right: .5rem;
+  padding-right: 0.5rem;
 }
 
 .footer .credit {
@@ -931,6 +908,11 @@ section {
 .footer .credit {
   color: White;
 }
+.imgRedonda {
+  width: 300px;
+  height: 300px;
+  border-radius: 150px;
+}
 
 @media (max-width: 991px) {
   html {
@@ -944,8 +926,8 @@ section {
   }
   .home {
     -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
     background-position: right;
   }
   .home .content {
@@ -968,11 +950,11 @@ section {
     right: 0;
     background: #fff;
     -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-            clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
   }
   .header .navbar.active {
     -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   }
   .header .navbar a {
     display: block;

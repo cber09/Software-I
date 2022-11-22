@@ -19,9 +19,6 @@
                     <div class="col">
                         <h1>Facturación</h1>
                     </div>
-                    <div class="col">
-                        <i class="fas fa-user-cog"></i>
-                    </div>
 
                 </div>
             </div>
@@ -54,7 +51,7 @@
                 <div class="col-2 fact-rap">
                     <div class="form-outline">
                         <label class="form-label" for="form3Example3">Cantidad</label>
-                        <input type="email" id="cant" maxlength="80" name="Cantidad" required class="form-control"
+                        <input type="number" id="cant" maxlength="80" name="Cantidad" required class="form-control"
                             placeholder="Cantidad" />
 
 
@@ -82,7 +79,7 @@
                                 <button class="btn btn-primary boton-input" type="button"><i
                                         class="fas fa-search"></i></button>
                             </div>
-                            <input type="text" class="form-control" placeholder="Codigo receta" aria-label="Username"
+                            <input type="number" class="form-control" placeholder="Codigo receta" aria-label="Username"
                                 aria-describedby="basic-addon1" id="idreceta">
                         </div>
 
@@ -94,7 +91,7 @@
                 <label class="form-label fact-rap" for="form3Example3">Factura Rápida</label>
                 <div class="col-6 fact-rap">
                     <div class="form-outline">
-                        <input type="email" id="cliente" maxlength="80" name="correo" required class="form-control"
+                        <input type="text" id="cliente" maxlength="80" name="correo" required class="form-control"
                             placeholder="Cliente" />
                         <label id="mensaje_error_input_c" class="control-label col-md-12 text-danger"
                             style="display: none;">Las
@@ -171,6 +168,7 @@
     <div id="contenermodal"> </div>
     <div id="pdf"></div>
     <script>
+        var consulta = 0
         var flaglista = false;
         $.ajax({
             url: "/idventa",
@@ -193,11 +191,49 @@
 
                 $('#total1').text($('#monto').val() + " C$");
                 flag = false
+                consulta = 0
+                $.ajax({
+                    url: "/quitarcons",
+                    type: "POST",
+                    data: {
+                        idventa: $('#venta').val()
+                    },
+                    success: function (response) {
+
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
+
+
             } else {
                 $('#monto').val(parseInt($('#monto').val()) + 50);
 
                 $('#total1').text($('#monto').val() + " C$");
                 flag = true
+                consulta = 50
+                $.ajax({
+                    url: "/añadircons",
+                    type: "POST",
+                    data: {
+                        idventa: $('#venta').val()
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Consulta Añadida!',
+                            text: 'Gracias por preferirnos!!!',
+                            icon: 'success',
+                            confirmButtonText: "Aceptar",
+                        }).then(() => {
+
+
+                        });
+                    },
+                    error: function (error) {
+                        //console.log(error);
+                    },
+                });
             }
 
         }
@@ -247,22 +283,34 @@
                                                 cant: diag
                                             },
                                             success: function (response) {
-                                                Swal.fire({
-                                                    title: 'Cantidad Actualizada!',
-                                                    text: 'Gracias por preferirnos!!!',
-                                                    icon: 'success',
-                                                    confirmButtonText: "Aceptar",
-                                                }).then(() => {
-                                                    setTimeout(() => {
-                                                        $('#tabla').html(response);
-                                                        $('#tabla').append(response.htmlresponse);
-                                                        $('#monto').val(parseInt($('#total').val()));
-
-                                                        $('#total1').text($('#monto').val() + " C$");
+                                                if (response == "NoStock") {
+                                                    Swal.fire({
+                                                        title: 'No disponemos esa cantidad en Stock!',
+                                                        text: 'Debe ingresar una cantidad inferior!!!',
+                                                        icon: 'error',
+                                                        confirmButtonText: "Aceptar",
+                                                    }).then(() => {
                                                         buscarReceta($('#idreceta').val());
-                                                    }, 200);
+                                                    });
+                                                } else {
+                                                    Swal.fire({
+                                                        title: 'Cantidad Actualizada!',
+                                                        text: 'Gracias por preferirnos!!!',
+                                                        icon: 'success',
+                                                        confirmButtonText: "Aceptar",
+                                                    }).then(() => {
+                                                        setTimeout(() => {
+                                                            $('#tabla').html(response);
+                                                            $('#tabla').append(response.htmlresponse);
+                                                            $('#monto').val(parseInt($('#total').val()));
 
-                                                });
+                                                            $('#total1').text($('#monto').val() + " C$");
+                                                            buscarReceta($('#idreceta').val());
+                                                        }, 200);
+
+                                                    });
+                                                }
+
                                             },
                                             error: function (error) {
                                                 //console.log(error);
@@ -396,26 +444,37 @@
                                         cant: diag1
                                     },
                                     success: function (response) {
-                                        Swal.fire({
-                                            title: 'Cantidad Actualizada!',
-                                            text: 'Gracias por preferirnos!!!',
-                                            icon: 'success',
-                                            confirmButtonText: "Aceptar",
-                                        }).then(() => {
-                                            setTimeout(() => {
-                                                $('#tabla').html(response);
-                                                $('#tabla').append(response.htmlresponse);
-                                                $('#monto').val(parseInt($('#total2').val()));
-                                                flaglista = true
-                                                $('#listaproducto').empty();
-                                                $('#total1').text($('#monto').val() + " C$");
-                                                $('#buscprod').val('')
+                                        if (response == "NoStock") {
+                                            Swal.fire({
+                                                title: 'No disponemos esa cantidad en Stock!',
+                                                text: 'Debe ingresar una cantidad inferior!!!',
+                                                icon: 'error',
+                                                confirmButtonText: "Aceptar",
+                                            }).then(() => {
                                                 buscarproducto($('#buscprod').val());
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Cantidad Actualizada!',
+                                                text: 'Gracias por preferirnos!!!',
+                                                icon: 'success',
+                                                confirmButtonText: "Aceptar",
+                                            }).then(() => {
+                                                setTimeout(() => {
+                                                    $('#tabla').html(response);
+                                                    $('#tabla').append(response.htmlresponse);
+                                                    $('#monto').val(parseInt($('#total2').val()));
+                                                    flaglista = true
+                                                    $('#listaproducto').empty();
+                                                    $('#total1').text($('#monto').val() + " C$");
+                                                    $('#buscprod').val('')
+                                                    buscarproducto($('#buscprod').val());
 
 
-                                            }, 200);
+                                                }, 200);
 
-                                        });
+                                            });
+                                        }
                                     },
                                     error: function (error) {
                                         //console.log(error);
@@ -569,18 +628,31 @@
                                         data: {
                                             prod: id,
                                             idventa: $('#venta').val(),
-                                            cant: $('#cant').val()
+                                            cant: $('#cant').val(),
+                                            cons: consulta
 
                                         },
                                         success: function (response) {
-                                            flaglista = true
-                                            $('#tabla').html(response);
-                                            $('#tabla').append(response.htmlresponse);
-                                            $('#listaproducto').empty();
-                                            $('#monto').val(parseInt($('#total2').val()));
-                                            $('#total1').text($('#monto').val() + " C$");
-                                            $('#buscprod').val('')
-                                            buscarproducto($('#buscprod').val());
+                                            if (response == "NoStock") {
+                                                Swal.fire({
+                                                    title: 'No disponemos esa cantidad en Stock!',
+                                                    text: 'Debe ingresar una cantidad inferior!!!',
+                                                    icon: 'error',
+                                                    confirmButtonText: "Aceptar",
+                                                }).then(() => {
+                                                    buscarproducto($('#buscprod').val());
+                                                });
+                                            } else {
+                                                flaglista = true
+                                                $('#tabla').html(response);
+                                                $('#tabla').append(response.htmlresponse);
+                                                $('#listaproducto').empty();
+                                                $('#monto').val(parseInt($('#total2').val()));
+                                                $('#total1').text($('#monto').val() + " C$");
+                                                $('#buscprod').val('')
+                                                buscarproducto($('#buscprod').val());
+                                            }
+
 
 
                                         },
@@ -629,7 +701,7 @@
                             html2pdf()
                                 .set({
                                     margin: 0.5,
-                                    filename: 'documento.pdf',
+                                    filename: 'Factura.pdf',
                                     image: {
                                         type: 'jpeg',
                                         quality: 0.98
@@ -650,8 +722,8 @@
                             setTimeout(() => {
                                 elementoParaConvertir.style.display = 'none'
                                 Swal.fire(
-                                    'Good job!',
-                                    'You clicked the button!',
+                                    'Factura Impresa!',
+                                    '',
                                     'success'
                                 )
                                 window.location = '/facturacion'
@@ -737,7 +809,38 @@
                 }
             }
         }
+        // function validarcantidad(id) {
+        //     if (id == "") {
 
+        //     } else {
+        //         $.ajax({
+        //             url: "/buscar",
+        //             type: "POST",
+        //             data: {
+        //                 id: id,
+        //                 flag: "cantidad"
+        //             },
+        //             success: function (response) {
+        //                 Swal.fire({
+        //                     title: 'Producto Eliminado!',
+        //                     text: 'Gracias por preferirnos!!!',
+        //                     icon: 'success',
+        //                     confirmButtonText: "Aceptar",
+        //                 }).then(() => {
+
+        //                     buscarproducto($('#buscprod').val());
+        //                 });
+        //             },
+        //             error: function (error) {
+        //                 //console.log(error);
+        //             },
+        //         });
+        //     }
+        // }
+        // $("#cant").keyup(function () {
+
+        //     validarcantidad($('#cant').val());
+        // });
     </script>
     {%endblock%}
 </body>

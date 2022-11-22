@@ -1,0 +1,125 @@
+<br>
+<div class="row mb-4">
+    <div class="col">
+
+    </div>
+    <br>
+    <div class="col-2">
+        <button class="btn btn-success" onclick="agregar()"><i class="far fa-plus-square"></i>
+            Añadir</button>
+    </div>
+</div>
+<table id="inventario" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id Producto</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th>Compañia</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for list in inventario%}
+        <tr>
+            <td>{{list.Id_Producto}}</td>
+            <td>{{list.Nombre}}</td>
+            <td>{{list.Precio}}</td>
+            <td>{{list.Stock}}
+                {%if list.Stock <= 5%} <i class="fas fa-exclamation-triangle text-warning" style="padding-left: 10px;">
+                    </i>
+                    {%endif%} </td>
+            <td>{{list.NombreEstado}}</td>
+            <td>{{list.Compañia}}</td>
+            <td><button class="btn btn-outline-light" id="actinv" name="actinv" value="{{list.Id_Producto}}">
+                    <box-icon type='solid' name='edit-alt'></box-icon>
+                </button>
+                {%if rol == "Administrador"%}
+                <button class="btn btn-outline-light" id="elim" name="elim" value="{{list.Id_Producto}}">
+                    <i class="bi bi-x-circle" style="color: red;"></i>
+                </button>
+                {%endif%}
+            </td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>
+<input id="launch" type="hidden" data-toggle="modal" data-target=".bd-example-modal-lg">
+<div id="modal-act"></div>
+<script>
+    function agregar() {
+        $.ajax({
+            url: "/añadirinv",
+            type: "POST",
+            data: {
+            },
+            success: function (response) {
+                $('#modal-act').html(response);
+                $('#modal-act').append(response.htmlresponse);
+                $('#launch').click();
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    }
+    $("#inventario button[name=actinv]").click(function () {
+        id = $(this).val();
+        $.ajax({
+            url: "/actinv",
+            type: "POST",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $('#modal-act').html(response);
+                $('#modal-act').append(response.htmlresponse);
+                $('#launch').click();
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+    $("#inventario button[name=elim]").click(function () {
+        id = $(this).val();
+        $.ajax({
+            url: "/elimprod",
+            type: "POST",
+            data: {
+                id: id,
+            },
+            success: function (response) {
+                let timerInterval
+                Swal.fire({
+                    title: 'Eliminando!',
+                    html: '',
+                    timer: 150,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            b.textContent = Swal.getTimerLeft()
+                        }, 10)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        window.location = '/ajuste'
+                    }
+                })
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+
+</script>

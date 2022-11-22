@@ -1,10 +1,13 @@
 
-from datetime import datetime,date
+from datetime import datetime,date, timedelta
 import random
+from dateutil.relativedelta import relativedelta
 import secrets
-
+import shutil
+import pandas as pd
+from io import BytesIO
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, sessions, url_for, session, send_file
+from flask import Flask, flash, jsonify, make_response, redirect, render_template, request, sessions, url_for, session, send_file
 from jinja2 import Environment
 from werkzeug.security import check_password_hash, generate_password_hash
 from correo import enviar_correo
@@ -27,13 +30,13 @@ def login():
         usuario = request.form['loginUser']
         Contraseña = request.form['loginPassword']
         if usuario == "" or Contraseña == "":
-            return render_template('asociate.html', errorlogin=1)
+            return render_template('index.html', errorlogin=1)
         else:
             rows = db1.execute("SELECT * FROM Credenciales Where Usuario=:username",
                                username=usuario)
             
             if len(rows) == 0 or not check_password_hash(rows[0]["Contraseña"], Contraseña):
-                return render_template('asociate.html', errorlogin=1)
+                return render_template('index.html', errorlogin=1)
             else:
                 # Estas consultas son para mostrar la lista de personas y su asistencia
                 
@@ -97,14 +100,14 @@ def diagnosticar():
         receta = request.form['receta']
         mascota = request.form['mascota']
         db1.execute('UPDATE Consulta set Diagnostico = :diag, IdEstado = 4 where Id_Consulta = :u',diag = diagnostico,u = id)
+        receta = db1.execute('select Id_Receta From Recetas WHere IdConsulta = :id',id = id)
         
-        
-        return "siuuu"
+        return str(receta[0]['Id_Receta'])
 # USUARIOS
 @app.route('/usuario')
 def usuario():
     usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
-    return render_template('sistema/usuario.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
+    return render_template('sistema/tablas/usuario.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
 
 @app.route('/actusu', methods =["POST","GET"])
 def actusu():
@@ -114,9 +117,9 @@ def actusu():
         if accion == "actualizar":
             id = request.form['id']
             usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
-            return render_template('sistema/modal.html',info = usuarios)
+            return render_template('sistema/modales/modal.html',info = usuarios)
         elif accion == "agregar":
-            return render_template('sistema/modal.html',info = "agregar")
+            return render_template('sistema/modales/modal.html',info = "agregar")
 
 @app.route('/actualizaremp', methods =["POST","GET"])
 def actualizaremp():
@@ -149,7 +152,11 @@ def eliminar():
         
         if flag == "fact":
             receta = request.form['receta']
-            db1.execute('Update DetalleReceta set IdEstado = :est where Medicamento = :id',est = 2,id = id)
+            cantidad = db1.execute('select IdProducto,Cantidad From DetalleVenta WHERE IdDetalle = :id',id = id)
+            stock = db1.execute('SELECT Stock from Producto WHERE Id_Producto = :name',name = cantidad[0]['IdProducto'])
+            db1.execute('UPDATE Producto set Stock =:nuevo WHERE Id_Producto =:id',nuevo = (int(cantidad[0]['Cantidad'])+ stock[0]['Stock']),id = id)
+            
+            db1.execute('DELETE FROM DetalleVenta WHERE IdDetalle = :id',est = 2,id = id)
         
             recetas = db1.execute('select Medicamento from DetalleReceta Where IdReceta = :name AND IdEstado = 1',name = receta)
             cantidad = 0    
@@ -165,7 +172,7 @@ def eliminar():
                     
                 if medicamentoencontrado:
                     hay.append(medicamentoencontrado)
-                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name',name = i['Medicamento'])
+                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name and IdReceta = :rec',name = i['Medicamento'],rec = receta)
                     total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'] )
 
                 else:
@@ -173,16 +180,24 @@ def eliminar():
                     nohay.append(medicamentoencontrado)
                 
 
-            return render_template('sistema/tabla-factura.html',productos = hay,total = total,cant  = cantidad, nohay = nohay)  
+            return render_template('sistema/tablas/tabla-factura.html',productos = hay,total = total,cant  = cantidad, nohay = nohay)  
         elif flag == "fact-rapida":
             idventa = request.form['idventa']
+
+            cantidad = db1.execute('select IdProducto,Cantidad From DetalleVenta WHERE IdDetalle = :id',id = id)
+            print(cantidad)
+            stock = db1.execute('SELECT Stock from Producto WHERE Id_Producto = :name',name = cantidad[0]['IdProducto'])
+            print(stock)
+            db1.execute('UPDATE Producto set Stock =:nuevo WHERE Id_Producto =:id',nuevo = (int(cantidad[0]['Cantidad'])+ int(stock[0]['Stock'])),id = cantidad[0]['IdProducto'])
+            
+
             db1.execute('DELETE FROM DetalleVenta WHERE IdDetalle = :id',id = id)
             sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
             print(sumatotal[0]['total'])
             db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = idventa)
             nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = idventa)
         
-            return render_template('sistema/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])         
+            return render_template('sistema/tablas/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])         
 
 
 
@@ -195,6 +210,17 @@ def buscarusu():
             return "ya hay"
         else:
             return "no existe"
+
+@app.route('/buscarCorreo', methods =["POST","GET"])
+def buscarCorreo():
+    if request.method == "POST":
+        correo = request.form['correo']
+        existente = db1.execute('select * from Usuarios where Correo like :us',us = correo +'%' )
+        if existente:
+            return "ya hay"
+        else:
+            return "no existe"
+
 @app.route('/buscar', methods =["POST","GET"])
 def buscar():
     if request.method == "POST":
@@ -236,11 +262,11 @@ def buscar():
             cont = 0
             for i in recetas:
                 
-                medicamentoencontrado = db1.execute('select p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name', name = i['Medicamento'])
+                medicamentoencontrado = db1.execute('select p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name and dr.IdReceta = :rec', name = i['Medicamento'],rec = receta)
                 
                 if medicamentoencontrado:
                     hay.append(medicamentoencontrado)
-                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name',name = i['Medicamento'])
+                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name and IdReceta = :rec',name = i['Medicamento'],rec = receta)
                     cantidades.append(cantidad)
                     print("cantidad receta: ",cantidad)
                     total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'])
@@ -253,9 +279,11 @@ def buscar():
             print("no hay: ",nohay) 
             print(cantidades)
             if hay:
-                return render_template('sistema/tabla-factura.html',productos = hay,total = total,cant  = cantidades,nohay = nohay)
+                return render_template('sistema/tablas/tabla-factura.html',productos = hay,total = total,cant  = cantidades,nohay = nohay)
             else:
                 return "no"
+       
+
 
 @app.route('/cantidad', methods =["POST","GET"])
 def cantidad():
@@ -263,35 +291,41 @@ def cantidad():
         id = request.form['id']
         cant = request.form['cant']
         receta = request.form['receta']
-        db1.execute('UPDATE DetalleReceta set Cantidad = :cant WHERE Medicamento = :id',cant = cant,id = id)
+
+        precio = db1.execute('SELECT Id_Producto,Precio,Stock from Producto WHERE Nombre = :name',name = id)
+        
+        if int(precio[0]['Stock']) >= int(cant):
+            db1.execute('UPDATE DetalleReceta set Cantidad = :cant WHERE Medicamento = :id',cant = cant,id = id)
 
         
-        recetas = db1.execute('select Medicamento from DetalleReceta Where IdReceta = :name AND IdEstado = 1',name = receta)
-            
-        print("receta: ",recetas)
-        medicamentobase = {}
-        nohay = []
-        hay = []
-        cantidades = []
-            
-        total = 0
-        for i in recetas:
+            recetas = db1.execute('select Medicamento from DetalleReceta Where IdReceta = :name AND IdEstado = 1',name = receta)
                 
-            medicamentoencontrado = db1.execute('select p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name', name = i['Medicamento'])
-                  
-            if medicamentoencontrado:
-                hay.append(medicamentoencontrado)
-                cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name And IdReceta = :rec',name = i['Medicamento'],rec = receta)
-                cantidades.append(cantidad)
-                print("cantidad receta: ",cantidad)
-                total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'] )
-
-            else:
+            print("receta: ",recetas)
+            medicamentobase = {}
+            nohay = []
+            hay = []
+            cantidades = []
+                
+            total = 0
+            for i in recetas:
                     
-                nohay.append(medicamentoencontrado)
-            
-        print("cantidad: ",cantidades)
-        return render_template('sistema/tabla-factura.html',productos = hay,total = total,cant  = cantidad, nohay = nohay)        
+                medicamentoencontrado = db1.execute('select p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name', name = i['Medicamento'])
+                    
+                if medicamentoencontrado:
+                    hay.append(medicamentoencontrado)
+                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name And IdReceta = :rec',name = i['Medicamento'],rec = receta)
+                    cantidades.append(cantidad)
+                    print("cantidad receta: ",cantidad)
+                    total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'] )
+
+                else:
+                        
+                    nohay.append(medicamentoencontrado)
+                
+            print("cantidad: ",cantidades)
+            return render_template('sistema/tablas/tabla-factura.html',productos = hay,total = total,cant  = cantidad, nohay = nohay)  
+        else:
+            return "NoStock"      
 
 @app.route('/insertarReceta', methods =["POST","GET"])
 def insertarReceta():
@@ -326,7 +360,9 @@ def insertarReceta():
             else:
                 nuevoid = db1.execute('INSERT INTO DetalleReceta VALUES(null,:id,:medi,null,1,null,1)',id = id[0]['Id_Receta'],medi = prod)
             receta = db1.execute('SELECT * from DetalleReceta Where IdReceta = :id',id = id[0]['Id_Receta'])
-        return render_template ('tabla-productos.html',receta = receta)
+        
+        
+        return render_template ('sistema/tablas/tabla-productos.html',receta = receta)
 
 @app.route('/insertarVenta', methods =["POST","GET"])
 def insertarVenta():
@@ -334,25 +370,31 @@ def insertarVenta():
         idventa = request.form['idventa']
         prod = request.form['prod']
         cantidad = request.form['cant']
-        hi = datetime.now()
-        precio = db1.execute('SELECT Id_Producto,Precio from Producto WHERE Nombre = :name',name = prod)
-        
-        subtotal = float(precio[0]['Precio']) * float(cantidad)
+        cons = request.form['cons']
 
-        verificacion = db1.execute('SELECT * FROM Ventas Where Id_Venta = :id', id = idventa)
-        if not verificacion:
-            nuevoid = db1.execute('INSERT INTO Ventas VALUES(:id,:emp,:fecha,:total)',id = idventa,emp = session["user_Id"], fecha = datetime.date(hi),total = 0 )
-            db1.execute('INSERT INTO DetalleVenta VALUES(null,:idv,:idpro,:cant,:sub,null)',idv= nuevoid,idpro = precio[0]['Id_Producto'] ,cant = cantidad,sub =subtotal)
-            sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =nuevoid)
-            db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = nuevoid)
-            nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = nuevoid)
-        else:
-            db1.execute('INSERT INTO DetalleVenta VALUES(null,:idv,:idpro,:cant,:sub,null)',idv= idventa,idpro = precio[0]['Id_Producto'] ,cant = cantidad,sub =subtotal)
-            sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
-            db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = idventa)
-            nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta = :idven',idven = idventa)
+        hi = datetime.now()
+        precio = db1.execute('SELECT Id_Producto,Precio,Stock from Producto WHERE Nombre = :name',name = prod)
         
-        return render_template('sistema/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])  
+        if int(precio[0]['Stock']) >= int(cantidad):
+            db1.execute('UPDATE Producto set Stock =:nuevo WHERE Id_Producto = :name',nuevo = (int(precio[0]['Stock'])- int(cantidad)),name = precio[0]['Id_Producto'])
+            subtotal = float(precio[0]['Precio']) * float(cantidad)
+
+            verificacion = db1.execute('SELECT * FROM Ventas Where Id_Venta = :id', id = idventa)
+            if not verificacion:
+                nuevoid = db1.execute('INSERT INTO Ventas VALUES(:id,:emp,:fecha,:total,null)',id = idventa,emp = session["user_Id"], fecha = datetime.date(hi),total = 0 )
+                db1.execute('INSERT INTO DetalleVenta VALUES(null,:idv,:idpro,:cant,:sub)',idv= nuevoid,idpro = precio[0]['Id_Producto'] ,cant = cantidad,sub =subtotal)
+                sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =nuevoid)
+                db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = float(sumatotal[0]['total'])+float(cons) , id = nuevoid)
+                nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = nuevoid)
+            else:
+                db1.execute('INSERT INTO DetalleVenta VALUES(null,:idv,:idpro,:cant,:sub)',idv= idventa,idpro = precio[0]['Id_Producto'] ,cant = cantidad,sub =subtotal)
+                sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
+                db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = float(sumatotal[0]['total'])+float(cons), id = idventa)
+                nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta = :idven',idven = idventa)
+            
+            return render_template('sistema/tablas/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total']) 
+        else:
+            return "NoStock" 
 
 @app.route('/cantidad1', methods =["POST","GET"])
 def cantidad1():
@@ -360,17 +402,25 @@ def cantidad1():
         id = request.form['id']
         idventa = request.form['idventa']
         cantidad = request.form['cant']
-        idproducto = db1.execute('SELECT IdProducto from DetalleVenta WHERE IdDetalle = :name',name = id)
-        producto = db1.execute('SELECT Precio from Producto WHERE Id_Producto = :name',name = idproducto[0]['IdProducto'])
-        subtotal = float(producto[0]['Precio']) * float(cantidad)
-        db1.execute('UPDATE DetalleVenta set Cantidad = :cant, Subtotal = :sub WHERE IdDetalle = :id',cant = cantidad,sub = subtotal,id = id)
-        sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
-        print(sumatotal[0]['total'])
-        db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = idventa)
-        nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = idventa)
-        
-        return render_template('sistema/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])         
 
+        
+        idproducto = db1.execute('SELECT IdProducto from DetalleVenta WHERE IdDetalle = :name',name = id)
+        producto = db1.execute('SELECT Precio,Stock from Producto WHERE Id_Producto = :name',name = idproducto[0]['IdProducto'])
+        
+        if int(producto[0]['Stock']) >= int(cantidad):
+
+            
+            
+            subtotal = float(producto[0]['Precio']) * float(cantidad)
+            db1.execute('UPDATE DetalleVenta set Cantidad = :cant, Subtotal = :sub WHERE IdDetalle = :id',cant = cantidad,sub = subtotal,id = id)
+            sumatotal = db1.execute('select sum(Subtotal) as total from DetalleVenta where IdVenta = :idv',idv =idventa)
+            print(sumatotal[0]['total'])
+            db1.execute('UPDATE Ventas set total = :total WHERE Id_Venta = :id',total = sumatotal[0]['total'], id = idventa)
+            nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = idventa)
+            
+            return render_template('sistema/tablas/tabla-factura-rapida.html',productos = nuevatabla,total = sumatotal[0]['total'])         
+        else:
+            return "NoStock"
 
 
 @app.route('/orientacion', methods =["POST","GET"])
@@ -385,7 +435,7 @@ def orientacion():
         
         
         receta = db1.execute('SELECT * from DetalleReceta Where IdReceta = :id',id = id[0]['Id_Receta'])
-        return render_template ('tabla-productos.html',receta = receta)
+        return render_template ('sistema/tablas/tabla-productos.html',receta = receta)
 @app.route('/idventa', methods =["POST","GET"])
 def idventa():
     if request.method == "POST":
@@ -403,7 +453,26 @@ def oriedit():
         id = request.form['id']
         
         receta = db1.execute('SELECT * from DetalleReceta Where IdDetalleReceta = :id',id = id)
-        return render_template ('sistema/modal.html', info = "producto", receta = receta)
+        return render_template ('sistema/modales/modal.html', info = "producto", receta = receta)
+
+@app.route('/añadircons', methods =["POST","GET"])
+def añadircons():
+    if request.method == "POST":
+        id = request.form['idventa']
+        total = db1.execute('SELECT Total from Ventas Where Id_Venta = :id',id = id)
+        db1.execute('UPDATE Ventas set Total = :total WHERE Id_Venta = :id',total = float(total[0]['Total'])+ 50 , id = id)
+        return "done"
+
+@app.route('/quitarcons', methods =["POST","GET"])
+def quitarcons():
+    if request.method == "POST":
+        id = request.form['idventa']
+        total = db1.execute('SELECT Total from Ventas Where Id_Venta = :id',id = id)
+        db1.execute('UPDATE Ventas set Total = :total WHERE Id_Venta = :id',total = float(total[0]['Total'])+ 50 , id = id)
+        return "done"
+
+
+
 
 
 @app.route('/generarpdf', methods =["POST","GET"])
@@ -414,20 +483,22 @@ def generarpdf():
         if flag == "receta":
             id = request.form['id']
             idrec = db1.execute('select Id_Receta from Recetas order by Id_Receta desc')
-            recetas = db1.execute('SELECT * from DetalleReceta Where IdReceta = :id',id = idrec[0]['Id_Receta'])
+            recetas = db1.execute('SELECT * from DetalleReceta Where IdReceta = :id',id = id)
+            print("recetas",recetas)
             nohay = []
             hay = []
             cantidades = []
             cantidad = 0  
             total = 0
+            total1 = 0
             cont = 0
             for i in recetas:
                 
-                medicamentoencontrado = db1.execute('select p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name', name = i['Medicamento'])
-                
+                medicamentoencontrado = db1.execute('select p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name and IdReceta = :rec', name = i['Medicamento'],rec = id)
+                print
                 if medicamentoencontrado:
                     hay.append(medicamentoencontrado)
-                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name',name = i['Medicamento'])
+                    cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name and IdReceta = :rec',name = i['Medicamento'],rec = id)
                     cantidades.append(cantidad)
                     print("cantidad receta: ",cantidad)
                     total = total + int(medicamentoencontrado[0]['Precio'] * cantidad[0]['Cantidad'])
@@ -435,14 +506,26 @@ def generarpdf():
                 else:
                     
                     nohay.append(medicamentoencontrado)
-            print(hay)
+
+           
+            hi = datetime.now()
+            idVenta = db1.execute('INSERT INTO Ventas VALUES(null,:emp,:fecha,:total,:rec)',emp = session["user_Id"], fecha = datetime.date(hi),total = total,rec = id )
+            for a in recetas:
+                    
+                    medicamentoencontrado1 = db1.execute('select p.Id_Producto,p.Nombre,p.Precio,dr.Cantidad from Producto as p inner join DetalleReceta as dr ON p.Id_Producto = dr.IdProducto where p.Nombre = :name and IdReceta = :rec', name = a['Medicamento'],rec = id)
+                    
+                    if medicamentoencontrado1:
+                        cantidad = db1.execute('select Cantidad from DetalleReceta Where Medicamento = :name and IdReceta = :rec',name = a['Medicamento'],rec = id)
+                        db1.execute('INSERT INTO DetalleVenta VALUES(null,:idv,:idpro,:cant,:sub)',idv= idVenta,idpro = medicamentoencontrado1[0]['Id_Producto'] ,cant = cantidad[0]['Cantidad'],sub =int(medicamentoencontrado1[0]['Precio'] * cantidad[0]['Cantidad']))
+          
             
-            return render_template ('sistema/pdf-factura.html', info = hay, flag = flag)
+            return render_template ('sistema/pdf-factura.html', info = hay, flag = flag,total = total)
         elif flag == "rapida":
             idventa = request.form['idventa']
             nuevatabla = db1.execute('select dv.IdDetalle,p.Nombre as Nombre,p.Precio as Precio,dv.Cantidad from DetalleVenta as dv Inner join Producto as p ON dv.IdProducto = p.Id_Producto Where dv.IdVenta  = :idven',idven = idventa)
             print(nuevatabla)
-            return render_template ('sistema/pdf-factura.html', info = nuevatabla,flag = flag)
+            total = db1.execute('SELECT Total from Ventas where Id_Venta = :id',id = idventa)
+            return render_template ('sistema/pdf-factura.html', info = nuevatabla,flag = flag,total = total[0]['Total'])
 
 
 ######################
@@ -451,7 +534,7 @@ def generarpdf():
 def clienteinfo():
     if request.method == "POST":
        id = request.form['id']
-       return render_template('sistema/modal-cliente.html',id = id)
+       return render_template('sistema/modales/modal-cliente.html',id = id)
         
 ######################
 # OTRAS FUNCIONES
@@ -465,7 +548,7 @@ def correo():
             correoc = request.form['correo']
             usuario = request.form['loginUser']
             contraseña = request.form['loginPassword']
-            enviar_correo(app,"Bienvenido a Nuestra Familia",correoc,usuario,contraseña,"a","a")
+            enviar_correo(app,"Bienvenido a Nuestra Familia",correoc,usuario,contraseña,"","")
             return "done"
         elif flag == "receta":
             consulta = request.form['cons']
@@ -503,12 +586,48 @@ def facturacion():
 #HOME SISTEMA
 @app.route('/homesistema')
 def homesistema():
-    return render_template('sistema/admin.html',rol =session["nombrerol"],nombre =session["usercom"])
+    hi = datetime.now()
+    ventas = db1.execute('select sum(total) as ventas from Ventas where Fecha = :fecha',fecha = datetime.date(hi))
+    consultas = db1.execute('select count(Id_Consulta) as consultas from Consulta where Fecha = :fecha',fecha = datetime.date(hi))
+    usuarios = db1.execute('select count(*) as usuarios from Usuarios as u inner join credenciales as cred on u.IdCredenciales = cred.Id_Credenciales where cred.Rol = "3"')
+    empleados = db1.execute('select count(*) as empleados from Usuarios as u inner join credenciales as cred on u.IdCredenciales = cred.Id_Credenciales where cred.Rol = "2" and u.IdEstado = "1"')
+    clientes = db1.execute('select u.Id_Usuario,u.Nombres  || " " || u.Apellidos as cliente,m.Nombre as Mascota from Mascota as m inner join Usuarios as u on m.IdUsuario = u.Id_Usuario')
+    mesUno = datetime.date(hi)- relativedelta(months=1)
+    mesDos = datetime.date(hi)- relativedelta(months=2)
+    ventasMesUno = db1.execute('select sum(total) as ventas1 from Ventas where Fecha = :fecha',fecha = mesUno)
+    ventasMesDos = db1.execute('select sum(total) as ventas2 from Ventas where Fecha = :fecha',fecha = mesDos)
+    print(ventasMesDos)
+    ventas2 = 0
+    ventas1 = 0
+    
+    if ventasMesUno[0]['ventas1'] != None:
+        ventas1 = ventasMesUno[0]['ventas1']
+
+    if ventasMesDos[0]['ventas2'] != None:
+        ventas2 = ventasMesDos[0]['ventas2']
+        print(ventas2)
+       
+
+    return render_template('sistema/admin.html',rol =session["nombrerol"],nombre =session["usercom"],ventas = ventas[0]['ventas'],cons = consultas[0]['consultas'],usuarios = usuarios[0]['usuarios'],empleados = empleados[0]['empleados'],clientes = clientes,ventasmesuno = ventas1,ventasmesdos = ventas2)
 ######################
+@app.route('/buscarinv',methods=["GET", "POST"])
+def buscarinv():
+    if request.method == "POST":
+        producto = request.form['id']
+        producto += "%"
+        invent = db1.execute('select * from Producto as p INNER JOIN Proveedor as prov ON p.IdProveedor = prov.Id_Proveedor inner join Estado as e ON p.IdEstado = e.Id_Estado WHERE p.IdEstado != 2 and p.Nombre like :id',id = producto)
+        return render_template('sistema/tablas/tabla-inventario.html',rol =session["nombrerol"],inventario = invent)
 
 @app.route('/home')
 def home():
     return render_template('index.html',rol =session["nombrerol"],nombre =session["usercom"] )
+
+@app.route('/miinfo',methods=["GET", "POST"])
+def miinfo():
+    if request.method == "POST":
+        usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = session["user_Id"])
+        return render_template('sistema/modales/mi-info.html',info = usuarios)
+
 # usuario nuevo
 @app.route('/nuevou',methods=["GET", "POST"])
 def nuevou():
@@ -582,6 +701,382 @@ def generarconsulta():
         return "consulta lista"
 
 
+
+#AJUSTES
+@app.route('/ajuste')
+def ajuste():
+    return render_template('sistema/Ajustes.html')
+
+
+#*************************************************
+#       *PROVEEDORES*
+# ************************************************   
+@app.route('/proveedores',methods=["GET", "POST"])
+def proveedores():
+    if request.method == "POST":
+        prov = db1.execute('select * from Proveedor')
+
+        return render_template('sistema/tablas/tabla-proveedores.html',prov = prov)
+
+#*************************************************
+#       *INVENTARIO*
+# ************************************************   
+@app.route('/inventario',methods=["GET", "POST"])
+def inventario():
+    if request.method == "POST":
+        invent = db1.execute('select * from Producto as p INNER JOIN Proveedor as prov ON p.IdProveedor = prov.Id_Proveedor inner join Estado as e ON p.IdEstado = e.Id_Estado WHERE p.IdEstado != 2')
+        return render_template('sistema/tablas/tabla-inventario.html',rol =session["nombrerol"],inventario = invent)
+
+@app.route('/actinv',methods=["GET", "POST"])
+def actinv():
+    if request.method == "POST":
+        id = request.form['id']
+        invent = db1.execute('select * from Producto as p INNER JOIN Proveedor as prov ON p.IdProveedor = prov.Id_Proveedor inner join Estado as e ON p.IdEstado = e.Id_Estado Where p.Id_Producto = :id',id = id)
+        proveedores = db1.execute('select Id_Proveedor,Compañia from Proveedor')
+        return render_template('sistema/modales/modal-inventario.html',inventario = invent,prov = proveedores)
+
+@app.route('/actprod',methods=["GET", "POST"])
+def actprod():
+    if request.method == "POST":
+        id = request.form['id']
+        nombre = request.form['nombre']
+        precio = request.form['precio']
+        stock = request.form['stock']
+        estado = request.form['estado']
+        compañia = request.form['compañia']
+        cant = stock
+        if estado == "5":
+            cant = 0
+            db1.execute('UPDATE Producto set Nombre = :nombre, Precio = :pre, Stock = :stock,IdEstado = :est, IdProveedor = :prov where Id_Producto = :id',nombre = nombre,pre = precio,stock = cant, est = estado, prov = compañia,id = id)
+        else:
+            db1.execute('UPDATE Producto set Nombre = :nombre, Precio = :pre, Stock = :stock,IdEstado = :est, IdProveedor = :prov where Id_Producto = :id',nombre = nombre,pre = precio,stock = cant, est = estado, prov = compañia,id = id)
+        
+        
+        return "Done"
+
+@app.route('/addprod',methods=["GET", "POST"])
+def addprod():
+    if request.method == "POST":
+        nombre = request.form['nombre']
+        precio = request.form['precio']
+        stock = request.form['stock']
+        estado = request.form['estado']
+        compañia = request.form['compañia']
+        db1.execute('INSERT INTO Producto values(null,:nom,:pre,:stock,:est,:prov)',nom = nombre,pre= precio,stock = stock,est = estado,prov = compañia)
+        
+        return "Done"
+
+@app.route('/elimprod',methods=["GET", "POST"])
+def elimprod():
+    if request.method == "POST":
+        id = request.form['id']
+        db1.execute('UPDATE Producto set IdEstado = 2 Where Id_Producto = :id',id = id)
+        
+        return "Done"
+
+@app.route('/añadirinv',methods=["GET", "POST"])
+def añadirinv():
+    if request.method == "POST":
+        proveedores = db1.execute('select Id_Proveedor,Compañia from Proveedor')
+        return render_template('sistema/modales/modal-inventario.html',inventario = "",prov = proveedores)
+
+#*************************************************
+#       *VENTAS*
+# ************************************************   
+@app.route('/venta',methods=["GET", "POST"])
+def venta():
+    if request.method == "POST":
+        invent = db1.execute('select v.Id_Venta,u.Nombres || " " || u.Apellidos as Nombre,v.Fecha,v.Total,v.IdReceta from Ventas as v inner join Usuarios as u ON v.IdEmpleado = u.Id_Usuario')
+        return render_template('sistema/tablas/tabla-ventas.html',rol =session["nombrerol"],ventas = invent)
+
+@app.route('/tipoVenta',methods=["GET", "POST"])
+def tipoVenta():
+    if request.method == "POST":
+        tipo = request.form['tipo']
+        if tipo == "receta":
+           invent = db1.execute('select v.Id_Venta,u.Nombres || " " || u.Apellidos as Nombre,v.Fecha,v.Total,v.IdReceta from Ventas as v inner join Usuarios as u ON v.IdEmpleado = u.Id_Usuario Where v.IdReceta like "%"')
+        elif tipo == "rapida":
+            invent = db1.execute('select v.Id_Venta,u.Nombres || " " || u.Apellidos as Nombre,v.Fecha,v.Total,v.IdReceta from Ventas as v inner join Usuarios as u ON v.IdEmpleado = u.Id_Usuario Where v.IdReceta is NULL')
+        elif tipo == "todo":
+            invent = db1.execute('select v.Id_Venta,u.Nombres || " " || u.Apellidos as Nombre,v.Fecha,v.Total,v.IdReceta from Ventas as v inner join Usuarios as u ON v.IdEmpleado = u.Id_Usuario')
+        return render_template('sistema/tablas/tabla-ventas.html',rol =session["nombrerol"],ventas = invent)
+
+@app.route('/buscarventa',methods=["GET", "POST"])
+def buscarventa():
+    if request.method == "POST":
+        inicio = request.form['inicio']
+        fin = request.form['final']
+        ventas = db1.execute('select v.Id_Venta,u.Nombres || " " || u.Apellidos as Nombre,v.Fecha,v.Total,v.IdReceta from Ventas as v inner join Usuarios as u ON v.IdEmpleado = u.Id_Usuario where v.Fecha BETWEEN :inicio and :fin ',inicio = inicio,fin = fin)
+       
+        return render_template('sistema/tablas/tabla-ventas.html',rol =session["nombrerol"],ventas = ventas)
+
+@app.route('/ventadetalle',methods=["GET", "POST"])
+def ventadetalle():
+    if request.method == "POST":
+        id = request.form['id']
+        ventas = db1.execute('select v.Id_Venta,u.Nombres || " " || u.Apellidos as Empleado,v.Fecha,v.Total,p.Nombre,p.Precio,dv.Cantidad,dv.Subtotal,v.IdReceta from Ventas as v inner join Usuarios as u ON v.IdEmpleado = u.Id_Usuario inner join DetalleVenta as dv on v.Id_Venta = dv.IdVenta inner join Producto as p on dv.IdProducto = p.Id_Producto Where v.Id_Venta = :id', id = id)
+        return render_template('sistema/modales/detalle-venta.html',ventas = ventas,id = id)
+
+
+#*************************************************
+#       *CONSULTAS HISTORIAL*
+# ************************************************   
+@app.route('/consultahist',methods=["GET", "POST"])
+def consultahist():
+    if request.method == "POST":
+        consul = db1.execute('select c.Id_Consulta,c.Diagnostico,u.Nombres || " " || u.Apellidos as Veterinario,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado,c.IdUsuario from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado inner join Usuarios as u ON c.IdUsuario = u.Id_Usuario  ')
+    return render_template('sistema/tablas/tabla-consultas.html',consultas = consul)
+
+@app.route('/buscarconsul',methods=["GET", "POST"])
+def buscarconsul():
+    if request.method == "POST":
+        inicio = request.form['inicio']
+        fin = request.form['final']
+        consul = db1.execute('select c.Id_Consulta,c.Diagnostico,u.Nombres || " " || u.Apellidos as Veterinario,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado inner join Usuarios as u ON c.IdUsuario = u.Id_Usuario where c.Fecha BETWEEN :inicio and :fin ',inicio = inicio,fin = fin)
+    
+        return render_template('sistema/tablas/tabla-consultas.html',consultas = consul)
+
+@app.route('/tipoConsulta',methods=["GET", "POST"])
+def tipoConsulta():
+    if request.method == "POST":
+        tipo = request.form['tipo']
+        val = request.form['val']
+        print(tipo)
+        print(val)
+        if tipo == "mascota":
+           consul = db1.execute('select c.Id_Consulta,c.Diagnostico,u.Nombres || " " || u.Apellidos as Veterinario,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado,c.IdUsuario from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado inner join Usuarios as u ON c.IdUsuario = u.Id_Usuario where m.Nombre like :m',m = val + "%")
+        elif tipo == "vet":
+            consul = db1.execute('select c.Id_Consulta,c.Diagnostico,u.Nombres || " " || u.Apellidos as Veterinario,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado,c.IdUsuario from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado inner join Usuarios as u ON c.IdUsuario = u.Id_Usuario where Veterinario like :m',m = val + "%")
+        elif tipo == "todo":
+            consul = db1.execute('select c.Id_Consulta,c.Diagnostico,u.Nombres || " " || u.Apellidos as Veterinario,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado,c.IdUsuario from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado inner join Usuarios as u ON c.IdUsuario = u.Id_Usuario')
+        return render_template('sistema/tablas/tabla-consultas.html',consultas = consul)
+
+@app.route('/consultadetalle',methods=["GET", "POST"])
+def consultadetalle():
+    if request.method == "POST":
+        id = request.form['id']
+        historial = db1.execute('select Id_Receta from Recetas Where IdConsulta = :id  ORDER BY date(Id_Receta) ASC Limit 1',id = id)
+        
+        receta = db1.execute('select * from DetalleReceta Where IdReceta = :rec',rec = historial[0]['Id_Receta'])
+        
+        return render_template('sistema/modales/detalle-consulta.html',recetas = receta)
+
+@app.route('/Backupusu')
+def Backupusu():
+            usuarios = db1.execute('select u.Id_Usuario,u.Nombres,u.Apellidos,u.TelefonoFijo,u.Celular,u.Direccion,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+            
+            df_1 = pd.DataFrame((tuple(t) for t in usuarios), 
+            columns=('Date ', 'name', 'username', 'description', '','','',''))
+    
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+
+            #taken from the original question
+            df_1.to_excel(writer, startrow = -1,startcol=-1, merge_cells = False, sheet_name = "Backup")
+            workbook = writer.book
+            worksheet = writer.sheets["Backup"]
+            caption = 'Table with user defined column headers.'
+            formato = workbook.add_format()
+            formato.set_align('center')
+        # Set the columns widths.
+            worksheet.set_column('A:H', 20)
+        
+            #haciendo la lista
+            row = 2
+            for i in usuarios:
+                worksheet.write('A'+ str(row), i['Id_Usuario'],formato)
+                worksheet.write('B'+ str(row), i['Nombres'],formato)
+                worksheet.write('C'+ str(row), i['Apellidos'],formato)
+                worksheet.write('D'+ str(row), i['TelefonoFijo'],formato)
+                worksheet.write('E'+ str(row), i['Celular'],formato)
+                worksheet.write('F'+ str(row), i['Direccion'],formato)
+                worksheet.write('G'+ str(row), i['Usuario'],formato)
+                worksheet.write('H'+ str(row), i['NombreRol'],formato)
+                worksheet.write('I'+ str(row), None)
+                row += 1
+
+            tam = len(usuarios)
+            tam = "A1:H" + str(tam)
+            worksheet.add_table(tam, {
+                                        'columns': [{'header': 'Id Usuario'},
+                                                    {'header': 'Nombres'},
+                                                    {'header': 'Apellidos'},
+                                                    {'header': 'Telefono Fijo'},
+                                                    {'header': 'Celular'},
+                                                     {'header': 'Dirección'},
+                                                    {'header': 'Usuario'},
+                                                     {'header': 'Rol'}
+                                                    ]})
+
+            #the writer has done its job
+            writer.close()
+
+            #go back to the beginning of the stream
+            output.seek(0)
+
+            return send_file(output, download_name="Usuarios.xlsx", as_attachment=True)
+       
+@app.route('/Backupinv')
+def Backupinv():
+            usuarios = db1.execute('select p.Id_Producto,p.Nombre,p.Precio,p.Stock,prov.Compañia from Producto as p INNER JOIN Proveedor as prov ON p.IdProveedor = prov.Id_Proveedor inner join Estado as e ON p.IdEstado = e.Id_Estado WHERE p.IdEstado != 2')
+        
+            df_1 = pd.DataFrame((tuple(t) for t in usuarios), 
+            columns=('Date ', 'name', 'username', 'description', ''))
+    
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+
+            #taken from the original question
+            df_1.to_excel(writer, startrow = -1,startcol=-1, merge_cells = False, sheet_name = "Backup")
+            workbook = writer.book
+            worksheet = writer.sheets["Backup"]
+            caption = 'Table with user defined column headers.'
+            formato = workbook.add_format()
+            formato.set_align('center')
+        # Set the columns widths.
+            worksheet.set_column('A:E', 20)
+        
+            #haciendo la lista
+            row = 2
+            for i in usuarios:
+                worksheet.write('A'+ str(row), i['Id_Producto'],formato)
+                worksheet.write('B'+ str(row), i['Nombre'],formato)
+                worksheet.write('C'+ str(row), i['Precio'],formato)
+                worksheet.write('D'+ str(row), i['Stock'],formato)
+                worksheet.write('E'+ str(row), i['Compañia'],formato)
+                worksheet.write('F'+ str(row), None)
+                row += 1
+
+            tam = len(usuarios)
+            tam = "A1:E" + str(tam)
+            worksheet.add_table(tam, {
+                                        'columns': [{'header': 'Id Producto'},
+                                                    {'header': 'Nombre'},
+                                                    {'header': 'Precio'},
+                                                    {'header': 'Stock'},
+                                                    {'header': 'Compañia'}
+                                                    ]})
+
+            #the writer has done its job
+            writer.close()
+
+            #go back to the beginning of the stream
+            output.seek(0)
+
+            return send_file(output, download_name="Inventario.xlsx", as_attachment=True)
+       
+@app.route('/Backupcons')
+def Backupcons():
+            usuarios = db1.execute('select c.Id_Consulta,c.Diagnostico,u.Nombres || " " || u.Apellidos as Veterinario,m.Nombre,c.Fecha,c.Sintomas,c.Hora,est.NombreEstado,u.Nombres as Cliente from consulta as c inner join Mascota as m ON c.IdMascota = m.Id_Mascota inner join Estado as est ON c.IdEstado = est.Id_Estado inner join Usuarios as u ON c.IdUsuario = u.Id_Usuario  ')
+    
+            df_1 = pd.DataFrame((tuple(t) for t in usuarios), 
+            columns=('Date ', 'name', 'username', 'description', '','','','',''))
+    
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+
+            #taken from the original question
+            df_1.to_excel(writer, startrow = -1,startcol=-1, merge_cells = False, sheet_name = "Backup")
+            workbook = writer.book
+            worksheet = writer.sheets["Backup"]
+            caption = 'Table with user defined column headers.'
+            formato = workbook.add_format()
+            formato.set_align('center')
+        # Set the columns widths.
+            worksheet.set_column('A:I', 20)
+        
+            #haciendo la lista
+            row = 2
+            for i in usuarios:
+                worksheet.write('A'+ str(row), i['Id_Consulta'],formato)
+                worksheet.write('B'+ str(row), i['Diagnostico'],formato)
+                worksheet.write('C'+ str(row), i['Veterinario'],formato)
+                worksheet.write('D'+ str(row), i['Nombre'],formato)
+                worksheet.write('E'+ str(row), i['Fecha'],formato)
+                worksheet.write('F'+ str(row), i['Sintomas'],formato)
+                worksheet.write('G'+ str(row), i['Hora'],formato)
+                worksheet.write('H'+ str(row), i['NombreEstado'],formato)
+                worksheet.write('I'+ str(row), i['Cliente'],formato)
+                worksheet.write('J'+ str(row), None)
+                row += 1
+
+            tam = len(usuarios)
+            tam = "A1:I" + str(tam)
+            worksheet.add_table(tam, {
+                                        'columns': [{'header': 'N° Consulta'},
+                                                    {'header': 'Diagnostico'},
+                                                    {'header': 'Veterinario'},
+                                                    {'header': 'Mascota'},
+                                                    {'header': 'Fecha'},
+                                                    {'header': 'Sintomas'},
+                                                    {'header': 'Hora'},
+                                                    {'header': 'Estado'},
+                                                     {'header': 'Cliente'}
+                                                    ]})
+
+            #the writer has done its job
+            writer.close()
+
+            #go back to the beginning of the stream
+            output.seek(0)
+
+            return send_file(output, download_name="Consultas.xlsx", as_attachment=True)
+
+@app.route('/Backupvent')
+def Backupvent():
+            usuarios = db1.execute('select v.Id_Venta,u.Nombres || " " || u.Apellidos as Nombre,v.Fecha,v.Total,v.IdReceta from Ventas as v inner join Usuarios as u ON v.IdEmpleado = u.Id_Usuario')
+        
+            df_1 = pd.DataFrame((tuple(t) for t in usuarios), 
+            columns=('Date ', 'name', 'username', 'description', ''))
+    
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+
+            #taken from the original question
+            df_1.to_excel(writer, startrow = -1,startcol=-1, merge_cells = False, sheet_name = "Backup")
+            workbook = writer.book
+            worksheet = writer.sheets["Backup"]
+            caption = 'Table with user defined column headers.'
+            formato = workbook.add_format()
+            formato.set_align('center')
+        # Set the columns widths.
+            worksheet.set_column('A:F', 20)
+        
+            #haciendo la lista
+            row = 2
+            for i in usuarios:
+                worksheet.write('A'+ str(row), i['Id_Venta'],formato)
+                worksheet.write('B'+ str(row), i['Nombre'],formato)
+                worksheet.write('C'+ str(row), i['Fecha'],formato)
+                worksheet.write('D'+ str(row), i['Total'],formato)
+                worksheet.write('E'+ str(row), i['IdReceta'],formato)
+                worksheet.write('F'+ str(row), None)
+                row += 1
+
+            tam = len(usuarios)
+            tam = "A1:E" + str(tam)
+            worksheet.add_table(tam, {
+                                        'columns': [{'header': 'N° Venta'},
+                                                    {'header': 'Nombre'},
+                                                    {'header': 'Fecha'},
+                                                    {'header': 'Total'},
+                                                    {'header': 'Receta'}
+                                                    ]})
+
+            #the writer has done its job
+            writer.close()
+
+            #go back to the beginning of the stream
+            output.seek(0)
+
+            return send_file(output, download_name="Ventas.xlsx", as_attachment=True)      
+@app.route('/base',methods=["GET", "POST"])
+def base():
+    if request.method == 'POST':
+        shutil.copy('Veterinaria.db', 'Backups/Veterinaria.db')
+        return "done"
+
+#************************************************
 #CONTACTOS
 @app.route('/contactos')
 def contactos():

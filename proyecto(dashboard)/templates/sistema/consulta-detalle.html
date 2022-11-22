@@ -332,7 +332,7 @@
                             success: function (response) {
                                 Swal.fire({
                                     title: 'Diagnosticado Correctamente!',
-                                    text: 'Gracias por preferirnos!!! ',
+                                    text: 'Gracias por preferirnos, su Numero de Receta es: ' + response,
                                     icon: 'success',
                                     confirmButtonText: "Aceptar",
                                 }).then(() => {
@@ -345,6 +345,7 @@
                                             flag: "receta"
                                         },
                                         success: function (response) {
+
                                             window.location = '../consulta'
                                         }
                                     });

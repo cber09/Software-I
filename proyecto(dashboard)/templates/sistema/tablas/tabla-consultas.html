@@ -1,0 +1,58 @@
+<div class="row mb-4">
+
+</div>
+<table id="consul-data" class="table table-bordered table-hover dataTable dtr-inline">
+    <thead>
+        <tr>
+            <th>N° Consulta</th>
+            <th>Mascota</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Diagnostico</th>
+            <th>Veterinario</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for list in consultas%}
+        <tr>
+            <td>{{list.Id_Consulta}}</td>
+            <td>{{list.Nombre}}</td>
+            <td>{{list.Fecha}}</td>
+            <td>{{list.Hora}}</td>
+            <td>{{list.Diagnostico}}</td>
+            <td>{{list.Veterinario}}</td>
+            <td>{{list.NombreEstado}}</td>
+
+            <td><button class="btn " id="verdetalle" name="verdetalle" value="{{list.Id_Consulta}}">
+                    <i class="fas fa-info-circle" style="font-size: 25px; color: rgb(85, 83, 83);"></i>
+                </button>
+            </td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>
+<input id="launch2" type="hidden" data-toggle="modal" data-target="#detcon">
+<div id="modal-act2"></div>
+<script>
+
+    $("#consul-data button[name=verdetalle]").click(function () {
+        id = $(this).val();
+        $.ajax({
+            url: "/consultadetalle",
+            type: "POST",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $('#modal-act2').html(response);
+                $('#modal-act2').append(response.htmlresponse);
+                $('#launch2').click();
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+</script>

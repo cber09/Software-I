@@ -5,8 +5,35 @@
         <input type="hidden" id="total2" value="{{total}}">
     </div>
     <!-- /.card-header -->
-    <div class="card-body p-0">
-        {%if info%}
+    {%if info%}
+    <div id="app" class="col-11">
+
+        <h2>Factura comercial</h2>
+
+        <div class="row my-3">
+            <div class="col-10">
+                <h1>Veterinaria el buen productor </h1>
+                <p>Terminal de buses san carlos, mercado hernesto fernandez 20 varas oeste</p>
+                <p>Masaya, Nicaragua</p>
+
+            </div>
+            <div class="col-2">
+                <img src="" />
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row fact-info mt-3">
+            <div class="col-3">
+                <h5>Facturar a</h5>
+                <p>
+                    Nombre de la persona
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row my-5" style="padding: 50px;">
         <table class="table table-sm" id="fact">
             <thead>
                 <tr>
@@ -34,24 +61,56 @@
                 {%endfor%}
                 {%endfor%}
             </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total </th>
+                    <th>C$ {{total}}</th>
+                </tr>
+            </tfoot>
         </table>
-
-        {%endif%}
     </div>
+    {%endif%}
     <!-- /.card-body -->
 </div>
 <script>
 
 </script>
 {%elif flag == "rapida"%}
-<div class="card div-verpdf">
+<div class="div-verpdf">
     <div class="card-header">
         <h3 class="card-title">Productos</h3>
         <input type="hidden" id="total2" value="{{total}}">
     </div>
     <!-- /.card-header -->
-    <div class="card-body p-0">
-        {%if info%}
+    {%if info%}
+    <div id="app" class="col-12">
+
+        <h2>Factura comercial</h2>
+
+        <div class="row my-3">
+            <div class="col-10">
+                <h1>Veterinaria el buen productor </h1>
+                <p>Terminal de buses san carlos, mercado hernesto fernandez 20 varas oeste</p>
+                <p>Masaya, Nicaragua</p>
+
+            </div>
+            <div class="col-2">
+                <img src="" />
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row fact-info mt-3">
+            <div class="col-3">
+                <h5>Facturar a</h5>
+                <p>
+                    Nombre de la persona
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding: 50px;">
         <table class="table table-sm" id="fact">
             <thead>
                 <tr>
@@ -78,10 +137,18 @@
                 </tr>
                 {%endfor%}
             </tbody>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>Total </th>
+                    <th>C$ {{total}}</th>
+                </tr>
+            </tfoot>
         </table>
-
-        {%endif%}
     </div>
+
+    {%endif%}
     <!-- /.card-body -->
 </div>
 {%endif%}

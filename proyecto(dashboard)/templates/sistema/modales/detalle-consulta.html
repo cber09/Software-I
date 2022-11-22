@@ -1,0 +1,105 @@
+<div class="modal fade bd-example-modal-lg" id="detcon" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle de la Consulta</h5>
+                <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <input type="hidden" id="id" value="{{id}}">
+            <div class="container" id="clientenuevo" style="display: block; padding: 15px 15px;">
+                <div class="card-body p-0">
+                    {%if recetas%}
+                    <table class="table table-sm" id="fact">
+                        <thead>
+                            <tr>
+
+                                <th>N° Receta</th>
+                                <th>Medicamento</th>
+                                <th>Orientaciones</th>
+                                <th style="width: 40px">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for hi in recetas%}
+
+                            <tr>
+                                <td>{{hi.IdReceta}}</td>
+                                <td>
+                                    {{hi.Medicamento}}
+                                </td>
+                                <td>{{hi.Pasos}}</td>
+                                <td>{{hi.Cantidad}}</td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+
+                    {%endif%}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" onclick="imprimir()" class="btn btn-success"><i class="fas fa-solid fa-print"></i>
+                    Imprimir</button> -->
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="pdf"></div>
+<script>
+    function imprimir() {
+        id = $('#id').val();
+        $.ajax({
+            url: "/generarpdf",
+            type: "POST",
+            data: {
+                flag: "rapida",
+                idventa: id
+            },
+            success: function (response) {
+                $('#pdf').html(response);
+                $('#pdf').append(response.htmlresponse);
+                // Escuchamos el click del botón
+                elementoParaConvertir = document.querySelector(".div-verpdf"); // <-- Aquí puedes elegir cualquier elemento del DOM
+                elementoParaConvertir.style.display = 'block'
+                html2pdf()
+                    .set({
+                        margin: 0.5,
+                        filename: 'documento.pdf',
+                        image: {
+                            type: 'jpeg',
+                            quality: 0.98
+                        },
+                        html2canvas: {
+                            scale: 3, // A mayor escala, mejores gráficos, pero más peso
+                            letterRendering: true,
+                        },
+                        jsPDF: {
+                            unit: "in",
+                            format: "letter",
+                            orientation: 'portrait' // landscape o portrait
+                        }
+                    })
+
+                    .from(elementoParaConvertir)
+                    .save()
+                setTimeout(() => {
+                    elementoParaConvertir.style.display = 'none'
+                    Swal.fire(
+                        'Good job!',
+                        'You clicked the button!',
+                        'success'
+                    )
+                    $('#launch1').click();
+                }, 1000)
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+
+    }
+</script>

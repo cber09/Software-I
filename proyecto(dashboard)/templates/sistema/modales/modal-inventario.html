@@ -1,0 +1,192 @@
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar</h5>
+                <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="container" id="clientenuevo" style="display: block; padding: 15px 15px;">
+                <!-- 2 column grid layout with text inputs for the first and last names -->
+                {%if inventario%}
+                {%for list in inventario%}
+                <div class="row mb-4">
+                    <input type="hidden" name="id" id="id" value="{{list.Id_Producto}}">
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example1">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" required value="{{list.Nombre}}"
+                                class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example2">Precio</label>
+                            <input type="number" id="precio" name="apellido" required value="{{list.Precio}}"
+                                class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Stock</label>
+                            <input type="number" id="stock" name="telfijo" required value="{{list.Stock}}"
+                                class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Estado</label>
+                            <select class="form-select" name="estado" id="estado">
+                                <option selected value="6">En Existencia</option>
+                                <option value="5">Agotado</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Compañia</label>
+
+                            <select class="form-select" name="comp" id="comp">
+
+                                {%for i in prov%}
+                                {%if i.Compañia == list.Compañia%}
+                                <option selected value="{{i.Id_Proveedor}}">{{i.Compañia}}</option>
+                                {%else%}
+                                <option value="{{i.Id_Proveedor}}">{{i.Compañia}}</option>
+                                {%endif%}
+                                {%endfor%}
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+                <button type="button" id="actualizarInv" class="btn btn-primary btn-block mb-4">
+                    ENVIAR
+                </button>
+                {%else%}
+                <div class="row mb-4">
+                    <input type="hidden" name="id" id="id" value="">
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example1">Nombre</label>
+                            <input type="text" id="nombre1" name="nombre" required value="" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example2">Precio</label>
+                            <input type="number" id="precio1" name="apellido" required value="" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Stock</label>
+                            <input type="number" id="stock1" name="telfijo" required value="" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Estado</label>
+                            <select class="form-select" name="estado" id="estado1">
+                                <option selected value="6">En Existencia</option>
+                                <option value="5">Agotado</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example3">Compañia</label>
+
+                            <select class="form-select" name="comp" id="comp1">
+
+                                {%for i in prov%}
+                                <option value="{{i.Id_Proveedor}}">{{i.Compañia}}</option>
+                                {%endfor%}
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="addinv" class="btn btn-primary btn-block mb-4">
+                    Añadir
+                </button>
+                {%endif%}
+
+            </div>
+            <!-- Submit button -->
+
+
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $("#actualizarInv").click(function () {
+        $.ajax({
+            url: "/actprod",
+            type: "POST",
+            data: {
+                id: id,
+                nombre: $('#nombre').val(),
+                precio: $('#precio').val(),
+                stock: $('#stock').val(),
+                estado: $('#estado option:selected').val(),
+                compañia: $('#comp option:selected').val(),
+            },
+            success: function (response) {
+                Swal.fire({
+                    title: 'Producto Actualizado Correctamente!',
+                    text: 'Se ha actualizado el producto',
+                    icon: 'success',
+                    confirmButtonText: "Aceptar",
+                }).then(() => {
+                    window.location = "/ajuste"
+                });
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+
+    $("#addinv").click(function () {
+        alert("a")
+        $.ajax({
+            url: "/addprod",
+            type: "POST",
+            data: {
+                nombre: $('#nombre1').val(),
+                precio: $('#precio1').val(),
+                stock: $('#stock1').val(),
+                estado: $('#estado1 option:selected').val(),
+                compañia: $('#comp1 option:selected').val(),
+            },
+            success: function (response) {
+                Swal.fire({
+                    title: 'Producto Añadido Correctamente!',
+                    text: 'Se ha añadido el producto',
+                    icon: 'success',
+                    confirmButtonText: "Aceptar",
+                }).then(() => {
+                    window.location = "/ajuste"
+                });
+
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+</script>

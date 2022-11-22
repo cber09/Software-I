@@ -34,11 +34,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <!-- DATERANGEPIECKER -->
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- ICONS -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <!-- sweet alert -->
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Font Awesome Cdn Link -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <!-- dashboard -->
     <link rel="stylesheet"
@@ -81,37 +87,37 @@
 
 <body>
     <div class="container1">
-        <nav class="nav">
+        <nav class="navlat">
             <ul>
                 <li><a href="/homesistema" class="logo">
                         <img src="../static/img/nosotros.jpg">
-                        <span class="nav-item">Buen <br> Productor</span>
+                        <span class="navlat-item">Buen <br> Productor</span>
                     </a></li>
                 {%if session.nombrerol == "Administrador"%}
 
 
                 <li><a href="/usuario" class="a">
                         <i class="fas fa-users"></i>
-                        <span class="nav-item">Usuarios</span>
+                        <span class="navlat-item">Usuarios</span>
                     </a></li>
                 {%endif%}
                 <li><a href="/consulta" class="a">
                         <i class="fas fa-book"></i>
-                        <span class="nav-item">Consultas</span>
+                        <span class="navlat-item">Consultas</span>
                     </a></li>
                 <li><a href="/facturacion" class="a">
                         <i class="fas fa-file-invoice-dollar"></i>
-                        <span class="nav-item">Facturacion</span>
+                        <span class="navlat-item">Facturacion</span>
                     </a></li>
 
-                <li><a href="#" class="a">
+                <li><a href="/ajuste" class="a">
                         <i class="fas fa-cog"></i>
-                        <span class="nav-item">Ajustes</span>
+                        <span class="navlat-item">Ajustes</span>
                     </a></li>
 
                 <li><a href="/deslog" class="logout a">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span class="nav-item">Cerrar Sesion</span>
+                        <span class="navlat-item">Cerrar Sesion</span>
                     </a></li>
             </ul>
         </nav>

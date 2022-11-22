@@ -14,10 +14,7 @@
 
     {% block content %}
     <div class="admin" style="padding: 20px;">
-        <div class="main-top">
 
-            <i class="fas fa-user-cog"></i>
-        </div>
         <div class="row mb-4">
             <div class="col">
                 <h1>Registro Usuario</h1>
@@ -124,10 +121,10 @@
                     }).then((result) => {
                         /* Read more about handling dismissals below */
                         if (result.dismiss === Swal.DismissReason.timer) {
-                            console.log('I was closed by the timer')
+                            window.location = '../usuario'
                         }
                     })
-                    window.location = '../usuario'
+
                 },
                 error: function (error) {
                     //console.log(error);

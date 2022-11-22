@@ -1,0 +1,93 @@
+<div class="row mb-4">
+
+</div>
+<table id="venta-data" class="table table-bordered table-hover dataTable dtr-inline">
+    <thead>
+        <tr>
+            <th>N° Venta</th>
+            <th>Vendido por</th>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for list in ventas%}
+        <tr>
+            <td>{{list.Id_Venta}}</td>
+            <td>{{list.Nombre}}</td>
+            <td>{{list.Fecha}}</td>
+            {%if list.IdReceta%}
+            <td>Con Receta</td>
+            {%else%}
+            <td>Factura rápida</td>
+            {%endif%}
+            {%if list.Total%}
+            <td>{{list.Total}} C$</td>
+            {%else%}
+            <td>0 C$</td>
+            {%endif%}
+
+            <td><button class="btn " id="verdetalle" name="verdetalle" value="{{list.Id_Venta}}">
+                    <i class="fas fa-info-circle" style="font-size: 25px; color: rgb(85, 83, 83);"></i>
+                </button>
+            </td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>
+<input id="launch" type="hidden" data-toggle="modal" data-target=".bd-example-modal-lg">
+<div id="modal-act"></div>
+
+<input id="launch1" type="hidden" data-toggle="modal" data-target="#detvet">
+<div id="modal-act1"></div>
+<script>
+    $(document).ready(function () {
+        $('#venta-data').DataTable({
+            "bLengthChange": false,
+            "bFilter": true,
+            "bInfo": false,
+            "bAutoWidth": false,
+            searching: false,
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+    });
+    $("#venta-data button[name=verdetalle]").click(function () {
+        id = $(this).val();
+        $.ajax({
+            url: "/ventadetalle",
+            type: "POST",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $('#modal-act1').html(response);
+                $('#modal-act1').append(response.htmlresponse);
+                $('#launch1').click();
+            },
+            error: function (error) {
+                //console.log(error);
+            },
+        });
+    });
+</script>
