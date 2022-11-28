@@ -114,6 +114,7 @@ def actusu():
     if request.method == "POST":
         
         accion = request.form['accion']
+        print(accion)
         if accion == "actualizar":
             id = request.form['id']
             usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
@@ -542,6 +543,7 @@ def clienteinfo():
 def correo():
     if request.method == "POST":
         flag = request.form['flag']
+        print(flag)
         if flag == "usuario":
             nombres = request.form['nombres']
             apellidos = request.form['apellidos']
@@ -591,12 +593,12 @@ def homesistema():
     consultas = db1.execute('select count(Id_Consulta) as consultas from Consulta where Fecha = :fecha',fecha = datetime.date(hi))
     usuarios = db1.execute('select count(*) as usuarios from Usuarios as u inner join credenciales as cred on u.IdCredenciales = cred.Id_Credenciales where cred.Rol = "3"')
     empleados = db1.execute('select count(*) as empleados from Usuarios as u inner join credenciales as cred on u.IdCredenciales = cred.Id_Credenciales where cred.Rol = "2" and u.IdEstado = "1"')
-    clientes = db1.execute('select u.Id_Usuario,u.Nombres  || " " || u.Apellidos as cliente,m.Nombre as Mascota from Mascota as m inner join Usuarios as u on m.IdUsuario = u.Id_Usuario')
+    clientes = db1.execute('select u.Id_Usuario,u.Nombres  || " " || u.Apellidos as cliente,m.Nombre as Mascota from Mascota as m inner join Usuarios as u on m.IdUsuario = u.Id_Usuario where u.IdEstado = "1"')
     mesUno = datetime.date(hi)- relativedelta(months=1)
     mesDos = datetime.date(hi)- relativedelta(months=2)
     ventasMesUno = db1.execute('select sum(total) as ventas1 from Ventas where Fecha = :fecha',fecha = mesUno)
     ventasMesDos = db1.execute('select sum(total) as ventas2 from Ventas where Fecha = :fecha',fecha = mesDos)
-    print(ventasMesDos)
+    print(ventas)
     ventas2 = 0
     ventas1 = 0
     

@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Actualizar</h5>
+                <h5 class="modal-title">Agregar</h5>
                 <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -389,11 +389,12 @@
                     url: "/correo",
                     type: "POST",
                     data: {
+                        flag:"usuario",
                         nombres: $('#nombre').val(),
                         apellidos: $('#apellido').val(),
                         correo: $('#correo').val(),
                         loginUser: $('#usuario').val(),
-                        loginPassword: $('#contra').val(),
+                        loginPassword: $('#contra').val()
                     },
                     success: function (response) {
                         Swal.fire({
