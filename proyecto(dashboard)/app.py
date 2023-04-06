@@ -51,6 +51,7 @@ def login():
                 session["user_Id"] = empleado[0]["Id_Usuario"]
                 session["userrole"] = empleadoRol[0]["Id_Rol"]
                 session["nombrerol"] = empleadoRol[0]["NombreRol"]
+                print(session['usercom'])
                 if session["nombrerol"] == "Administrador":
                     return redirect(url_for('homesistema'))
                 elif session["nombrerol"] == "Empleado":

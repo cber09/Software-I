@@ -1,13 +1,11 @@
 {%if info == "agregar"%}
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+<div class="modal fade" id="modalusuario" data-bs-focus="true" tabindex="-1" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Agregar</h5>
-                <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="cliente-nuevo" id="clientenuevo" style="display: block; padding: 15px 15px;">
                 <!-- 2 column grid layout with text inputs for the first and last names -->
@@ -389,7 +387,7 @@
                     url: "/correo",
                     type: "POST",
                     data: {
-                        flag:"usuario",
+                        flag: "usuario",
                         nombres: $('#nombre').val(),
                         apellidos: $('#apellido').val(),
                         correo: $('#correo').val(),
