@@ -13,9 +13,12 @@
 <body>
 
     {% block content %}
+    <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Usuarios</label>
+    </div>
+
     <div class="admin" style="padding: 20px;">
 
-        <div class="row mb-4">
+        <!-- <div class="row mb-4">
             <div class="col">
                 <h1>Registro Usuario</h1>
             </div>
@@ -23,15 +26,19 @@
                 <button class="btn btn-success" onclick="agregar()"><i class="bi bi-person-plus-fill"></i>
                     Añadir</button>
             </div>
-        </div>
-        <div class="table">
-            <table id="table_id" class="display">
-                <thead>
+        </div> -->
+
+        <div class=" p-3 overflow-scroll" style="background-color: white; border-radius: 3px;">
+            <table id="table_id" class="table table-hover display bg-light">
+                <thead class="table-dark">
                     <tr>
-                        <th>Id usuario</th>
+                        
+                    </tr>
+                    <tr>
+                        <th>Id</th>
                         <th>Nombres</th>
                         <th>Apellidos</th>
-                        <th>Telefono Fijo</th>
+                        <th>Tel. Fijo</th>
                         <th>Celular</th>
                         <th>Dirección</th>
                         <th>Estado</th>
@@ -72,7 +79,30 @@
     </div>
     <script>
         $(document).ready(function () {
-            $('#table_id').DataTable();
+            $('#table_id').DataTable({
+                lengthChange: false,
+                language: {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json"
+                },
+                info: false,
+                "initComplete": function (settings, json) {
+                    $('<button/>', {
+                        id: 'miBoton',
+                        text: 'Añadir   ',
+                        class: 'btn btn-success me-2',
+                        html: '<i class="fas fa-plus"></i> Añadir ',
+                        click: function () {
+                            // acción del botón
+                            agregar();
+                        }
+                    }).appendTo('.dataTables_filter');
+                }
+                });
+
+
+
+
+
         });
         $("#table_id button[name=act]").click(function () {
             id = $(this).val();
