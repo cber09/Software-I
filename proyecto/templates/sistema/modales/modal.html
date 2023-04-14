@@ -5,115 +5,182 @@
         <div class="modal-content">
             <div class="modal-header encabezado_modales">
                 <h5 class="modal-title">Agregar</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
-            <div class="cliente-nuevo" id="clientenuevo" style="display: block; padding: 15px 15px;">
+            <div class="cliente-nuevo fondo-modal" id="clientenuevo" style="display: block; padding: 15px 15px;">
                 <!-- 2 column grid layout with text inputs for the first and last names -->
-                <div class="row mb-4">
-                    <input type="hidden" name="id">
-                    <div class="col">
-                        <div class="form-outline">
-                            <label class="form-label" for="form3Example1">Nombres</label>
-                            <input type="text" id="nombre" name="nombre" required class="form-control" />
-                            <label id="mensaje_error_input" class="control-label col-md-12 text-danger"
-                                style="display: block;">Las
-                                constraseñas no coinciden</label>
+                <div class="row">
+                    <div class="col-4 p-5">
+                        <div class="row justify-content-center" style="height: 50%;">
+                            <img src="../../../static/img/user-default-icon.png"
+                                alt=""  class="img-portada">
                         </div>
+                        <div class="row justify-content-center">
+                            <button class="btn btn-outline-warning">Editar Imagen</button>
+                            <button class="btn btn-outline-success mt-2" onclick="añadir()" id="boton-enviar"
+                                disabled>Guardar</button>
+                        </div>
+                        <hr>
+                        <div class="row overflow-auto contenedor-tabla">
+                            <table class="table table-dark table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Mascota</th>
+                                        <th><i class="fas fa-plus" style="color: #248029;"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>250</td>
+                                        <td>Paquito</td>
+                                        <td><i class="fas fa-eye fa-sm" style="color: #005eff;"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>250</td>
+                                        <td>Paquito</td>
+                                        <td><i class="fas fa-eye fa-sm" style="color: #005eff;"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>250</td>
+                                        <td>Paquito</td>
+                                        <td><i class="fas fa-eye fa-sm" style="color: #005eff;"></i></td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                   
                     </div>
-                    <div class="col">
-                        <div class="form-outline">
-                            <label class="form-label" for="form3Example2">Apellidos</label>
-                            <input type="text" id="apellido" name="apellido" required class="form-control" />
-                            <label id="mensaje_error_input_a" class="control-label col-md-12 text-danger"
-                                style="display: block;">Las
-                                constraseñas no coinciden</label>
+                    <div class="col-8 overflow-auto" style="height: 78vh;">
+                        <div class="row justify-content-center titulos-modal-columna">Datos del Usuario</div>
+                        <div class="row mb-4">
+                            <input type="hidden" name="id">
+                            <div class="col mt-5">
+
+                                <div class="form-group row">
+                                    <label for="inputPassword" class="col-sm-2 col-form-label">Nombres</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="inputPassword"
+                                            placeholder="Nombres">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-group row">
+                                    <label for="inputPassword" class="col-sm-2 col-form-label">Apellidos</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="inputPassword"
+                                            placeholder="Apellidos">
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="row mb-4">
+
+                            <div class="col">
+                                <div class="form-group row">
+                                    <label for="inputPassword" class="col-sm-2 col-form-label">Correo</label>
+                                    <div class="col-sm-10">
+                                        <input type="email" class="form-control" id="inputPassword"
+                                            placeholder="Correo">
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="row mb-4">
+
+                            <div class="col">
+                                <div class="form-group row">
+                                    <label for="inputPassword" class="col-sm-2 col-form-label">Rol</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-select" name="rol">
+                                            <option value="1">Administrador</option>
+                                            <option value="2">Usuario</option>
+                                            <option value="3">Veterinario</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="row mb-4">
+
+                            <div class="col">
+                                <div class="col">
+                                    <div class="form-group row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Dirección</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" name="direccion" maxlength="50" required
+                                                id="direccion" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col" id="div-cambio"><label for=""><input type="checkbox" name="cambio">
+                                    Personalizar
+                                    Credenciales</label></div>
+
+                        </div>
+                        <div class="row mb-4 hidden" id="credenciales" style="display: none;">
+
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Usuario</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="usuario" name="usuario" placeholder="Ingrese el Usuario" required class="form-control" />
+                                    <label id="mensaje_error_usu" class="control-label col-md-12 text-danger"
+                                        style="display: block;">El
+                                        usuario ya existe</label>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row mt-3">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Contraseña</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="contra" name="contra" placeholder="Contraseña nueva"
+                                        class="form-control" />
+                                    <label id="mensaje_error" class="control-label col-md-12 text-danger"
+                                        style="display: block;">Las
+                                        constraseñas no coinciden</label>
+                                    <label id="passstrength" class="control-label col-md-12 text-danger"
+                                        style="display: block;">Las
+                                        constraseñas no coinciden</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mt-3">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Contraseña</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="contra1" name="contra1"
+                                        placeholder="Repita la contraseña" class="form-control" />
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <div class="row mb-4">
-                    <div class="col">
-                        <div class="form-outline">
-                            <label class="form-label" for="form3Example3">Telefono Fijo</label>
-                            <input type="text" id="telfijo" name="telfijo" maxlength="8" required
-                                class="form-control" />
 
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-outline">
-                            <label class="form-label" for="form3Example3">Celular</label>
-                            <input type="text" id="celular" maxlength="8" name="celular" required
-                                class="form-control" />
-
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-outline">
-                            <label class="form-label" for="form3Example3">Correo</label>
-                            <input type="email" id="correo" maxlength="80" name="correo" required
-                                class="form-control" />
-
-                        </div>
-                    </div>
-
-                </div>
-                <div class="row mb-4">
-                    <div class="col">
-                        <div class="form-outline">
-                            <label class="form-label" for="form3Example3">Rol</label>
-                            <select class="form-select" id="rol" name="rol">
-                                <option value="1" selected="true">Administrador</option>
-                                <option value="2">Usuario</option>
-                            </select>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-4">
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form3Example4">Dirección</label>
-                        <textarea class="form-control" name="direccion" maxlength="50" required id="direccion"
-                            rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="row mb-4">
-                    <div class="col" id="div-cambio"><label for=""><input type="checkbox" name="cambio"> Personalizar
-                            Credenciales</label></div>
-
-                </div>
-                <div class="row mb-4 hidden" id="credenciales" style="display: none;">
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form3Example4">Usuario</label>
-                        <input type="text" id="usuario" name="usuario" required class="form-control" />
-                        <label id="mensaje_error_usu" class="control-label col-md-12 text-danger"
-                            style="display: block;">El
-                            usuario ya existe</label>
-
-                    </div>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form3Example4">Contraseña</label>
-                        <input type="text" id="contra" name="contra" placeholder="Contraseña nueva"
-                            class="form-control" />
-                        <label id="mensaje_error" class="control-label col-md-12 text-danger"
-                            style="display: block;">Las
-                            constraseñas no coinciden</label>
-                        <label id="passstrength" class="control-label col-md-12 text-danger" style="display: block;">Las
-                            constraseñas no coinciden</label>
-
-                    </div>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form3Example4">Contraseña</label>
-                        <input type="text" id="contra1" name="contra1" placeholder="Repita la contraseña"
-                            class="form-control" />
-
-
-
-                    </div>
-                </div>
                 <!-- Submit button -->
-                <button onclick="añadir()" id="boton-enviar" disabled class="btn btn-primary btn-block mb-4">
-                    Guardar
-                </button>
+
+
             </div>
         </div>
     </div>
