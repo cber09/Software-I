@@ -111,19 +111,19 @@
                     </div>
                     <ul class="sub-menu">
                         <li><a class="link_name" href="/usuario">Usuarios</a></li>
-                        <li><a href="#">Doctores</a></li>
-                        <li><a href="#">Clientes</a></li>
-                        <li><a href="#">Empleados</a></li>
+                        <li><a href="/verVeterinarios">Veterinarios</a></li>
+                        <li><a href="/verClientes">Clientes</a></li>
+                        <li><a href="/verEmpleados">Empleados</a></li>
                     </ul>
                 </li>
                 {%endif%}
                 <li>
-                    <a href="#">
+                    <a href="/verMascotas">
                         <i class="fas fa-dog"></i>
                         <span class="link_name">Mascotas</span>
                     </a>
                     <ul class="sub-menu blank">
-                        <li><a class="link_name" href="#">Mascotas</a></li>
+                        <li><a class="link_name" href="/verMascotas">Mascotas</a></li>
                     </ul>
                 </li>
                 {%if session.nombrerol == "Administrador"%}

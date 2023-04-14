@@ -110,6 +110,30 @@ def usuario():
     usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
     return render_template('sistema/tablas/usuario.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
 
+@app.route('/verVeterinarios')
+def verVeterinarios():
+    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    return render_template('sistema/tablas/tabla-veterinarios.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
+
+@app.route('/verClientes')
+def verClientes():
+    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    return render_template('sistema/tablas/tabla-clientes.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
+
+
+@app.route('/verEmpleados')
+def verEmpleados():
+    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    return render_template('sistema/tablas/tabla-empleados.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
+
+
+@app.route('/verMascotas')
+def verMascotas():
+    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    return render_template('sistema/tablas/tabla-mascotas.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
+
+
+
 @app.route('/actusu', methods =["POST","GET"])
 def actusu():
     if request.method == "POST":

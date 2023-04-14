@@ -288,7 +288,7 @@
   background-position: center center;
   background-size: 400px 200px;
   background-repeat: no-repeat;
-  background-color: #11101d;
+  background-color: #424242;
 }
 .titulos-modal-columna{
   font-size: 30px;
@@ -311,7 +311,7 @@
 .img-portada{
   border-radius: 50%; /* Establece el radio de la esquina al 50% para hacer que la imagen se vea redonda */
   width: 5%; /* Ancho de la imagen */
-  height: 80%; /* Altura de la imagen */
+  height: 15%; /* Altura de la imagen */
 }
 
 
