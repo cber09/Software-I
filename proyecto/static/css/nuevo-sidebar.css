@@ -313,6 +313,12 @@
   width: 5%; /* Ancho de la imagen */
   height: 15%; /* Altura de la imagen */
 }
+.card-title{
+  color: white;
+}
+.form-label{
+  color: white;
+}
 
 
 /* ===================================== */

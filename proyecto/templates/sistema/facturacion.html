@@ -15,140 +15,164 @@
     <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Facturación</label>
     </div>
 
-    <div class="admin d-flex" style="padding: 20px;">
-        <br>
-        <div class="card" style="padding: 20px;">
+    <div class="d-flex" style="padding: 20px; padding-left: 50px; width: 100vw;">
+        <div class="container bg-dark" style="color: white; border-radius: 20px;">
             <div class="row">
-                <div class="col-4 fact-rap">
-                    <div class="form-outline">
-
-                        <label class="form-label" for="form3Example3">Busqueda Producto</label>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-primary boton-input" type="button"><i
-                                        class="fas fa-search"></i></button>
+                <div class="col-7 overflow-auto" style="height: 87vh;">
+                   
+                    
+                    <div class="row mb-4">
+                        <input type="hidden" name="id">
+                        <div class="col mt-2">
+    
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Cliente</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputPassword"
+                                        placeholder="Nombres">
+                                </div>
                             </div>
-                            <input type="text" class="form-control" id="buscprod" placeholder="Buscar producto"
-                                aria-label="Username" aria-describedby="basic-addon1">
+    
                         </div>
-
+    
                     </div>
-                    <div style="background-color: #FFF; position:relative; ">
-                        <div class="info" id="listaproducto">
-
+                    <div class="row mb-4">
+                        <input type="hidden" name="id">
+                        <div class="col">
+    
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Producto</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputPassword"
+                                        placeholder="Nombre Producto">
+                                </div>
+                            </div>
+    
                         </div>
+    
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Cantidad</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputPassword"
+                                        placeholder="Descuento">
+                                </div>
+                            </div>
+    
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-4 col-form-label">Forma de pago</label>
+                                <div class="col">
+                                    <select class="form-select" name="rol">
+                                        <option value="1">Tarjeta</option>
+                                        <option value="2">Efectivo</option>
+                                    </select>
+                                </div>
+                            </div>
+    
+                        </div>
+    
+                        <div class="col">
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-4 col-form-label">Descuento</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputPassword"
+                                        placeholder="Cantidad">
+                                </div>
+                            </div>
+    
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <input type="hidden" name="id">
+                        <div class="col">
+    
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">No Receta</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputPassword"
+                                        placeholder="No Receta">
+                                </div>
+                            </div>
+    
+                        </div>
+    
+                    </div>
+                    <div class="row mb-4 d-flex justify-content-center">
+                        <input type="hidden" name="id">
+                        <div class="col mt-4 text-center">
+                            <button type="button" class="btn btn-outline-success btn-lg">Agregar</button>
+                            
+    
+                        </div>
+                        <div class="col mt-4 text-center">
+                            <button type="button" class="btn btn-outline-warning btn-lg">Imprimir</button>
+                            
+    
+                        </div>
+                        <div class="col mt-4 text-center">
+                            <button type="button" class="btn btn-outline-info btn-lg">Consulta</button>
+                            
+    
+                        </div>
+                        
+    
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-12" style="padding: 10px 10px 0 10px; background-color: rgb(180, 180, 180); border-radius: 5px;">
+                            <!-- small box -->
+                            <div class="cards" style="padding: 5px; height: 100%;">
+                                <div class="inner" style="color: black;">
+                                    <h3>TOTAL</h3>
+    
+                                </div>
+                                <div style=" text-align: end;">
+                                    <h2 style="font-size: 70px; color: rgb(71, 71, 71);" id="total1">0 C$</h2>
+                                </div>
+    
+                            </div>
+                        </div>
+    
                     </div>
                 </div>
-                <div class="col-2 fact-rap">
-                    <div class="form-outline">
-                        <label class="form-label" for="form3Example3">Cantidad</label>
-                        <input type="number" id="cant" maxlength="80" name="Cantidad" required class="form-control"
-                            placeholder="Cantidad" />
-
-
-                    </div>
-                </div>
-                <!-- <div class="col-2 fact-rap">
-                    <div class="form-outline">
-                        <label class="form-label" for="form3Example3">Descuento</label>
-                        <div style="display: flex;">
-                            <input type="email" id="correo" maxlength="80" name="correo" required class="form-control"
-                                placeholder="Descuento" />
-                            <div style="display: block;">
-                                <input type="radio" style="margin-left: 10px;"> %
-                                <input type="radio" style="margin-left: 10px;"> C$
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <div class="col-4 sin-rec">
-                    <div class="form-outline">
-                        <label class="form-label" for="form3Example3">N° Receta</label>
-
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-primary boton-input" type="button"><i
-                                        class="fas fa-search"></i></button>
-                            </div>
-                            <input type="number" class="form-control" placeholder="Codigo receta" aria-label="Username"
-                                aria-describedby="basic-addon1" id="idreceta">
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <label class="form-label fact-rap" for="form3Example3">Factura Rápida</label>
-                <div class="col-6 fact-rap">
-                    <div class="form-outline">
-                        <input type="text" id="cliente" maxlength="80" name="correo" required class="form-control"
-                            placeholder="Cliente" />
-                        <label id="mensaje_error_input_c" class="control-label col-md-12 text-danger"
-                            style="display: none;">Las
-                            constraseñas no coinciden</label>
-
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-        <br>
-        <div style="display: flex; ">
-            <div class="card" id="tabla" style="width: calc(75%);padding: 20px;">
-
-            </div>
-
-            <div class="card" style="margin-left: 10px; width:calc(40%) ;">
-                <div class="row">
-                    <div class="col-lg-6 col-6">
-                        <!-- small box -->
-                        <div class=" card cartas bg-info" style="padding: 5px;">
-                            <div class="inner">
-                                <h3>Consulta</h3>
-                                <p style="height: 20px;"></p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-user-md"></i>
-                            </div>
-                            <a onclick="addconsul()" class="card-footer" style="cursor: pointer;">
-                                Click
-                            </a>
-                        </div>
-                    </div>
-                    <br>
-                    <!-- ./col -->
-                    <div class="col-lg-6 col-6">
-                        <!-- small box -->
-                        <div class="card cartas bg-success" style="padding: 5px;">
-                            <div class="inner">
-                                <h3>PAGAR</h3>
-
-                                <p style="height: 20px;"> </p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                            <a onclick="pay()" class="card-footer" style="cursor: pointer;">Click</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12" style="padding: 10px 10px 0 10px;">
-                        <!-- small box -->
-                        <div class="cards" style="padding: 5px; height: 100%;">
-                            <div class="inner" style="color: black;">
-                                <h3>TOTAL</h3>
-
-                            </div>
-                            <div style=" text-align: end;">
-                                <h2 style="font-size: 50px;" id="total1">0 C$</h2>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!-- ./col -->
+                <div class="col-5" style="border: 1px solid white; background-color: rgb(236, 236, 236); padding-left: 5px;">
+                    <table class="table">
+                        <thead class="table-dark">
+                          <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Subtotal</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Producto 1</td>
+                            <td>5</td>
+                            <td>200</td>
+                            <td><i class="fas fa-trash" style="color: #b42c1d;"></i></td>
+                          </tr>
+                          <tr>
+                            <td>Producto 2</td>
+                            <td>3</td>
+                            <td>300</td>
+                            <td><i class="fas fa-trash" style="color: #b42c1d;"></i></td>
+                          </tr>
+                          <tr>
+                            <td>Producto 3</td>
+                            <td>2</td>
+                            <td>500</td>
+                            <td><i class="fas fa-trash" style="color: #b42c1d;"></i></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      
+                     
                 </div>
             </div>
         </div>

@@ -732,7 +732,7 @@ def generarconsulta():
 #AJUSTES
 @app.route('/ajuste')
 def ajuste():
-    return render_template('sistema/Ajustes.html')
+    return render_template('sistema/tablas/tabla-inventario.html')
 
 
 #*************************************************
