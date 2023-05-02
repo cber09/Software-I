@@ -11,15 +11,24 @@
 </head>
 
 <body>
+   
 
     {% block content %}
+     <style>
+        a {
+            text-decoration: none !important;
+            color: white;
+        }
+
+    </style>
     {%if session.nombrerol == "Administrador"%}
-    <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Mis Consultas</label>
+    <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Mis
+            Consultas</label>
     </div>
     <div class="" style="padding: 20px;">
-        
+
         <div class="card overflow-scroll" style="background-color: white; border-radius: 3px; height: 85vh;" id="lista">
-            
+
             <!-- /.card-header -->
             <div class="card-body ">
                 <table class="table table-striped" id="consultas">
@@ -81,187 +90,140 @@
         </script>
         {%else%}
         <!-- empleado -->
-        <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Agendar Consultas</label>
+        <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Agendar
+                Consultas</label>
         </div>
-        <div class="overflow-scroll" style="margin: 20px; height: 80vh;">
-            
-            <div class="card overflow-scroll bg-dark" >
-                <div class="card-body" id="client">
-                    <h5 class="card-title">Datos del Cliente</h5>
-                    <hr>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-outline">
-                                    <label class="form-label" for="form3Example3">Correo</label>
-                                    <input type="email" id="correo" maxlength="80" name="correo" required
-                                        class="form-control" placeholder="correo" />
-                                    <label id="mensaje_error_input_c" class="control-label col-md-12 text-danger"
-                                        style="display: none;">Las
-                                        constraseñas no coinciden</label>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div id="form" style="display: none;">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-outline">
-                                        <label class="form-label" for="form3Example1">Nombres</label>
-                                        <input type="text" id="nombre" name="nombre" placeholder="nombres" required
-                                            class="form-control" />
-                                        <label id="mensaje_error_input" class="control-label col-md-12 text-danger"
-                                            style="display: block;">Las
-                                            constraseñas no coinciden</label>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-outline">
-                                        <label class="form-label" for="form3Example2">Apellidos</label>
-                                        <input type="text" id="apellido" name="apellido" required
-                                            class="form-control" />
-                                        <label id="mensaje_error_input_a" class="control-label col-md-12 text-danger"
-                                            style="display: block;">Las
-                                            constraseñas no coinciden</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-outline">
-                                        <label class="form-label" for="form3Example3">Celular</label>
-                                        <input type="text" id="celular" maxlength="8" name="celular" required
-                                            class="form-control" />
-
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-outline">
-                                        <label class="form-label" for="form3Example3">Telefono Fijo</label>
-                                        <input type="text" id="telfijo" name="telfijo" maxlength="8" required
-                                            class="form-control" />
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <label class="labels" for="receta">Direccion:</label>
-                                    <br>
-                                    <textarea class="textarea" style="width: 100%;"
-                                        placeholder="Escriba su dirección..." name="direccion" maxlength="50" required
-                                        id="direccion" rows="3"></textarea>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <br>
+        <div class="container bg-dark"
+            style="color: white; margin-left: 80px !important; margin-top: 15px !important; height: 80vh; border-radius: 15px">
             <div class="row">
-                <div class="col">
-                    <div class="card" id="pet">
-                        <div class=" card-body bg-dark">
+                <div class="col-4 overflow-auto" style="height: 100vh;">
+                    <div class="row justify-content-center">CITA</div>
 
+                    <div class="row mb-4">
+                        <input type="hidden" name="id">
+                        <div class="col mt-5">
 
-                            <h5 class="card-title">Datos del Paciente</h5>
-                            <hr>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="exampleInputEmail1">Nombre</label>
-                                        <input type="text" class="form-control" id="nombremas"
-                                            aria-describedby="emailHelp" placeholder="Nombre de la mascota">
-                                        <label id="mensaje_error_input_ma" class="control-label col-md-12 text-danger"
-                                            style="display: none;">Las
-                                            constraseñas no coinciden</label>
-                                    </div>
-                                </div>
-                                <div id="formmas" style="margin-bottom: 15px;">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="exampleInputEmail1">Edad</label>
-                                            <input type="number" maxlength="10" class="form-control" id="edad"
-                                                aria-describedby="emailHelp" placeholder="Edad">
-                                        </div>
-                                        <div class="col">
-                                            <label for="exampleInputEmail1">Tipo mascota</label>
-                                            <select class="form-select" id="tipo" name="rol">
-                                                <option value="1" selected="true">Perro</option>
-                                                <option value="2">Gato</option>
-                                                <option value="3" selected="true">Hamster</option>
-                                                <option value="0">Otro</option>
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="exampleInputEmail1">Sexo</label>
-                                            <select class="form-select" id="sexo" name="rol">
-                                                <option value="1" selected="true">Hembra</option>
-                                                <option value="2">Macho</option>
-
-                                            </select>
-                                        </div>
-                                        <div class="col">
-                                            <label for="exampleInputEmail1">Raza</label>
-                                            <input type="text" maxlength="20" class="form-control" id="raza"
-                                                aria-describedby="emailHelp" placeholder="Raza">
-                                            <label id="mensaje_error_input_m"
-                                                class="control-label col-md-12 text-danger" style="display: none;">Las
-                                                constraseñas no coinciden</label>
-                                        </div>
-                                    </div>
-
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col col-form-label">Cliente <i class="fas fa-plus"
+                                        style="color: #999999;"></i></label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control" id="inputPassword" placeholder="Correo">
                                 </div>
                             </div>
 
                         </div>
 
+                    </div>
+                    <div class="row mb-4">
+                        <input type="hidden" name="id">
+                        <div class="col">
+
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col col-form-label">Mascota <i class="fas fa-plus"
+                                        style="color: #999999;"></i></label>
+                                <div class="col-sm-12 mr-2">
+                                    <input type="text" class="form-control" id="inputPassword"
+                                        placeholder="Nombre Mascota">
+                                </div>
+                            </div>
+
+                        </div>
 
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card" style="height: 330px;" id="general">
-                        <div class=" card-body bg-dark">
-                            <h5 class="card-title">Datos Generales</h5>
-                            <hr>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label class="labels" style="margin-bottom: 0;" for="sintomas1">Sintomas</label>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Síntomas</label>
+                                <div class="col-sm-12">
+                                    <textarea type="text" class="form-control" cols="30" rows="10" id="inputPassword"
+                                        placeholder="Descuento"></textarea>
 
-                                        <textarea class="textarea form-control" style="width: 100%;" name="sintomas1"
-                                            placeholder="Escriba sus sintomas..." id="sintomas1" rows="2"></textarea>
-                                    </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="exampleInputEmail1">Fecha</label>
-                                        <input type="date" class="form-control" id="fecha" aria-describedby="emailHelp"
-                                            placeholder="Enter email">
-                                    </div>
-                                </div>
-
                             </div>
+
                         </div>
                     </div>
-                </div>
+                    <div class="row  d-flex justify-content-center">
+                        <input type="hidden" name="id">
+                        <div class="col">
+                            <label for="inputPassword" class="col col-form-label">Fecha</label>
+                            <div class="col-sm-12 mr-2">
+                                <input type="date" class="form-control" id="inputPassword" placeholder="Nombre Mascota">
+                            </div>
+                        </div>
+                        <div class="col mt-4 text-center">
+                            <button type="button" class="btn btn-outline-success btn-lg mt-3">Agendar</button>
 
-                <div class="row justify-content-md-end" style="margin-top: 15px;">
-                    <div class="col col-lg-2">
-                        <button type="button" class="btn btn-success" id="boton-enviar" disabled onclick="agendar()"><i
-                                class="fas fa-calendar-check" style="margin-right: 5px;"></i>Agendar</button>
+
+                        </div>
+
+
+
+                    </div>
+                </div>
+                <div class="col-8"
+                    style="border: 1px solid white; background-color: rgb(182, 182, 182); height: 80vh; border-radius: 15px; overflow: hidden;">
+                    <div id="calendario-cliente" style=" height: 80vh;">
+
+
                     </div>
 
                 </div>
             </div>
-
         </div>
         <script>
+            cale();
+            function cale() {
+                /* initialize the calendar
+                 -----------------------------------------------------------------*/
+                //Date for the calendar events (dummy data)
+                var date1 = new Date()
+                var d1 = date1.getDate(),
+                    m1 = date1.getMonth(),
+                    y1 = date1.getFullYear()
+
+                var Calendar1 = FullCalendar.Calendar;
+                var calendarEl1 = document.getElementById('calendario-cliente');
+
+                // initialize the external events
+                // -----------------------------------------------------------------
+                var calendar1 = new Calendar1(calendarEl1, {
+
+                    buttonText: {
+                        prevYear: 'prev year',
+                        nextYear: 'next year',
+                        year: 'year',
+                        today: 'Hoy',
+                        month: 'Mes',
+                        day: 'Dia',
+                        list: 'list',
+                    },
+                    locale: 'es',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridDay'
+                    },
+
+                    //Random default events
+                    events: [
+                        {
+                            title: 'Consulta 1',
+                            start: new Date(y1, m1, 1),
+                            backgroundColor: '#f56954', //red
+                            borderColor: '#f56954', //red
+                            allDay: true
+                        }
+                    ],
+                    editable: false,
+
+
+                });
+
+                calendar1.render();
+                // $('#calendario-cliente').fullCalendar()
+
+            }
             var totalflag;
             var mascotaflag;
             var cambioDeus = function () {

@@ -161,12 +161,12 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="/internamiento">
                         <i class="fas fa-home"></i>
                         <span class="link_name">Internamiento</span>
                     </a>
                     <ul class="sub-menu blank">
-                        <li><a class="link_name" href="#">Internamiento</a></li>
+                        <li><a class="link_name" href="/internamiento">Internamiento</a></li>
                     </ul>
                 </li>
                 {%if session.nombrerol == "Administrador"%}
@@ -180,9 +180,8 @@
                     </div>
                     <ul class="sub-menu">
                         <li><a class="link_name" href="/ajuste">Configuración</a></li>
-                        <li><a href="#">Back ups</a></li>
-                        <li><a href="#">Reportes</a></li>
-                        <li><a href="#">Permisos</a></li>
+                        <li><a href="/backups">Back ups / Reportes</a></li>
+                        <li><a href="/permisos">Permisos</a></li>
                     </ul>
                 </li>
                 {%endif%}

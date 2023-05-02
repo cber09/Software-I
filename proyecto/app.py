@@ -735,6 +735,21 @@ def ajuste():
     return render_template('sistema/tablas/tabla-inventario.html')
 
 
+#INTERNAMIENTO
+@app.route('/internamiento')
+def internamiento():
+    return render_template('sistema/internamiento.html')
+
+#BACKUPS
+@app.route('/backups')
+def backups():
+    return render_template('sistema/backups.html')
+
+#PERMISOS
+@app.route('/permisos')
+def permisos():
+    return render_template('sistema/permisos.html')
+
 #*************************************************
 #       *PROVEEDORES*
 # ************************************************   

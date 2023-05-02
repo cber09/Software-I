@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+{% extends "sistema/layout-sistema.html" %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Usuarios</title>
+</head>
+
+<body>
+
+    {% block content %}
+    <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Backups / Reportes</label>
+    </div>
+
+    <div class="" style="padding: 20px;">
+
+        <!-- <div class="row mb-4">
+            <div class="col">
+                <h1>Registro Usuario</h1>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-success" onclick="agregar()"><i class="bi bi-person-plus-fill"></i>
+                    Añadir</button>
+            </div>
+        </div> -->
+
+        <div class="containe" style="color: white;">
+            <div class="cuadricula">
+                <div class="col bg-dark borde">
+                    <div class="row division "  >
+                        <i class="fas fa-database icono" ></i>
+                    </div>
+                    <div class="row" style="padding: 0 50px 0 50px;">
+                        <button type="button" class="btn btn-outline-warning">Backup Completo</button>
+                    </div>
+                </div>
+                <div class="col bg-dark borde">
+                    <div class="row division "  >
+                        <i class="fas fa-redo icono"></i>
+                    </div>
+                    <div class="row" style="padding: 0 50px 0 50px;">
+                        <button type="button" class="btn btn-outline-warning">Restaurar Respaldo</button>
+                    </div>
+                </div>
+                <div class="col bg-dark borde">
+                    <div class="row division "  >
+                        <i class="fas fa-coins icono"></i>
+                    </div>
+                    <div class="row" style="padding: 0 50px 0 50px;">
+                        <button type="button" class="btn btn-outline-warning">Reporte Ventas</button>
+                    </div>
+                </div>
+                <div class="col bg-dark borde">
+                    <div class="row division "  >
+                        <i class="fas fa-hand-holding-usd icono"></i>
+                    </div>
+                    <div class="row" style="padding: 0 50px 0 50px;">
+                        <button type="button" class="btn btn-outline-warning">Reporte Ingresos</button>
+                    </div>
+                </div>
+                <div class="col bg-dark borde">
+                    <div class="row division "  >
+                        <i class="fas fa-users icono"></i>
+                    </div>
+                    <div class="row" style="padding: 0 50px 0 50px;">
+                        <button type="button" class="btn btn-outline-warning">Reporte Clientes</button>
+                    </div>
+                </div>
+        </div>
+        </div>
+
+        <input id="launch" type="hidden" data-bs-toggle="modal" data-bs-target="#modalusuario">
+        <div id="cont"></div>
+
+        <br>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#table_id').DataTable({
+                lengthChange: false,
+                language: {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json"
+                },
+                info: false,
+                "initComplete": function (settings, json) {
+                    $('<button/>', {
+                        id: 'miBoton',
+                        text: 'Añadir   ',
+                        class: 'btn btn-success me-2',
+                        html: '<i class="fas fa-plus"></i> Añadir ',
+                        click: function () {
+                            // acción del botón
+                            agregar();
+                        }
+                    }).appendTo('.dataTables_filter');
+                }
+            });
+
+
+
+
+
+        });
+        $("#table_id button[name=act]").click(function () {
+            id = $(this).val();
+            $.ajax({
+                url: "/actusu",
+                type: "POST",
+                data: {
+                    id: id,
+                    accion: "actualizar",
+                },
+                success: function (response) {
+                    $('#cont').html(response);
+                    $('#cont').append(response.htmlresponse);
+                    $('#launch').click();
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        });
+        $("#table_id button[name=elim]").click(function () {
+            id = $(this).val();
+            $.ajax({
+                url: "/elimusu",
+                type: "POST",
+                data: {
+                    id: id,
+                },
+                success: function (response) {
+                    let timerInterval
+                    Swal.fire({
+                        title: 'Eliminando!',
+                        html: '',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading()
+                            const b = Swal.getHtmlContainer().querySelector('b')
+                            timerInterval = setInterval(() => {
+                                b.textContent = Swal.getTimerLeft()
+                            }, 3000)
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval)
+                        }
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            window.location = '../usuario'
+                        }
+                    })
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        });
+        function agregar() {
+            $.ajax({
+                url: "/actusu",
+                type: "POST",
+                data: {
+                    accion: "agregar",
+                },
+                success: function (response) {
+                    $('#cont').html(response);
+                    $('#cont').append(response.htmlresponse);
+                    $('#launch').click();
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        }
+    </script>
+
+    {%endblock%}
+</body>
+
+
+</html>
