@@ -11,6 +11,8 @@ from flask import Flask, flash, jsonify, make_response, redirect, render_templat
 from jinja2 import Environment
 from werkzeug.security import check_password_hash, generate_password_hash
 from correo import enviar_correo
+from conexion import conectar
+
 app = Flask(__name__)
 
 db1 = SQL("sqlite:///Veterinaria.db")
@@ -32,23 +34,59 @@ def login():
         if usuario == "" or Contraseña == "":
             return render_template('index.html', errorlogin=1)
         else:
-            rows = db1.execute("SELECT * FROM Credenciales Where Usuario=:username",
-                               username=usuario)
+            # SINTAXIS PARA CONSULTAS EN SQL
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'SELECT * FROM Credenciales where usuario = ?'
+            cursor.execute(query, usuario)
+            rows = cursor.fetchall()
             
-            if len(rows) == 0 or not check_password_hash(rows[0]["Contraseña"], Contraseña):
+            cursor.close()
+            conn.close()
+            # AQUI TERMINA LA SINTAXIS
+            if len(rows) == 0 or not check_password_hash(rows[0][2], Contraseña):
+            #if len(rows) == 0 or not check_password_hash(rows[0]["Contraseña"], Contraseña):
                 return render_template('index.html', errorlogin=1)
             else:
                 # Estas consultas son para mostrar la lista de personas y su asistencia
                 
                 empleadoRol = db1.execute(
                     "select rol.* from Credenciales as cred INNER JOIN Roles as rol ON cred.Rol = rol.Id_Rol WHERE cred.Usuario =:u", u=usuario)
+                if rows[0][4] == 1:
+                    # es VETERINARIO
+                    #DATOS DEL USUARIO O EMPLEADO (NOMBRE ETC)
+                    conn = conectar()
+                    cursor = conn.cursor()
+                    query = 'SELECT * FROM veterinario where id_credenciales = ?'
+                    cursor.execute(query, rows[0][0])
+                    empleado = cursor.fetchall()
+                    
+                    cursor.close()
+                    conn.close()
+                    session['cargo'] = 'VETERINARIO'
+                else:
+                    # ES CLIENTE
+                    conn = conectar()
+                    cursor = conn.cursor()
+                    query = 'SELECT * FROM cliente where id_credenciales = ?'
+                    cursor.execute(query, rows[0][0])
+                    empleado = cursor.fetchall()
+                    
+                    cursor.close()
+                    conn.close()
+                    session['cargo'] = 'CLIENTE'
+                #=======0
                 empleado = db1.execute(
                     "select * from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales Where cred.Usuario =:u", u=usuario)
 
                 # # Recordar el usuario y rol que se logeo
-                session["user"] = empleado[0]["Usuario"]
-                session["usercom"] = empleado[0]["Nombres"]
-                session["user_Id"] = empleado[0]["Id_Usuario"]
+                session["user"] = usuario
+                if session['cargo'] == 'VETERINARIO':
+                    session["usercom"] = empleado[0][3]
+                else:
+                    session["usercom"] = empleado[0][1]
+                
+                session["user_Id"] = empleado[0][0]
                 session["userrole"] = empleadoRol[0]["Id_Rol"]
                 session["nombrerol"] = empleadoRol[0]["NombreRol"]
                 print(session['usercom'])
