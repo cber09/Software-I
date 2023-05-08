@@ -15,11 +15,18 @@ from conexion import conectar
 
 app = Flask(__name__)
 
-db1 = SQL("sqlite:///Veterinaria.db")
+# db1 = SQL("sqlite:///Veterinaria.db")
 app.secret_key = "super secret key"
 
 @app.route('/')
 def Index():
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'INSERT INTO credenciales (usuario,contraseña,rol,cargo) VALUES (?,?,?,?)'
+    cursor.execute(query, ('admin',generate_password_hash('admin'),1,1))
+    conn.commit()
+    cursor.close()
+    conn.close()
     return render_template('index.html', rol = "")
 # asociate (LOGIN)
 @app.route('/asociate')
@@ -87,17 +94,30 @@ def login():
                     session["usercom"] = empleado[0][1]
                 
                 session["user_Id"] = empleado[0][0]
-                session["userrole"] = empleadoRol[0]["Id_Rol"]
-                session["nombrerol"] = empleadoRol[0]["NombreRol"]
-                print(session['usercom'])
-                if session["nombrerol"] == "Administrador":
+                session["userrole"] = empleado[0][4]
+                if session['userrole'] == 1:
+                    session["nombrerol"] = 'ADMINISTRADOR'
+                elif session['userrole'] == 2:
+                    session["nombrerol"] = 'EMPLEADO'
+                    print(session['usercom'])
+                else:
+                    session["nombrerol"] = 'CLIENTE'
+                if session["nombrerol"] == "ADMINISTRADOR":
                     return redirect(url_for('homesistema'))
-                elif session["nombrerol"] == "Empleado":
+                elif session["nombrerol"] == "EMPLEADO":
                     return redirect(url_for('homesistema'))
                 else:
                     #aca traemos las consultas del cliente logeado
                     consultas = db1.execute('select c.*,m.Nombre from Consulta as c inner join mascota as m ON c.IdMascota = m.Id_Mascota inner join Usuarios as u ON m.IdUsuario = u.Id_Usuario Where u.Id_Usuario = :id',id = session["user_Id"] )
+                    #TRAER CONSULTAS DEL CLIENTE QUE ESTA LOGUEADO
+                    conn = conectar()
+                    cursor = conn.cursor()
+                    query = 'select ate.cod_atencion,ate.fecha_atencion,ma.Nombre_mascota,ate.tipo_atencion,c.nombres_cliente,est.NombreEstado from atencion as ate inner join cliente as c on ate.num_cliente = c.num_cliente inner join veterinario as vet on ate.num_veterinario = vet.num_veterinario inner join mascota as ma on ate.idMascota = ma.idMascota inner join estado as est on ate.id_estado = est.id_estado where c.num_cliente = ?'
+                    cursor.execute(query,session['userId'])
+                    consultas = cursor.fetchall()
                     
+                    cursor.close()
+                    conn.close()
                     #receta = db1.execute('select * from DetalleReceta Where IdReceta = :rec',rec = historial[0]['Id_Receta'])
                     return render_template('cliente.html',rol =session["nombrerol"],nombre =session["usercom"], cons = consultas)
     return render_template('index.html')
