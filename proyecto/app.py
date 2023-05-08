@@ -15,18 +15,18 @@ from conexion import conectar
 
 app = Flask(__name__)
 
-# db1 = SQL("sqlite:///Veterinaria.db")
+db1 = SQL("sqlite:///Veterinaria.db")
 app.secret_key = "super secret key"
 
 @app.route('/')
 def Index():
-    conn = conectar()
-    cursor = conn.cursor()
-    query = 'INSERT INTO credenciales (usuario,contraseña,rol,cargo) VALUES (?,?,?,?)'
-    cursor.execute(query, ('admin',generate_password_hash('admin'),1,1))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    # conn = conectar()
+    # cursor = conn.cursor()
+    # query = 'INSERT INTO credenciales (usuario,contraseña,rol,cargo) VALUES (?,?,?,?)'
+    # cursor.execute(query, ('admin',generate_password_hash('admin'),1,1))
+    # conn.commit()
+    # cursor.close()
+    # conn.close()
     return render_template('index.html', rol = "")
 # asociate (LOGIN)
 @app.route('/asociate')
