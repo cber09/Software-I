@@ -15,15 +15,15 @@ from conexion import conectar
 
 app = Flask(__name__)
 
-db1 = SQL("sqlite:///Veterinaria.db")
+#db1 = SQL("sqlite:///Veterinaria.db")
 app.secret_key = "super secret key"
 
 @app.route('/')
 def Index():
     # conn = conectar()
     # cursor = conn.cursor()
-    # query = 'INSERT INTO credenciales (usuario,contraseña,rol,cargo) VALUES (?,?,?,?)'
-    # cursor.execute(query, ('admin',generate_password_hash('admin'),1,1))
+    # query = 'INSERT INTO credenciales (usuario,contrasena,rol,cargo) VALUES (?,?,?,?)'
+    # cursor.execute(query, ('empleado',generate_password_hash('123'),3,3))
     # conn.commit()
     # cursor.close()
     # conn.close()
@@ -57,14 +57,14 @@ def login():
             else:
                 # Estas consultas son para mostrar la lista de personas y su asistencia
                 
-                empleadoRol = db1.execute(
-                    "select rol.* from Credenciales as cred INNER JOIN Roles as rol ON cred.Rol = rol.Id_Rol WHERE cred.Usuario =:u", u=usuario)
+                #empleadoRol = db1.execute(
+                #   "select rol.* from Credenciales as cred INNER JOIN Roles as rol ON cred.Rol = rol.Id_Rol WHERE cred.Usuario =:u", u=usuario)
                 if rows[0][4] == 1:
                     # es VETERINARIO
                     #DATOS DEL USUARIO O EMPLEADO (NOMBRE ETC)
                     conn = conectar()
                     cursor = conn.cursor()
-                    query = 'SELECT * FROM veterinario where id_credenciales = ?'
+                    query = 'SELECT * FROM veterinario where id_credencial = ?'
                     cursor.execute(query, rows[0][0])
                     empleado = cursor.fetchall()
                     
@@ -75,7 +75,7 @@ def login():
                     # ES CLIENTE
                     conn = conectar()
                     cursor = conn.cursor()
-                    query = 'SELECT * FROM cliente where id_credenciales = ?'
+                    query = 'SELECT * FROM cliente where id_credencial = ?'
                     cursor.execute(query, rows[0][0])
                     empleado = cursor.fetchall()
                     
@@ -83,8 +83,9 @@ def login():
                     conn.close()
                     session['cargo'] = 'CLIENTE'
                 #=======0
-                empleado = db1.execute(
-                    "select * from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales Where cred.Usuario =:u", u=usuario)
+                print(empleado)
+                #empleado = db1.execute(
+                #    "select * from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales Where cred.Usuario =:u", u=usuario)
 
                 # # Recordar el usuario y rol que se logeo
                 session["user"] = usuario
@@ -94,26 +95,26 @@ def login():
                     session["usercom"] = empleado[0][1]
                 
                 session["user_Id"] = empleado[0][0]
-                session["userrole"] = empleado[0][4]
+                session["userrole"] = rows[0][3]
                 if session['userrole'] == 1:
-                    session["nombrerol"] = 'ADMINISTRADOR'
+                    session["nombrerol"] = 'Administrador'
                 elif session['userrole'] == 2:
-                    session["nombrerol"] = 'EMPLEADO'
+                    session["nombrerol"] = 'Empleado'
                     print(session['usercom'])
                 else:
-                    session["nombrerol"] = 'CLIENTE'
-                if session["nombrerol"] == "ADMINISTRADOR":
+                    session["nombrerol"] = 'Cliente'
+                if session["nombrerol"] == "Administrador":
                     return redirect(url_for('homesistema'))
-                elif session["nombrerol"] == "EMPLEADO":
+                elif session["nombrerol"] == "Empleado":
                     return redirect(url_for('homesistema'))
                 else:
                     #aca traemos las consultas del cliente logeado
-                    consultas = db1.execute('select c.*,m.Nombre from Consulta as c inner join mascota as m ON c.IdMascota = m.Id_Mascota inner join Usuarios as u ON m.IdUsuario = u.Id_Usuario Where u.Id_Usuario = :id',id = session["user_Id"] )
+                    #consultas = db1.execute('select c.*,m.Nombre from Consulta as c inner join mascota as m ON c.IdMascota = m.Id_Mascota inner join Usuarios as u ON m.IdUsuario = u.Id_Usuario Where u.Id_Usuario = :id',id = session["user_Id"] )
                     #TRAER CONSULTAS DEL CLIENTE QUE ESTA LOGUEADO
                     conn = conectar()
                     cursor = conn.cursor()
                     query = 'select ate.cod_atencion,ate.fecha_atencion,ma.Nombre_mascota,ate.tipo_atencion,c.nombres_cliente,est.NombreEstado from atencion as ate inner join cliente as c on ate.num_cliente = c.num_cliente inner join veterinario as vet on ate.num_veterinario = vet.num_veterinario inner join mascota as ma on ate.idMascota = ma.idMascota inner join estado as est on ate.id_estado = est.id_estado where c.num_cliente = ?'
-                    cursor.execute(query,session['userId'])
+                    cursor.execute(query,session['user_Id'])
                     consultas = cursor.fetchall()
                     
                     cursor.close()
@@ -672,28 +673,66 @@ def facturacion():
 @app.route('/homesistema')
 def homesistema():
     hi = datetime.now()
-    ventas = db1.execute('select sum(total) as ventas from Ventas where Fecha = :fecha',fecha = datetime.date(hi))
-    consultas = db1.execute('select count(Id_Consulta) as consultas from Consulta where Fecha = :fecha',fecha = datetime.date(hi))
-    usuarios = db1.execute('select count(*) as usuarios from Usuarios as u inner join credenciales as cred on u.IdCredenciales = cred.Id_Credenciales where cred.Rol = "3"')
-    empleados = db1.execute('select count(*) as empleados from Usuarios as u inner join credenciales as cred on u.IdCredenciales = cred.Id_Credenciales where cred.Rol = "2" and u.IdEstado = "1"')
-    clientes = db1.execute('select u.Id_Usuario,u.Nombres  || " " || u.Apellidos as cliente,m.Nombre as Mascota from Mascota as m inner join Usuarios as u on m.IdUsuario = u.Id_Usuario where u.IdEstado = "1"')
+    fecha = datetime.date(hi)
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select sum(total) as ventas from venta where fecha_venta = ?'
+    cursor.execute(query, fecha)
+    ventas = cursor.fetchall()
+
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select count(cod_atencion) as consultas from atencion where fecha_atencion = ?'
+    cursor.execute(query, fecha)
+    consultas = cursor.fetchall()
+    # CLIENTES
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select count(num_cliente) as usuarios from cliente where id_estado = ?'
+    cursor.execute(query, 1)
+    usuarios = cursor.fetchall()
+    # EMPLEADOS
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select count(num_veterinario) as usuarios from veterinario where id_estado = ?'
+    cursor.execute(query, 1)
+    empleados = cursor.fetchall()
+
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select num_cliente,nombres_cliente as cliente from cliente where id_estado = ?'
+    cursor.execute(query, 1)
+    clientes = cursor.fetchall()
+
+    
     mesUno = datetime.date(hi)- relativedelta(months=1)
     mesDos = datetime.date(hi)- relativedelta(months=2)
-    ventasMesUno = db1.execute('select sum(total) as ventas1 from Ventas where Fecha = :fecha',fecha = mesUno)
-    ventasMesDos = db1.execute('select sum(total) as ventas2 from Ventas where Fecha = :fecha',fecha = mesDos)
+
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select sum(total) as ventas1 from venta where fecha_venta = ?'
+    cursor.execute(query, mesUno)
+    ventasMesUno = cursor.fetchall()
+
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select sum(total) as ventas1 from venta where fecha_venta = ?'
+    cursor.execute(query, mesDos)
+    ventasMesDos = cursor.fetchall()
+
     print(ventas)
     ventas2 = 0
     ventas1 = 0
     
-    if ventasMesUno[0]['ventas1'] != None:
-        ventas1 = ventasMesUno[0]['ventas1']
+    if ventasMesUno[0][0] != None:
+        ventas1 = ventasMesUno[0][0]
 
-    if ventasMesDos[0]['ventas2'] != None:
-        ventas2 = ventasMesDos[0]['ventas2']
+    if ventasMesDos[0][0] != None:
+        ventas2 = ventasMesDos[0][0]
         print(ventas2)
        
 
-    return render_template('sistema/admin.html',rol =session["nombrerol"],nombre =session["usercom"],ventas = ventas[0]['ventas'],cons = consultas[0]['consultas'],usuarios = usuarios[0]['usuarios'],empleados = empleados[0]['empleados'],clientes = clientes,ventasmesuno = ventas1,ventasmesdos = ventas2)
+    return render_template('sistema/admin.html',rol =session["nombrerol"],nombre =session["usercom"],ventas = ventas[0][0],cons = consultas[0][0],usuarios = usuarios[0][0],empleados = empleados[0][0],clientes = clientes,ventasmesuno = ventas1,ventasmesdos = ventas2)
 ######################
 @app.route('/buscarinv',methods=["GET", "POST"])
 def buscarinv():
