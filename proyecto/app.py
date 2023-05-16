@@ -166,17 +166,37 @@ def diagnosticar():
 # USUARIOS
 @app.route('/usuario')
 def usuario():
-    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    #usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select cli.num_cliente,cli.nombres_cliente,cli.apellidos_cliente,cli.direccion_cliente,cli.correo_cliente,est.NombreEstado,cred.usuario,cred.rol from cliente as cli inner join estado as est On cli.id_estado = est.id_estado inner join credenciales as cred on cli.id_credencial = cred.id_credencial'
+    cursor.execute(query)
+    usuarios = cursor.fetchall()
+    
     return render_template('sistema/tablas/usuario.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
 
 @app.route('/verVeterinarios')
 def verVeterinarios():
-    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    #usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select vet.num_veterinario,vet.cod_veterinario,vet.nom_vet,vet.dir_vet,vet.cel_vet,vet.correo_vet,est.NombreEstado,cred.usuario,cred.rol from veterinario as vet inner join credenciales as cred on vet.id_credencial = cred.id_credencial inner join estado as est on vet.id_estado = est.id_estado where vet.id_estado = 1'
+    cursor.execute(query)
+    usuarios = cursor.fetchall()
+    
+    
     return render_template('sistema/tablas/tabla-veterinarios.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
 
 @app.route('/verClientes')
 def verClientes():
-    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    #usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select cli.num_cliente,cli.nombres_cliente,cli.apellidos_cliente,cli.direccion_cliente,cli.correo_cliente,est.NombreEstado,cred.usuario,cred.rol from cliente as cli inner join estado as est On cli.id_estado = est.id_estado inner join credenciales as cred on cli.id_credencial = cred.id_credencial'
+    cursor.execute(query)
+    usuarios = cursor.fetchall()
     return render_template('sistema/tablas/tabla-clientes.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
 
 
@@ -200,9 +220,30 @@ def actusu():
         accion = request.form['accion']
         print(accion)
         if accion == "actualizar":
-            id = request.form['id']
-            usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
-            return render_template('sistema/modales/modal.html',info = usuarios)
+            tabla = request.form['tabla']
+            if tabla == 'veterinario':
+                id = request.form['id']
+                #usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
+                
+                conn = conectar()
+                cursor = conn.cursor()
+                query = 'select vet.num_veterinario,vet.cod_veterinario,vet.nom_vet,vet.dir_vet,vet.cel_vet,vet.correo_vet,est.NombreEstado,cred.usuario,cred.rol from veterinario as vet inner join credenciales as cred on vet.id_credencial = cred.id_credencial inner join estado as est on vet.id_estado = est.id_estado where num_veterinario = ?'
+                cursor.execute(query,id)
+                usuarios = cursor.fetchall()
+                
+                return render_template('sistema/modales/modal.html',tabla = tabla,info = usuarios)
+            elif tabla == 'cliente':
+                
+                id = request.form['id']
+                #usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado where u.Id_Usuario = :id',id = id)
+                print(id)
+                conn = conectar()
+                cursor = conn.cursor()
+                query = 'select cli.num_cliente,cli.nombres_cliente + ' ' +cli.apellidos_cliente as nombre,cli.direccion_cliente,cli.correo_cliente,est.NombreEstado,c.usuario,c.rol from cliente as cli inner join estado as est on cli.id_estado = est.id_estado inner join credenciales as c on cli.id_credencial = c.id_credencial where num_cliente = ?'
+                cursor.execute(query,id)
+                usuarios = cursor.fetchall()
+                
+                return render_template('sistema/modales/modal.html',tabla = tabla,info = usuarios)
         elif accion == "agregar":
             return render_template('sistema/modales/modal.html',info = "agregar")
 
@@ -211,22 +252,74 @@ def actualizaremp():
     if request.method == "POST":
         id = request.form['id']
         nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        telfijo = request.form['telfijo']
         celular = request.form['celular']
         direccion = request.form['direccion']
         usuario = request.form['usuario']
+        correo = request.form['correo']
         contra = request.form['contra']
-        db1.execute('Update Usuarios set Nombres = :nombre, Apellidos = :apell,TelefonoFijo = :tel,Celular = :cel,Direccion = :dir where Id_Usuario = :id',nombre = nombre,apell = apellido,tel = telfijo,cel = celular,dir = direccion,id = id)
+
+        conn = conectar()
+        cursor = conn.cursor()
+        query = 'UPDATE veterinario set nom_vet = ?,cel_vet = ?,dir_vet = ?,correo_vet = ? where num_veterinario = ?'
+        cursor.execute(query,(nombre,celular,direccion,correo,id))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
         if contra:
-            db1.execute('update Credenciales set Usuario = :usu,Contraseña = :contra where Id_Credenciales = :id',usu = usuario, contra = generate_password_hash(contra),id = id)
-    return redirect(url_for('usuario'))
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'SELECT id_credencial FROM veterinario where num_veterinario = ?'
+            cursor.execute(query, id)
+            id_credenciales = cursor.fetchone()
+            print(id_credenciales[0])
+            # MODIFICAR LA CONTRASEÑA
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'UPDATE credenciales set usuario = ?,contrasena = ? where id_credencial = ?'
+            cursor.execute(query,(usuario,contra,id_credenciales[0]))
+            conn.commit()
+            cursor.close()
+            conn.close()
+        else:
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'SELECT id_credencial FROM veterinario where num_veterinario = ?'
+            cursor.execute(query, id)
+            id_credenciales = cursor.fetchone()
+            print(id_credenciales[0])
+            # MODIFICAR LA CONTRASEÑA
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'UPDATE credenciales set usuario = ? where id_credencial = ?'
+            cursor.execute(query,(usuario,id_credenciales[0]))
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+        #db1.execute('Update Usuarios set Nombres = :nombre, Apellidos = :apell,TelefonoFijo = :tel,Celular = :cel,Direccion = :dir where Id_Usuario = :id',nombre = nombre,apell = apellido,tel = telfijo,cel = celular,dir = direccion,id = id)
+        #if contra:
+        #    db1.execute('update Credenciales set Usuario = :usu,Contraseña = :contra where Id_Credenciales = :id',usu = usuario, contra = generate_password_hash(contra),id = id)
+    return redirect(url_for('verVeterinario'))
 
 @app.route('/elimusu', methods =["POST","GET"])
 def elimusu():
     if request.method == "POST":
         id = request.form['id']
-        db1.execute('Update Usuarios set IdEstado = :est where Id_Usuario = :id',est = 2,id = id)
+        tabla = request.form['tabla']
+        #db1.execute('Update Usuarios set IdEstado = :est where Id_Usuario = :id',est = 2,id = id)
+        if tabla == 'veterinario':
+
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'UPDATE veterinario set id_estado = 2 where num_veterinario = ?'
+            cursor.execute(query, id)
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return redirect(url_for('verVeterinarios'))
+            
+
         return redirect(url_for('usuario'))
 
 @app.route('/eliminar', methods =["POST","GET"])
@@ -759,8 +852,6 @@ def nuevou():
         nombres = request.form['nombres']
         apellidos = request.form['apellidos']
         direccion = request.form['direccion']
-        telefono = request.form['telefono']
-        celular = request.form['celular']
         correo = request.form['correo']
         usuario = request.form['loginUser']
         contraseña = request.form['loginPassword']
@@ -768,19 +859,68 @@ def nuevou():
         print(flag)
         if flag:
             rol = request.form['rol']
-            verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
-            db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,:rol)",usu = usuario,passw = generate_password_hash(contraseña),rol = rol)
-            credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
-            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred,null)",
-                        name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
+            # INSERTAMOS DESDE EL SISTEMA
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'INSERT INTO credenciales (usuario,contrasena,rol,cargo) VALUES (?,?,?,?)'
+            cursor.execute(query, (usuario,generate_password_hash(contraseña),rol,rol))
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'SELECT id_credencial FROM credenciales where usuario = ?'
+            cursor.execute(query, usuario)
+            id = cursor.fetchall()
+
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'INSERT INTO cliente (nombres_cliente,apellidos_cliente,direccion_cliente,correo_cliente,id_estado,id_credencial) VALUES (?,?,?,?,?,?)'
+            cursor.execute(query, (nombres,apellidos,direccion,correo,1,id[0]))
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+
+
+            #verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
+            # db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,:rol)",usu = usuario,passw = generate_password_hash(contraseña),rol = rol)
+            # credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
+            # db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred,null)",
+            #             name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
             return "yes"
         else:
-            verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
-            db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,3)",usu = usuario,passw = generate_password_hash(contraseña))
-            credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
-            db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred,null)",
-                            name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
-                
+            # verificacion = db1.execute('SELECT * from credenciales Where Usuario = :u',u = usuario)
+            # db1.execute("INSERT INTO Credenciales VALUES(NULL,:usu,:passw,3)",usu = usuario,passw = generate_password_hash(contraseña))
+            # credenciales = db1.execute('select Id_Credenciales from Credenciales  order by Id_Credenciales desc limit 1')
+            # db1.execute("INSERT INTO Usuarios VALUES(NULL,:name,:lastna,:tel,:cel,:corr,:dir,1,:cred,null)",
+            #                 name=nombres , lastna=apellidos , tel = telefono,cel = celular,corr = correo,dir=direccion,cred = credenciales[0]['Id_Credenciales'])
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'INSERT INTO credenciales (usuario,contrasena,rol,cargo) VALUES (?,?,?,?)'
+            cursor.execute(query, (usuario,generate_password_hash(contraseña),rol,rol))
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'SELECT id_credencial FROM credenciales where usuario = ?'
+            cursor.execute(query, usuario)
+            id = cursor.fetchall()
+
+            conn = conectar()
+            cursor = conn.cursor()
+            query = 'INSERT INTO cliente (nombres_cliente,apellidos_cliente,direccion_cliente,correo_cliente,id_estado,id_credencial) VALUES (?,?,?,?,?,?)'
+            cursor.execute(query, (nombres,apellidos,direccion,correo,1,id[0]))
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+
             return redirect(url_for('asociate'))
     else:
         return render_template('nuevous.html')

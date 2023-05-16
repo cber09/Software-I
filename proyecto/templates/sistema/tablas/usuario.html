@@ -16,7 +16,7 @@
     <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Usuarios</label>
     </div>
 
-    <div class="admin" style="padding: 20px;">
+    <div class="" style="padding: 20px;">
 
         <!-- <div class="row mb-4">
             <div class="col">
@@ -38,8 +38,6 @@
                         <th>Id</th>
                         <th>Nombres</th>
                         <th>Apellidos</th>
-                        <th>Tel. Fijo</th>
-                        <th>Celular</th>
                         <th>Dirección</th>
                         <th>Estado</th>
                         <th>Usuario</th>
@@ -51,15 +49,19 @@
                 <tbody>
                     {%for list in user%}
                     <tr>
-                        <td>{{list.Id_Usuario}}</td>
-                        <td>{{list.Nombres}}</td>
-                        <td>{{list.Apellidos}}</td>
-                        <td>{{list.TelefonoFijo}}</td>
-                        <td>{{list.Celular}}</td>
-                        <td>{{list.Direccion}}</td>
+                        <td>{{list.num_cliente}}</td>
+                        <td>{{list.nombres_cliente}}</td>
+                        <td>{{list.apellidos_cliente}}</td>
+                        <td>{{list.direccion_cliente}}</td>
                         <td>{{list.NombreEstado}}</td>
-                        <td>{{list.Usuario}}</td>
-                        <td>{{list.NombreRol}}</td>
+                        <td>{{list.usuario}}</td>
+                        {%if list.rol == 1%}
+                        <td>ADMINISTRADOR</td>
+                        {%elif list.rol == 2%}
+                        <td>CLIENTE</td>
+                        {%elif list.rol == 3%}
+                        <td>VETERINARIO</td>
+                        {%endif%}
                         <td><button class="btn btn-outline-light" id="act" name="act" value="{{list.Id_Usuario}}">
                                 <box-icon type='solid' name='edit-alt'></box-icon>
                             </button></td>
@@ -112,6 +114,7 @@
                 data: {
                     id: id,
                     accion: "actualizar",
+                    tabla: "cliente",
                 },
                 success: function (response) {
                     $('#cont').html(response);

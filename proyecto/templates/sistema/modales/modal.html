@@ -62,7 +62,7 @@
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-2 col-form-label">Nombres</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="inputPassword"
+                                        <input type="text" class="form-control" id="nombre"
                                             placeholder="Nombres">
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-2 col-form-label">Apellidos</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="inputPassword"
+                                        <input type="text" class="form-control" id="apellido"
                                             placeholder="Apellidos">
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-2 col-form-label">Correo</label>
                                     <div class="col-sm-10">
-                                        <input type="email" class="form-control" id="inputPassword"
+                                        <input type="email" class="form-control" id="correo"
                                             placeholder="Correo">
                                     </div>
                                 </div>
@@ -105,7 +105,7 @@
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-2 col-form-label">Rol</label>
                                     <div class="col-sm-10">
-                                        <select class="form-select" name="rol">
+                                        <select class="form-select" id="rol" name="rol">
                                             <option value="1">Administrador</option>
                                             <option value="2">Usuario</option>
                                             <option value="3">Veterinario</option>
@@ -433,7 +433,7 @@
     });
 
     function añadir() {
-
+        alert("ENTRO A LA FUNCION")
         $.ajax({
             url: "/nuevou",
             type: "POST",
@@ -441,8 +441,6 @@
                 nombres: $('#nombre').val(),
                 apellidos: $('#apellido').val(),
                 correo: $('#correo').val(),
-                telefono: $('#telfijo').val(),
-                celular: $('#celular').val(),
                 direccion: $('#direccion').val(),
                 loginUser: $('#usuario').val(),
                 loginPassword: $('#contra').val(),
@@ -450,32 +448,33 @@
                 flag: "sistema",
             },
             success: function (response) {
-                $.ajax({
-                    url: "/correo",
-                    type: "POST",
-                    data: {
-                        flag: "usuario",
-                        nombres: $('#nombre').val(),
-                        apellidos: $('#apellido').val(),
-                        correo: $('#correo').val(),
-                        loginUser: $('#usuario').val(),
-                        loginPassword: $('#contra').val()
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            title: 'Usuario Registrado Correctamente!',
-                            text: 'Se envio un correo con las credenciales al ' + $('#correo').val(),
-                            icon: 'success',
-                            confirmButtonText: "Aceptar",
-                        }).then(() => {
-                            window.location = '../usuario'
-                        });
+                // $.ajax({
+                //     url: "/correo",
+                //     type: "POST",
+                //     data: {
+                //         flag: "usuario",
+                //         nombres: $('#nombre').val(),
+                //         apellidos: $('#apellido').val(),
+                //         correo: $('#correo').val(),
+                //         loginUser: $('#usuario').val(),
+                //         loginPassword: $('#contra').val()
+                //     },
+                //     success: function (response) {
+                //         Swal.fire({
+                //             title: 'Usuario Registrado Correctamente!',
+                //             text: 'Se envio un correo con las credenciales al ' + $('#correo').val(),
+                //             icon: 'success',
+                //             confirmButtonText: "Aceptar",
+                //         }).then(() => {
+                //             window.location = '../usuario'
+                //         });
 
-                    },
-                    error: function (error) {
-                        //console.log(error);
-                    },
-                });
+                //     },
+                //     error: function (error) {
+                //         //console.log(error);
+                //     },
+                // });
+                alert("GG");
             },
             error: function (error) {
                 //console.log(error);
@@ -484,7 +483,7 @@
     }
 </script>
 {%elif info == "producto"%}
-<div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog"
+<div class="modal fade bd-example-modal-lg" id="modalusuario" id="exampleModal" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -514,50 +513,37 @@
     </div>
 </div>
 {%else%}
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+<div class="modal fade bd-example-modal-lg" id="modalusuario" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header encabezado_modales">
                 <h5 class="modal-title">Actualizar</h5>
-                <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
-            <div class="cliente-nuevo" id="clientenuevo" style="display: block; padding: 15px 15px;">
+            <div class="cliente-nuevo fondo-modal" id="clientenuevo" style="display: block; padding: 15px 15px;">
                 <form action="/actualizaremp" method="POST" id="okis">
                     <!-- 2 column grid layout with text inputs for the first and last names -->
+                    {%if tabla == 'veterinario'%}
                     {%for list in info%}
                     <div class="row mb-4">
-                        <input type="hidden" name="id" value="{{list.Id_Usuario}}">
+                        <input type="hidden" name="id" value="{{list.num_veterinario}}">
                         <div class="col">
                             <div class="form-outline">
                                 <label class="form-label" for="form3Example1">Nombres</label>
-                                <input type="text" id="form3Example1" name="nombre" required value="{{list.Nombres}}"
+                                <input type="text" id="form3Example1" name="nombre" required value="{{list.nom_vet}}"
                                     class="form-control" />
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="form-outline">
-                                <label class="form-label" for="form3Example2">Apellidos</label>
-                                <input type="text" id="form3Example2" name="apellido" required
-                                    value="{{list.Apellidos}}" class="form-control" />
-                            </div>
-                        </div>
+                        
                     </div>
                     <div class="row mb-4">
                         <div class="col">
                             <div class="form-outline">
-                                <label class="form-label" for="form3Example3">Telefono Fijo</label>
-                                <input type="text" id="form3Example3" name="telfijo" required
-                                    value="{{list.TelefonoFijo}}" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-outline">
                                 <label class="form-label" for="form3Example3">Celular</label>
-                                <input type="text" id="form3Example3" name="celular" required value="{{list.Celular}}"
-                                    class="form-control" />
+                                <input type="text" id="form3Example3" name="celular" required
+                                    value="{{list.cel_vet}}" class="form-control" />
                             </div>
                         </div>
                         <div class="col">
@@ -567,12 +553,28 @@
                                     value="{{list.NombreEstado}}" class="form-control" />
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Rol</label>
+                                <input type="text" id="form3Example3" name="rol" required
+                                    value="{{list.rol}}" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Correo</label>
+                                <input type="text" id="form3Example3" name="correo" required
+                                    value="{{list.correo_vet}}" class="form-control" />
+                            </div>
+                        </div>
                     </div>
                     <div class="row mb-4">
                         <div class="form-outline mb-4">
                             <label class="form-label" for="form3Example4">Dirección</label>
                             <textarea class="form-control" name="direccion" required id="exampleFormControlTextarea1"
-                                rows="3">{{list.Direccion}}</textarea>
+                                rows="3">{{list.dir_vet}}</textarea>
                         </div>
                     </div>
                     <div class="row mb-4">
@@ -581,7 +583,7 @@
                     <div class="row mb-4" id="credenciales" style="display: none;">
                         <div class="form-outline mb-4">
                             <label class="form-label" for="form3Example4">Usuario</label>
-                            <input type="text" id="usuario" name="usuario" required value="{{list.Usuario}}"
+                            <input type="text" id="usuario" name="usuario" required value="{{list.usuario}}"
                                 class="form-control" />
 
                         </div>
@@ -602,10 +604,89 @@
                         </div>
                     </div>
                     <!-- Submit button -->
-                    <button type="submit" class="btn btn-primary btn-block mb-4">
+                    <button type="submit" class="btn btn-success btn-block mb-4">
                         ENVIAR
                     </button>
                     {%endfor%}
+                    {%elif tabla == 'cliente'%}
+                    {%for list in info%}
+                    <div class="row mb-4">
+                        <input type="hidden" name="id" value="{{list.num_cliente}}">
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example1">Nombres</label>
+                                <input type="text" id="form3Example1" name="nombre" required value="{{list.nombre}}"
+                                    class="form-control" />
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row mb-4">
+                        
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Estado</label>
+                                <input type="text" id="form3Example3" name="estado" required
+                                    value="{{list.NombreEstado}}" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Rol</label>
+                                <input type="text" id="form3Example3" name="rol" required
+                                    value="{{list.rol}}" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label" for="form3Example3">Correo</label>
+                                <input type="text" id="form3Example3" name="correo" required
+                                    value="{{list.correo_cliente}}" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Dirección</label>
+                            <textarea class="form-control" name="direccion" required id="exampleFormControlTextarea1"
+                                rows="3">{{list.direccion_cliente}}</textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <label for=""><input type="checkbox" name="cambio"> Cambiar Credenciales</label>
+                    </div>
+                    <div class="row mb-4" id="credenciales" style="display: none;">
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Usuario</label>
+                            <input type="text" id="usuario" name="usuario" required value="{{list.usuario}}"
+                                class="form-control" />
+
+                        </div>
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Contraseña</label>
+                            <input type="text" id="contra" name="contra" placeholder="Contraseña nueva"
+                                class="form-control" />
+
+                        </div>
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="form3Example4">Contraseña</label>
+                            <input type="text" id="contra1" name="contra1" placeholder="Repita la contraseña"
+                                class="form-control" />
+                            <label id="mensaje_error" class="control-label col-md-12 text-danger"
+                                style="display: block;">Las
+                                constraseñas no coinciden</label>
+
+                        </div>
+                    </div>
+                    {%endfor%}
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-success btn-block mb-4">
+                        ENVIAR
+                    </button>
+                    
+                    {%endif%}
                 </form>
             </div>
         </div>
@@ -625,8 +706,8 @@
                 $('#contra').show();
                 $('#contra1').show();
                 $('#usuario').attr("required", true);
-                $('#contra').attr("required", true);
-                $('#contra1').attr("required", true);
+                // $('#contra').attr("required", true);
+                // $('#contra1').attr("required", true);
                 var cambioDePass = function () {
                     var cont = $('#contra').val();
                     var cont2 = $('#contra1').val();
