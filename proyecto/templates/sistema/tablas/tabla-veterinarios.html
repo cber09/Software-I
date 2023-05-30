@@ -46,6 +46,7 @@
                         <th>Usuario</th>
                         <th>Rol</th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,6 +67,9 @@
                         {%elif list.rol == 3%}
                         <td>VETERINARIO</td>
                         {%endif%}
+                        <td><button class="btn btn-outline-light" id="act" name="act" value="{{list.num_veterinario}}">
+                                <box-icon type='solid' name='edit-alt'></box-icon>
+                            </button></td>
                         {%if list.NombreEstado == 'ACTIVO'%}
                         <td><button class="btn btn-outline-light" id="elim" name="elim"
                                 value="{{list.num_veterinario}}">

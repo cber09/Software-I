@@ -442,6 +442,7 @@
                 loginPassword: $('#contra').val(),
                 rol: $('#rol').val(),
                 flag: "sistema",
+                tabla: "cliente",
             },
             success: function (response) {
                 $.ajax({
@@ -521,7 +522,7 @@
                     <!-- 2 column grid layout with text inputs for the first and last names -->
                     {%if tabla == 'veterinario'%}
                     {%for list in info%}
-                    <input type="text" name="origen" value="veterinario" id="">
+                    <input type="hidden" name="origen" value="veterinario" id="">
                     <div class="row mb-4">
                         <input type="hidden" name="id" value="{{list.num_veterinario}}">
                         <div class="col">
@@ -605,7 +606,7 @@
                     {%endfor%}
                     {%elif tabla == 'cliente'%}
                     {%for list in info%}
-                    <input type="text" name="origen" value="cliente" id="">
+                    <input type="hidden" name="origen" value="cliente" id="">
                     <div class="row mb-4">
                         <input type="hidden" name="id" value="{{list.num_cliente}}">
                         <div class="col">

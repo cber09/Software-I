@@ -17,7 +17,9 @@ app = Flask(__name__)
 
 #db1 = SQL("sqlite:///Veterinaria.db")
 app.secret_key = "super secret key"
-
+def capturarHora():
+    hi = datetime.now()
+    return hi
 @app.route('/')
 def Index():
     # conn = conectar()
@@ -204,9 +206,69 @@ def verClientes():
 
 @app.route('/verMascotas')
 def verMascotas():
-    usuarios = db1.execute('select u.*,est.NombreEstado,cred.Usuario,rol.NombreRol from Usuarios as u inner join Credenciales as cred ON u.IdCredenciales = cred.Id_Credenciales inner join Roles as rol ON cred.Rol = rol.Id_Rol inner join estado as est ON u.IdEstado = est.Id_Estado Where u.IdEstado = 1')
+    conn = conectar()
+    cursor = conn.cursor()
+    query = 'select idMascota,Nombre_mascota,r.nombre_raza,fecha_nac_mascota,fecha_ingreso,sexo,c.nombres_cliente +' ' + c.apellidos_cliente as cliente,e.NombreEstado  from mascota inner join estado as e on mascota.id_estado = e.id_estado inner join cliente as c on mascota.num_cliente = c.num_cliente inner join raza as r on mascota.id_raza = r.id_raza'
+    cursor.execute(query)
+    usuarios = cursor.fetchall()
     return render_template('sistema/tablas/tabla-mascotas.html',rol =session["nombrerol"],nombre =session["usercom"], user = usuarios )
 
+@app.route('/addPet',  methods =["POST","GET"])
+def addPet():
+    if request.method == "POST":
+        accion = request.form['accion']
+        conn = conectar()
+        cursor = conn.cursor()
+        query = 'select idMascota,Nombre_mascota,r.nombre_raza,fecha_nac_mascota,fecha_ingreso,sexo,c.nombres_cliente +' ' + c.apellidos_cliente as cliente  from mascota inner join cliente as c on mascota.num_cliente = c.num_cliente inner join raza as r on mascota.id_raza = r.id_raza'
+        cursor.execute(query)
+        mascotas = cursor.fetchall()
+
+
+        conn = conectar()
+        cursor = conn.cursor()
+        query = "select num_cliente, nombres_cliente+ ' '+apellidos_cliente as nombre  from cliente"
+        cursor.execute(query)
+        clientes = cursor.fetchall()
+
+
+        conn = conectar()
+        cursor = conn.cursor()
+        query = "select id_raza,nombre_raza from raza"
+        cursor.execute(query)
+        raza = cursor.fetchall()
+
+        conn = conectar()
+        cursor = conn.cursor()
+        query = "select id_especie,nom_especie from especie"
+        cursor.execute(query)
+        especie = cursor.fetchall()
+
+        return render_template('sistema/modales/modal-mascota-nueva.html',info = "agregar",especie = especie, raza = raza,clientes = clientes, user = mascotas )
+
+
+@app.route('/mascotaNueva',methods=["GET", "POST"])
+def mascotaNueva():
+    if request.method == "POST":
+        nombres = request.form['nombres']
+        especie = request.form['especie']
+        raza = request.form['raza']
+        fnaci = request.form['fnaci']
+        sexo = request.form['sexo']
+        cliente = request.form['cliente']
+        color = request.form['color']
+        hi = capturarHora()
+        conn = conectar()
+        cursor = conn.cursor()
+        query = 'INSERT INTO mascota (Nombre_mascota,id_estado,id_raza,num_cliente,fecha_nac_mascota,sexo,color,fecha_ingreso) VALUES (?,?,?,?,?,?,?,?)'
+        cursor.execute(query, (nombres,1,raza,cliente,fnaci,sexo,color,hi.date()))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+
+
+
+        return "yes"
 
 
 @app.route('/actusu', methods =["POST","GET"])
