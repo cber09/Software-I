@@ -13,7 +13,8 @@
 <body>
 
     {% block content %}
-    <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor > Veterinarios</label>
+    <div class="top-bar"><i class="fas fa-bars menu"></i><label class="titulo-logo">Buen Productor >
+            Veterinarios</label>
     </div>
 
     <div class="admin" style="padding: 20px;">
@@ -45,7 +46,6 @@
                         <th>Usuario</th>
                         <th>Rol</th>
                         <th></th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,12 +66,17 @@
                         {%elif list.rol == 3%}
                         <td>VETERINARIO</td>
                         {%endif%}
-                        <td><button class="btn btn-outline-light" id="act" name="act" value="{{list.num_veterinario}}">
-                                <box-icon type='solid' name='edit-alt'></box-icon>
-                            </button></td>
-                        <td><button class="btn btn-outline-light" id="elim" name="elim" value="{{list.num_veterinario}}">
+                        {%if list.NombreEstado == 'ACTIVO'%}
+                        <td><button class="btn btn-outline-light" id="elim" name="elim"
+                                value="{{list.num_veterinario}}">
                                 <i class="bi bi-x-circle" style="color: red;"></i>
                             </button></td>
+                        {%else%}
+                        <td><button class="btn btn-outline-light" id="elim" name="activar"
+                                value="{{list.num_veterinario}}">
+                                <box-icon name='power-off' style="color: green;"></box-icon>
+                            </button></td>
+                        {%endif%}
                     </tr>
                     {%endfor%}
                 </tbody>
@@ -130,6 +135,48 @@
                 },
             });
         });
+
+        $("#table_id button[name=activar]").click(function () {
+            id = $(this).val();
+            $.ajax({
+                url: "/activarusu",
+                type: "POST",
+                data: {
+                    id: id,
+                    tabla: "veterinario",
+                },
+                success: function (response) {
+                    let timerInterval
+                    Swal.fire({
+                        title: 'Activando!',
+                        html: '',
+                        timer: 200,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading()
+                            const b = Swal.getHtmlContainer().querySelector('b')
+                            timerInterval = setInterval(() => {
+                                b.textContent = Swal.getTimerLeft()
+                            }, 300)
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval)
+                        }
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            window.location = '../verVeterinarios'
+                        }
+                    })
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        });
+
+
         $("#table_id button[name=elim]").click(function () {
             id = $(this).val();
             $.ajax({
@@ -137,7 +184,7 @@
                 type: "POST",
                 data: {
                     id: id,
-                    tabla:'veterinario',
+                    tabla: 'veterinario',
                 },
                 success: function (response) {
                     let timerInterval
@@ -159,7 +206,7 @@
                     }).then((result) => {
                         /* Read more about handling dismissals below */
                         if (result.dismiss === Swal.DismissReason.timer) {
-                            window.location = '../usuario'
+                            window.location = '../verVeterinarios'
                         }
                     })
 
@@ -175,6 +222,7 @@
                 type: "POST",
                 data: {
                     accion: "agregar",
+                    tabla: "veterinario",
                 },
                 success: function (response) {
                     $('#cont').html(response);

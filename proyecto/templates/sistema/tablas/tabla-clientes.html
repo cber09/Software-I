@@ -65,9 +65,15 @@
                         <td><button class="btn btn-outline-light" id="act" name="act" value="{{list.num_cliente}}">
                                 <box-icon type='solid' name='edit-alt'></box-icon>
                             </button></td>
+                        {%if list.NombreEstado == 'ACTIVO'%}
                         <td><button class="btn btn-outline-light" id="elim" name="elim" value="{{list.num_cliente}}">
                                 <i class="bi bi-x-circle" style="color: red;"></i>
                             </button></td>
+                        {%else%}
+                        <td><button class="btn btn-outline-light" id="elim" name="activar" value="{{list.num_cliente}}">
+                                <box-icon name='power-off' style="color: green;"></box-icon>
+                            </button></td>
+                        {%endif%}
                     </tr>
                     {%endfor%}
                 </tbody>
@@ -126,6 +132,48 @@
                 },
             });
         });
+
+        $("#table_id button[name=activar]").click(function () {
+            id = $(this).val();
+            $.ajax({
+                url: "/activarusu",
+                type: "POST",
+                data: {
+                    id: id,
+                    tabla: "cliente",
+                },
+                success: function (response) {
+                    let timerInterval
+                    Swal.fire({
+                        title: 'Activando!',
+                        html: '',
+                        timer: 200,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading()
+                            const b = Swal.getHtmlContainer().querySelector('b')
+                            timerInterval = setInterval(() => {
+                                b.textContent = Swal.getTimerLeft()
+                            }, 300)
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval)
+                        }
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            window.location = '../verClientes'
+                        }
+                    })
+
+                },
+                error: function (error) {
+                    //console.log(error);
+                },
+            });
+        });
+
+
         $("#table_id button[name=elim]").click(function () {
             id = $(this).val();
             $.ajax({
@@ -133,6 +181,7 @@
                 type: "POST",
                 data: {
                     id: id,
+                    tabla: "cliente",
                 },
                 success: function (response) {
                     let timerInterval
@@ -154,7 +203,7 @@
                     }).then((result) => {
                         /* Read more about handling dismissals below */
                         if (result.dismiss === Swal.DismissReason.timer) {
-                            window.location = '../usuario'
+                            window.location = '../verClientes'
                         }
                     })
 

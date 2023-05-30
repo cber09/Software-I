@@ -1,7 +1,8 @@
 import pyodbc
 
 def conectar():
-    server = 'DESKTOP-GKFB17P'
+    server = 'DESKTOP-PABBKTH'
+    #server = 'DESKTOP-GKFB17P' trabajo
     database = 'Vet_ElBuenProductor'
     driver= '{ODBC Driver 17 for SQL Server}'
 

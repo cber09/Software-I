@@ -16,43 +16,17 @@
                         </div>
                         <div class="row justify-content-center">
                             <button class="btn btn-outline-warning">Editar Imagen</button>
-                            <button class="btn btn-outline-success mt-2" onclick="añadir()" id="boton-enviar"
+                            <button class="btn btn-outline-success mt-2" onclick="añadirVet()" id="boton-enviar"
                                 disabled>Guardar</button>
                         </div>
                         <hr>
                         <div class="row overflow-auto contenedor-tabla">
-                            <table class="table table-dark table-striped ">
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Mascota</th>
-                                        <th><i class="fas fa-plus" style="color: #248029;"></i></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>250</td>
-                                        <td>Paquito</td>
-                                        <td><i class="fas fa-eye fa-sm" style="color: #005eff;"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td>250</td>
-                                        <td>Paquito</td>
-                                        <td><i class="fas fa-eye fa-sm" style="color: #005eff;"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td>250</td>
-                                        <td>Paquito</td>
-                                        <td><i class="fas fa-eye fa-sm" style="color: #005eff;"></i></td>
-                                    </tr>
 
-                                </tbody>
-                            </table>
                         </div>
 
                     </div>
                     <div class="col-8 overflow-auto" style="height: 78vh;">
-                        <div class="row justify-content-center titulos-modal-columna">Datos del Usuario</div>
+                        <div class="row justify-content-center titulos-modal-columna">Datos del Veterinario</div>
                         <div class="row mb-4">
                             <input type="hidden" name="id">
                             <div class="col mt-5">
@@ -98,11 +72,25 @@
 
                             <div class="col">
                                 <div class="form-group row">
+                                    <label for="inputPassword" class="col-sm-2 col-form-label">Celular</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" class="form-control" id="celular" placeholder="Celular">
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="row mb-4">
+
+                            <div class="col">
+                                <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-2 col-form-label">Rol</label>
                                     <div class="col-sm-10">
                                         <select class="form-select" id="rol" name="rol">
                                             <option value="1">Administrador</option>
-                                            <option value="2">Usuario</option>
                                             <option value="3">Veterinario</option>
                                         </select>
                                     </div>
@@ -428,8 +416,7 @@
 
     });
 
-    function añadir() {
-
+    function añadirVet() {
         $.ajax({
             url: "/nuevou",
             type: "POST",
@@ -437,11 +424,13 @@
                 nombres: $('#nombre').val(),
                 apellidos: $('#apellido').val(),
                 correo: $('#correo').val(),
+                celular: $('#celular').val(),
                 direccion: $('#direccion').val(),
                 loginUser: $('#usuario').val(),
                 loginPassword: $('#contra').val(),
                 rol: $('#rol').val(),
                 flag: "sistema",
+                tabla: "veterinario"
             },
             success: function (response) {
                 $.ajax({
@@ -462,7 +451,7 @@
                             icon: 'success',
                             confirmButtonText: "Aceptar",
                         }).then(() => {
-                            window.location = '../verClientes'
+                            window.location = '../verVeterinarios'
                         });
 
                     },
@@ -521,7 +510,6 @@
                     <!-- 2 column grid layout with text inputs for the first and last names -->
                     {%if tabla == 'veterinario'%}
                     {%for list in info%}
-                    <input type="text" name="origen" value="veterinario" id="">
                     <div class="row mb-4">
                         <input type="hidden" name="id" value="{{list.num_veterinario}}">
                         <div class="col">
@@ -605,7 +593,6 @@
                     {%endfor%}
                     {%elif tabla == 'cliente'%}
                     {%for list in info%}
-                    <input type="text" name="origen" value="cliente" id="">
                     <div class="row mb-4">
                         <input type="hidden" name="id" value="{{list.num_cliente}}">
                         <div class="col">
@@ -615,14 +602,6 @@
                                     class="form-control" />
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="form-outline">
-                                <label class="form-label" for="form3Example1">Apellidos</label>
-                                <input type="text" id="form3Example1" name="apellido" required
-                                    value="{{list.apellidos_cliente}}" class="form-control" />
-                            </div>
-                        </div>
-
 
                     </div>
                     <div class="row mb-4">
@@ -631,17 +610,13 @@
                             <div class="form-outline">
                                 <label class="form-label" for="form3Example3">Estado</label>
                                 <input type="text" id="form3Example3" name="estado" required
-                                    value="{{list.NombreEstado}}" disabled class="form-control" />
+                                    value="{{list.NombreEstado}}" class="form-control" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-outline">
                                 <label class="form-label" for="form3Example3">Rol</label>
-                                {%if list.rol == 2%}
-                                <input type="text" id="form3Example3" disabled name="rol" required value="Cliente"
-                                    class="form-control" />
-                                {%endif%}
-                                <input type="hidden" id="form3Example3" name="rol" required value="{{list.rol}}"
+                                <input type="text" id="form3Example3" name="rol" required value="{{list.rol}}"
                                     class="form-control" />
                             </div>
                         </div>
