@@ -991,3 +991,109 @@ section {
     width: 90%;
   }
 }
+
+.chat-bubble {
+    
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #e67e22;;
+  color: white;
+  text-align: center;
+  line-height: 80px;
+  font-size: 20px;
+  cursor: pointer;
+  animation: bounce 1s ease-in-out infinite alternate;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  
+}
+.chat-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  background-color: #fff;
+  color: #f5a9bc;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 25px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.chat-bubble:hover {
+  width: 300px;
+  height: 100px;
+  border-radius: 5px;
+  
+}
+
+.chat-bubble h1:hover:before {
+	content: "Escribe tu duda";
+  font-size:x-large;
+	transition: color 0.1s linear 0.1s;
+}
+
+.chat-tray {
+  display: none;
+  position: absolute;
+  bottom: 80px;
+  width: 300px;
+  height: 400px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.chat-bubble:hover .chat-tray {
+  display: block;
+}
+
+.chat-messages {
+  height: 320px;
+  overflow-y: scroll;
+}
+
+.chat-form {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.chat-form input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+}
+
+.chat-form button[type="submit"] {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e67e22;;
+  color: white;
+  cursor: pointer;
+}
+
+.Chatbot{
+  border-inline-start-color: #eee;
+}
+
+.floating-access-button {
+  position: absolute;
+}
+.accessibility-options {
+  display: none;
+}
+.accessibility-options.show {
+  display: block;
+}

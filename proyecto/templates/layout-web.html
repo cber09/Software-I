@@ -16,7 +16,7 @@
         integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <!-- js files -->
     <script src="../../static/js/validaciones-nombres.js"></script>
-    <script src="../../static/js/Validaciones-contraseña-codigos.js"></script>
+    <script src="../../static/js/Validaciones-contraseña-codigos.js"></script>                                          
     <!-- custom css file link  -->
     <link rel="stylesheet" href="../static/css/layout-web.css">
     <!-- FULLCALENDAR -->
@@ -377,6 +377,101 @@
             {% endblock %}
         </section>
         <!-- plan section ends -->
+        
+        
+
+        <div class="chat-bubble">
+            <span><h1><svg xmlns="http://www.w3.org/2000/svg" height="1em" class="Chatbot" viewBox="0 0 512 512"><path d="M256 448c141.4 0 256-93.1 256-208S397.4 32 256 32S0 125.1 0 240c0 45.1 17.7 86.8 47.7 120.9c-1.9 24.5-11.4 46.3-21.4 62.9c-5.5 9.2-11.1 16.6-15.2 21.6c-2.1 2.5-3.7 4.4-4.9 5.7c-.6 .6-1 1.1-1.3 1.4l-.3 .3 0 0 0 0 0 0 0 0c-4.6 4.6-5.9 11.4-3.4 17.4c2.5 6 8.3 9.9 14.8 9.9c28.7 0 57.6-8.9 81.6-19.3c22.9-10 42.4-21.9 54.3-30.6c31.8 11.5 67 17.9 104.1 17.9zM128 208a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm128 0a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm96 32a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg></h1></span>
+            <div class="chat-tray">
+              <div class="chat-messages">
+                <!-- Aquí van los mensajes del chat -->
+              </div>
+              <form class="chat-form">
+                <input type="text" placeholder="Escribe tu mensaje...">
+                <button type="submit">Enviar</button>
+              </form>
+            </div>
+        </div>
+
+
+       
+        
+
+        <div class="floating-access-button">
+            <button
+              type="button"
+              class="btn btn-primary m-1"
+              onclick="toggleAccessibilityOptions()"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="2em"
+                viewBox="0 0 448 512"
+              >
+                <!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                <path
+                  d="M423.9 255.8L411 413.1c-3.3 40.7-63.9 35.1-60.6-4.9l10-122.5-41.1 2.3c10.1 20.7 15.8 43.9 15.8 68.5 0 41.2-16.1 78.7-42.3 106.5l-39.3-39.3c57.9-63.7 13.1-167.2-74-167.2-25.9 0-49.5 9.9-67.2 26L73 243.2c22-20.7 50.1-35.1 81.4-40.2l75.3-85.7-42.6-24.8-51.6 46c-30 26.8-70.6-18.5-40.5-45.4l68-60.7c9.8-8.8 24.1-10.2 35.5-3.6 0 0 139.3 80.9 139.5 81.1 16.2 10.1 20.7 36 6.1 52.6L285.7 229l106.1-5.9c18.5-1.1 33.6 14.4 32.1 32.7zm-64.9-154c28.1 0 50.9-22.8 50.9-50.9C409.9 22.8 387.1 0 359 0c-28.1 0-50.9 22.8-50.9 50.9 0 28.1 22.8 50.9 50.9 50.9zM179.6 456.5c-80.6 0-127.4-90.6-82.7-156.1l-39.7-39.7C36.4 287 24 320.3 24 356.4c0 130.7 150.7 201.4 251.4 122.5l-39.7-39.7c-16 10.9-35.3 17.3-56.1 17.3z"
+                />
+              </svg>
+            </button>
+            <div class="accessibility-options" id="accessibilityOptions">
+              <button class="btn btn-secondary p-1" onclick="increaseFontSize()">
+                Aumentar letra
+              </button>
+              <button class="btn btn-secondary p-1" onclick="decreaseFontSize()">
+                Reducir letra
+              </button>
+      
+              <div class="btn-group dropup">
+                <button
+                  type="button"
+                  class="btn btn-secondary dropdown-toggle p-1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Escoja el color de la letra
+                </button>
+                <ul class="dropdown-menu">
+                  <a class="dropdown-item" href="#" onclick="changeFontColor('red')"
+                    >Rojo</a
+                  >
+                  <a class="dropdown-item" href="#" onclick="changeFontColor('blue')"
+                    >Azul</a
+                  >
+                  <a class="dropdown-item" href="#" onclick="changeFontColor('white')"
+                    >Blanco</a
+                  >
+                  <a class="dropdown-item" href="#" onclick="changeFontColor('black')"
+                    >Negro</a
+                  >
+                </ul>
+              </div>
+      
+              <select
+                class="btn btn-secondary dropdown-toggle p-1"
+                onclick="changeBackgroundColor()"
+                id="background-color-select"
+              >
+                <option value="">Seleccionar color de fondo</option>
+                <option value="white">Blanco</option>
+                <option value="black">Negro</option>
+                <option value="blue">Azul</option>
+              </select>
+              <select
+                class="btn btn-secondary dropdown-toggle p-1"
+                onclick="changeFont()"
+                id="font-select"
+              >
+                <option value="">Seleccionar fuente</option>
+                <option value="Arial">Arial</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Times New Roman">Times New Roman</option>
+              </select>
+              <button class="btn btn-danger" onclick="resetSettings()">
+                Resetear
+              </button>
+            </div>
+          </div>
 
         <section class="contact" id="contact">
 
@@ -419,5 +514,51 @@
 
 </body>
 <script src="../static/js/script.js"></script>
+<script>
+    function changeFontColor(newColor) {
+        var elements = document.querySelectorAll("*");
+
+        for (var i = 0; i < elements.length; i++) {
+          elements[i].style.color = newColor;
+        }
+      }
+      function changeBackgroundColor() {
+        const select = document.getElementById("background-color-select");
+        const color = select.value;
+        document.body.style.backgroundColor = color;
+      }
+      function toggleAccessibilityOptions() {
+        var optionsDiv = document.getElementById("accessibilityOptions");
+        optionsDiv.classList.toggle("show");
+      }
+
+      function increaseFontSize() {
+        var elements = document.querySelectorAll("*");
+        for (var i = 0; i < elements.length; i++) {
+          var computedStyle = window.getComputedStyle(elements[i]);
+          var fontSize = parseFloat(computedStyle.fontSize);
+          elements[i].style.fontSize = fontSize + 1 + "px";
+        }
+      }
+
+      function changeFont() {
+        const select = document.getElementById("font-select");
+        const font = select.value;
+        document.body.style.fontFamily = font;
+      }
+
+      function decreaseFontSize() {
+        var elements = document.querySelectorAll("*");
+        for (var i = 0; i < elements.length; i++) {
+          var computedStyle = window.getComputedStyle(elements[i]);
+          var fontSize = parseFloat(computedStyle.fontSize);
+          elements[i].style.fontSize = fontSize - 1 + "px";
+        }
+      }
+
+      function resetSettings() {
+        location.reload();
+      }
+</script>
 
 </html>
